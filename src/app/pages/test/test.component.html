@@ -1,0 +1,13 @@
+<div class="contendor">
+    <div *ngIf="activo == 1" style="background-color: blue;"></div>
+    <div *ngIf="activo == 2" style="background-color: red;"></div>
+    <div *ngIf="activo == 3" style="background-color: green;"></div>
+
+    <section>
+        <button (click)="izquierda()">A</button>
+        <button>B</button>
+    </section>
+</div>
+<button (click)="activo=1">uno</button>
+<button (click)="activo=2">dos</button>
+<button (click)="activo=3">tres</button>

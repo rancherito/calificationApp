@@ -1,0 +1,19 @@
+.contendor,
+.contendor>div {
+    width: 100%;
+    height: 400px;
+}
+.contendor{
+    position: relative;
+}
+.contendor>div{
+    position: absolute;
+}
+section{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}

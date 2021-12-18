@@ -1,0 +1,42 @@
+<co-recoverdatalayout [extend]="countKeyperGroup().length > 0" label="PASO 1 DE 3">
+    <ng-container view>
+        <div class="content-groups" *ngIf="countKeyperGroup().length">
+            <div *ngFor="let item of countKeyperGroup()">
+                <div class="c co-card" style="background-color: var(--primary-color);">TOTAL CLAVES: {{item.total}}</div>
+                <co-box></co-box>
+                <div class="co-card" >
+                    <div style="display: grid; grid-template-columns: repeat(3, 60PX);">
+                        <span class="c">GRUPO</span>
+                        <span class="c">INDICE</span>
+                        <span class="c">CLAVE</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 60PX);" *ngFor="let tableKeys of computeKeys()">
+                        <ng-container *ngIf="tableKeys.group == item.group">
+                            <span class="c">{{tableKeys.group}}</span>
+                            <span class="c">{{tableKeys.index}}</span>
+                            <span class="c">{{tableKeys.key}}</span>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </ng-container>
+    <div action class="f-c" style="height: 100%;">
+        <img src="/assets/txt-file.svg" style="height: 6rem;" class="filter-white">
+        <co-box size="2rem"></co-box>
+        <h3>Para empezar es necesario cargar las claves</h3>
+        <co-box size="2rem"></co-box>
+        <label pButton>
+            {{countKeyperGroup().length?'Volver a cargar':'Cargar claves'}}
+            <input type="file" style="display: none;" (change)="onLoadKeys($event)">
+        </label>
+        <co-box size="4rem"></co-box>
+        <div *ngIf="countKeyperGroup().length">
+            <p-checkbox [(ngModel)]="isDeleteCabecera" label="Quitar cabecera" [binary]="true"></p-checkbox>
+        </div>
+        <co-box size="6rem"></co-box>
+        
+        <p-button label="Paso 2" routerLink="/loadstudents" styleClass="p-button-secondary"></p-button>
+    </div>
+</co-recoverdatalayout>
