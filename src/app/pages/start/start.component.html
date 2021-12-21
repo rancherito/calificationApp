@@ -1,4 +1,4 @@
-<co-recoverdatalayout [extend]="countKeyperGroup().length > 0" label="PASO 1 DE 3">
+<co-recoverdatalayout [extend]="countKeyperGroup().length > 0" label="PASO 1 DE 4">
     <ng-container view>
         <div class="content-groups" *ngIf="countKeyperGroup().length">
             <div *ngFor="let item of countKeyperGroup()">
@@ -11,8 +11,8 @@
                         <span class="c">CLAVE</span>
                     </div>
                     <div style="display: grid; grid-template-columns: repeat(3, 60PX);" *ngFor="let tableKeys of computeKeys()">
-                        <ng-container *ngIf="tableKeys.group == item.group">
-                            <span class="c">{{tableKeys.group}}</span>
+                        <ng-container *ngIf="tableKeys.idGroup == item.group">
+                            <span class="c">{{tableKeys.idGroup}}</span>
                             <span class="c">{{tableKeys.index}}</span>
                             <span class="c">{{tableKeys.key}}</span>
                         </ng-container>
@@ -37,6 +37,6 @@
         </div>
         <co-box size="6rem"></co-box>
         
-        <p-button label="Paso 2" routerLink="/loadstudents" styleClass="p-button-secondary"></p-button>
+        <p-button label="Siguiente" routerLink="/loadstudents" styleClass="p-button-secondary"></p-button>
     </div>
 </co-recoverdatalayout>

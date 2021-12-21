@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { IExcelData as excelData } from "../../providersInterfaces";
 import * as XLSX from "xlsx";
 
 @Component({
@@ -18,7 +19,7 @@ export class LoadstudentsComponent implements OnInit {
     group: "Grupo",
     modality: "Modalidad"
   }
-  private dataHeaderTemplate: any = {
+  private templateDataHeader: any = {
     career: "career",
     careername: "careername",
     code: "code",
@@ -27,39 +28,56 @@ export class LoadstudentsComponent implements OnInit {
     group: "group",
     modality: "modality"
   }
+  public currentHeaderChange: string | null = null
 
-  private dataHeaderTemplateCustom: any = {}
+  public relationHeaders: {headerkey: string, relationkey: string | undefined}[] = []
+
+  private templateDataHeaderCustom: any = {}
   constructor() {} 
+  evChangeHeader(headerName: string) {
+    this.currentHeaderChange = headerName
+  }
+  evAsingHeader(newHeader: string){
+    if (this.currentHeaderChange) {
+      this.templateDataHeaderCustom[this.currentHeaderChange.toLowerCase()] = newHeader
+      let stringData = JSON.stringify(this.templateDataHeaderCustom)
+      localStorage.setItem('templateDataHeaderCustom', stringData)
+      this.currentHeaderChange = null
+    }
+  }
   computeTableStudent(): excelData[]{
     let data: excelData[] = []
     let templateGroups: any = {A: 'P', B: 'Q', C: 'R'}
     if (this.dataExcel.length > 0) {
 
-
+      let tempHeaders: any = {...this.templateDataHeader, ...this.templateDataHeaderCustom}
 
       this.dataExcel.forEach((student, index) => {
         let keyss = Object.keys(student);
-
-        let career = student[keyss.find(x => x.toLowerCase() == 'career') ?? ""] ?? null
-        let careerName = student[keyss.find(x => x.toLowerCase() == 'careername') ?? ""] ?? null
-        let code = student[keyss.find(x => x.toLowerCase() == 'code') ?? ""] ?? null
-        let dni = student[keyss.find(x => x.toLowerCase() == 'dni') ?? ""] ?? null
-        let fullname = student[keyss.find(x => x.toLowerCase() == 'fullname') ?? ""] ?? null
-        let group = templateGroups[(student[keyss.find(x => x.toLowerCase() == 'group') ?? ""] as string)?.toUpperCase()] ?? null
-        let modality = (student[keyss.find(x => x.toLowerCase() == 'modality') ?? ""] as string)?.toUpperCase() ?? null
+        let temporalPush: excelData = { career: null, careerName: null, code: null, dni: null, fullname: null, group: null, modality: null}
 
         if (index == 0) {
           this.keyHeaders = keyss;
+          this.relationHeaders = []
+        }
+        for (const key in temporalPush) {
+          let findKey = keyss.find(x => x.toLowerCase() == tempHeaders[key.toLowerCase()].toLowerCase())
+          if (findKey) temporalPush[key] = student[findKey] ?? null
+          if (key == 'group' && findKey && student[findKey]) temporalPush[key] = templateGroups[temporalPush[key]?.toUpperCase()??""]??null
+          if (index == 0) this.relationHeaders.push({ headerkey: key, relationkey: findKey})
+          
         }
 
+
         
-        data.push({career,careerName,code,dni,fullname,group,modality})
+        data.push(temporalPush)
       })
       
     }
     let isModalitydataNull = data.every(x => x.modality == null );
     if (isModalitydataNull) data.forEach(x => {x.modality = "UNIQUE" })
 
+    localStorage.setItem('studentDataOficial', JSON.stringify(data));
     return data
   }
   readExcel(e: Event) {
@@ -81,20 +99,18 @@ export class LoadstudentsComponent implements OnInit {
   }
   ngOnInit(): void {
     let data = localStorage.getItem('student')
-    if (data != null) {
-      this.dataExcel = JSON.parse(data) as any[];
-    }
-      
+    if (data != null) this.dataExcel = JSON.parse(data) as any[];
+    
+    let herdersCustom = localStorage.getItem('templateDataHeaderCustom')
+    if (herdersCustom != null) this.templateDataHeaderCustom = JSON.parse(herdersCustom);
     
   }
+  reset(){
+    this.templateDataHeaderCustom = {}
+    console.log(this.templateDataHeaderCustom );
+    
+    let stringData = JSON.stringify(this.templateDataHeaderCustom)
+    localStorage.setItem('templateDataHeaderCustom', stringData)
+  }
 
-}
-interface excelData{
-  career: string | null,
-  careerName: string| null,
-  code: string| null,
-  dni: string| null,
-  fullname: string| null,
-  group: string| null,
-  modality: string| null
 }

@@ -4,3 +4,9 @@
     grid-template-rows: 100%;
     height: 100%;
 }
+::ng-deep .customChip {
+    height: 28px;
+    color: white;
+    border-radius: .25rem;
+    cursor: pointer;
+}

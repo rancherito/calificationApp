@@ -12,6 +12,9 @@
 .c{
     text-align: center;
 }
+.r {
+  text-align: right;
+}
 .co-card{
     padding: 1rem;
     border-radius: .5rem;
@@ -39,4 +42,11 @@
 .p-datatable .p-sortable-column:focus,
 .p-datatable .p-sortable-column:not(.p-highlight):hover {
     background: rgba(255, 255, 255, 0.7) !important;
+}
+
+.p-scrollpanel-content{
+        /*padding: 0 0 18px 0 !important;*/
+}
+.p-scrollpanel .p-scrollpanel-bar{
+    background-color: rgba(255, 255, 255, 0.12) !important;
 }

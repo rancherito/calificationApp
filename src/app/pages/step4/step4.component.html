@@ -1,0 +1,47 @@
+<co-recoverdatalayout label="Paso 4 de 4" [extend]="true">
+    <div view class="p-3">
+        <div style="text-align: right;">
+            <p-button (click)="process()">Procesar</p-button>
+        </div>
+        <div style="display: flex; justify-content: center;">
+            <co-card>
+                <table>
+                    <thead>
+                        <tr>
+                            <td>DNI</td>
+                            <td>Nombre completo</td>
+                            <td>Puntaje</td>
+                            <td>Calificación</td>
+                        </tr>
+                    </thead>
+                        <tr *ngFor="let item of processDataList">
+                        <td class="ml-2">{{item.dni}}</td>
+                        <td class="ml-2">{{item.fullname}}</td>
+                        <td class="ml-2 r">{{item.score}}</td>
+                        <td class="ml-2 r">{{item.calification}}</td>
+                    </tr>
+
+                </table>
+            
+            </co-card>
+        
+        </div>
+        
+    </div>
+    <div action class="f-c" style="height: 100%;">
+        <img src="/assets/txt-file.svg" class="filter-white" style="height: 6rem;">
+        <co-box size="2rem"></co-box>
+        <h3>Seleccione el archivo que contenga las respuestas</h3>
+        <co-box></co-box>
+        <label pButton>Cargar respuestas
+            <input type="file" style="display: none;" (change)="loadData($event)">
+        </label>
+
+        <div style="display: flex; justify-content: center;">
+            <p-button [style]="{background: 'var(--green-600)'}" styleClass="mt-3" routerLink="/step3">Paso 3</p-button>
+            <co-box></co-box>
+            <p-button [style]="{background: 'var(--green-600)'}" styleClass="mt-3" routerLink="/reports">REPORTE</p-button>
+        </div>
+        
+    </div>
+</co-recoverdatalayout>

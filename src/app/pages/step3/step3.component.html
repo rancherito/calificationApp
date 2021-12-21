@@ -1,0 +1,43 @@
+<co-recoverdatalayout label="Paso 3 de 4" [extend]="data.length > 0">
+    <div view>
+        <div class="p-3" style="display: flex; justify-content: center;flex-direction: column; align-items: center;">
+            <co-card styleClass="mb-2">
+                <div style="width:  700px;">
+                    TOTAL: {{data.length}}
+                </div>  
+            </co-card>
+            <co-card styleClass="mb-2">
+                <div style="display: grid; grid-template-columns: repeat(2, 150px) 400px;">
+                    <div class="c" style="display: flex; align-items: center; justify-content: center;">CODIGO BARRA</div>
+                    <div class="c" style="display: flex; align-items: center; justify-content: center;">CODIGO ESTUDIANTE</div>
+                    <div style="display: flex; align-items: center; justify-content: center;">NOMBRE COMPLETO</div>
+                </div>
+            </co-card>
+            <co-card>
+                <div *ngFor="let student of data" style="display: grid; grid-template-columns: repeat(2, 150px) 400px;">
+                    <div class="c">{{student.idStudent}}</div>
+                    <div class="c">{{student.idBar}}</div>
+                    <div>{{findFullnameStudent(student)}}</div>
+                </div>
+            </co-card>
+
+        </div>
+    </div>
+    
+    <div action class="f-c" style="height: 100%;">
+        <img src="/assets/txt-file.svg" class="filter-white" style="height: 6rem;">
+        <co-box size="2rem"></co-box>
+        <h3>Seleccione el archivo que contenga la información del codigo de barras y de estudiantes</h3>
+        <co-box></co-box>
+        <label pButton>Codigo de barras y alumno
+            <input type="file" style="display: none;" (change)="loadIndenty($event)" >
+        </label>
+
+        <div style="display: flex; justify-content: center;">
+            <p-button [style]="{background: 'var(--green-600)'}" styleClass="mt-3" routerLink="/loadstudents">Paso 2</p-button>
+            <co-box></co-box>
+            <p-button [style]="{background: 'var(--green-600)'}" styleClass="mt-3" routerLink="/step4">Paso 4</p-button>
+        </div>
+        
+    </div>
+</co-recoverdatalayout>

@@ -2,7 +2,7 @@
 <co-recoverdatalayout [extend]="dataExcel.length > 0" label="PASO 2 DE 3">
     <section class="action-table" view>
         <p-scrollPanel [style]="{height: '100%'}" >
-            <div class="p-3">
+            <div class="py-3 pl-3">
                 <p-table 
                 [paginator]="true" [rows]="30" styleClass="p-datatable-sm" responsiveLayout="scroll" [value]="computeTableStudent()"
                 [showCurrentPageReport]="true"
@@ -31,18 +31,56 @@
             </div>
         </p-scrollPanel>
         
-        <div style="padding: 1rem;">
-            <h3 class="mb-2">Cabeceras encontradas</h3>
-            <div style="display: flex; gap: .25rem;flex-wrap: wrap;" >
-                <p-chip *ngFor="let header of keyHeaders" [label]="header" [style]="{background: 'var(--primary-color)', height: '28px', color: 'white'}"></p-chip>
-            </div>
-            <h3 class="mb-2 mt-4">Cabeceras enlazadas</h3>
-            <div style="display: grid; grid-template-columns: auto 1fr auto; gap: .25rem; align-items: center;">
-                <p-chip [label]="'header'" [style]="{background: 'var(--primary-color)', height: '28px', color: 'white'}"></p-chip>
-                <div style="height: 1
-                px; background-color: white; width: auto;"></div>
-                <p-chip [label]="'header'" [style]="{background: 'var(--primary-color)', height: '28px', color: 'white'}"></p-chip>
-            </div>
+        <div class="p-3">
+            <co-card styleClass="mb-3">
+                <p-button styleClass="p-button-sm" (click)="reset()">Reset</p-button>
+            </co-card>
+            <co-card class="mb-3" styleClass="mb-3">
+                <h4 class="mb-2">Cabeceras encontradas del archivo</h4>
+                <div style="display: flex; gap: .25rem;flex-wrap: wrap;" >
+                    <p-chip *ngFor="let header of keyHeaders" [label]="header" [style]="{background: 'var(--primary-color)', height: '28px', color: 'white', 'border-radius': '.25rem'}"></p-chip>
+                </div>
+            </co-card>
+            <co-card styleClass="mb-3">
+                <h4 class="mb-2">Cabeceras enlazadas</h4>
+                <div style="gap: .25rem; display: grid;">
+                    <ng-container *ngFor="let item of relationHeaders">
+                        <p-chip *ngIf="item.relationkey"  [style]="{background: 'var(--primary-color)', width: '100%'}" styleClass="customChip" (click)="evChangeHeader(item.headerkey)">
+                            
+                            <div  style="display: grid; grid-template-columns: auto 1fr auto; gap: .25rem; align-items: center; width: 100%;">
+                                <span>{{item.headerkey}}</span>
+                                <div style="height: 1px;background-color: white; width: auto;"></div>
+                                <span>{{item.relationkey}}</span>
+                            </div>
+                        </p-chip>
+                    </ng-container>
+                </div>
+            </co-card>
+            
+            <co-card>
+                <h3 class="mb-2">Cabeceras faltantes</h3>
+                <div style="gap: .25rem; display: grid; ">
+                    <ng-container *ngFor="let item of relationHeaders">
+                        <p-chip *ngIf="item.relationkey == undefined" [style]="{background: currentHeaderChange == item.headerkey?'var(--teal-500)': 'var(--pink-500)',width: '100%'}" styleClass="customChip" (click)="evChangeHeader(item.headerkey)">
+                            <div  style="display: grid; grid-template-columns: auto 1fr auto; gap: .25rem; align-items: center; width: 100%;">
+                                <span>{{item.headerkey}}</span>
+                                <div style="height: 1px;background-color: white; width: auto;"></div>
+                                <span>{{item.relationkey}}</span>
+                            </div>
+                        </p-chip>
+                    </ng-container>
+                </div>
+            </co-card>
+        
+            <p-card styleClass="mt-3" [header]="currentHeaderChange" *ngIf="currentHeaderChange != null" subheader="Asigne una nueva cabezera">
+                <div style="display: flex; gap: .25rem;flex-wrap: wrap;" >
+                    <p-chip *ngFor="let header of keyHeaders" [label]="header" [style]="{background: 'var(--teal-500)'}" styleClass="customChip" (click)="evAsingHeader(header)"></p-chip>
+                </div>
+                <ng-template pTemplate="footer">
+                
+                    <button pButton class="p-button-sm" (click)="currentHeaderChange = null">Cancelar</button>
+                </ng-template>
+            </p-card>
         </div>
     </section>
     <div action class="f-c" style="height: 100%;">
@@ -53,5 +91,11 @@
         <label pButton>Cargar Excel Alumnos
             <input type="file" accept=".xlsx,.xls" style="display: none;" (change)="readExcel($event)">
         </label>
+        <div style="display: flex; justify-content: center;">
+            <p-button [style]="{background: 'var(--green-600)'}" styleClass="mt-3" routerLink="/">Paso 1</p-button>
+            <co-box></co-box>
+            <p-button [style]="{background: 'var(--green-600)'}" styleClass="mt-3" routerLink="/step3">Paso 3</p-button>
+        </div>
+        
     </div>
 </co-recoverdatalayout>
