@@ -13,6 +13,9 @@ import { CardModule } from 'primeng/card';
 import { TableModule } from "primeng/table";
 import { ChipModule } from 'primeng/chip';
 import { CheckboxModule } from 'primeng/checkbox';
+import { ToastModule } from 'primeng/toast';
+import { MessagesModule } from 'primeng/messages';
+import { MessageModule } from 'primeng/message';
 
 import { FormsModule } from '@angular/forms';
 
@@ -21,7 +24,6 @@ import { Step3Component } from './step3/step3.component';
 import { Step4Component } from './step4/step4.component';
 import { ReportDataComponent } from './report-data/report-data.component';
 let comps: any[] = [
-
   StartComponent,
   TestComponent,
   LoadstudentsComponent
@@ -41,7 +43,10 @@ let comps: any[] = [
     ChipModule,
     CheckboxModule,
     ComponentsModule,
-    RouterModule
+    RouterModule,
+    ToastModule,
+    MessagesModule,
+    MessageModule
   ]
 })
 export class PagesModule { }

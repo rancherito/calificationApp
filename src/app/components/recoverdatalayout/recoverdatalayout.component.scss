@@ -5,14 +5,14 @@ section{
     grid-template-columns: 100%;
     grid-template-rows: 100%;
 }
-.action{
-    background-color: #111;
+::ng-deep .action{
     display: grid;
     grid-template-columns: 100%;
     grid-template-rows: auto 1fr;
+    height: 100%;
 }
 section.extend{
-    grid-template-columns: auto 400px;
+    grid-template-columns: 400px auto;
 }
 .action-content{
     padding: 1rem;

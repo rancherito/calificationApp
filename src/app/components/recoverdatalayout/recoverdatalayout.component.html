@@ -1,13 +1,15 @@
 <section [class]="extend?'extend':null">
+    <div [class]="extend ? 'py-3 pl-3': null" style="height: 100%;">
+       <co-card styleClass="action">
+            <div class="super-title">{{label}}</div>
+            <div class="action-content">
+                <ng-content select="[action]"></ng-content>
+            </div>
+        </co-card>
+    </div>
+    
     <p-scrollPanel [style]="{width: '100%', height: '100%'}" class="view" *ngIf="extend">
         <ng-content select="[view]"></ng-content>
     </p-scrollPanel>
-    <div class="action">
-        <div class="super-title">{{label}}</div>
-        <div class="action-content">
-            <ng-content select="[action]"></ng-content>
-        </div>
-        
-    </div>
 </section>
 

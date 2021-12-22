@@ -1,42 +1,56 @@
 import { Injectable } from '@angular/core';
-import { IAnswer, IKeyAnswer } from "../providersInterfaces";
+import { IAnswer, IKeyAnswer, IExcelData, IStudentInfo } from "../providersInterfaces";
 
 @Injectable({
 	providedIn: 'root'
 })
 export class DatastorageService {
-	private keyAnswersList: IKeyAnswer[] = []
-	private answersList: IAnswer[] = []
-	private fileKeyAnswer: string | null = null
-
-	getKeyAnswerList(): IKeyAnswer[] {
-		if (this.keyAnswersList.length) this.keyAnswersList = JSON.parse(localStorage.getItem('keyAnswersList') ?? '[]') as IKeyAnswer[]
-		return this.keyAnswersList
+	//FILE DATA
+	restoreFileStudentInfo() {
+		return JSON.parse(localStorage.getItem('fileStudentInfo')??'[]') as Record<string, string>[]
 	}
-	setKeyAnswerList(keyAnswerList: IKeyAnswer[]) {
-		this.keyAnswersList = keyAnswerList
-		localStorage.setItem('keyAnswersList', JSON.stringify(this.keyAnswersList))
-	}
-	getAnswerList(): IAnswer[] {
-		if (this.answersList.length) this.answersList = JSON.parse(localStorage.getItem('answersList') ?? '[]') as IAnswer[]
-		return this.answersList
-	}
-	setAnswerList(answerList: IAnswer[]) {
-		this.answersList = answerList
-		localStorage.setItem('answersList', JSON.stringify(this.answersList))
+	saveFileStudentInfo(fileStudentInfo: string) {
+		localStorage.setItem('fileStudentInfo', fileStudentInfo)
 	}
 
 	restoreFileKeyAnswer() {
-		this.fileKeyAnswer = localStorage.getItem('fileKeyAnswers')
-		return this.fileKeyAnswer
+		return localStorage.getItem('fileKeyAnswers')
 	}
 	saveFileKeyAnswer(fileKeyAnswer: string) {
-		this.fileKeyAnswer = fileKeyAnswer
 		localStorage.setItem('fileKeyAnswers', fileKeyAnswer)
 	}
 
+	//GENERAL DATA
+	getKeyAnswerList(): IKeyAnswer[] {
+		return JSON.parse(localStorage.getItem('keyAnswersList') ?? '[]') as IKeyAnswer[]
+	}
+	setKeyAnswerList(keyAnswerList: IKeyAnswer[]) {
+		localStorage.setItem('keyAnswersList', JSON.stringify(keyAnswerList))
+	}
+	
+	getAnswerList(): IAnswer[] {
+		return JSON.parse(localStorage.getItem('answersList') ?? '[]') as IAnswer[]
+	}
+	setAnswerList(answerList: IAnswer[]) {
+		localStorage.setItem('answersList', JSON.stringify(answerList))
+	}
+
+	setStudentInfoList(studentInfo: IStudentInfo[])  {
+		return localStorage.setItem('studentInfoList', JSON.stringify(studentInfo))
+	}
+	getStudentInfoList(): IStudentInfo[]{
+		return JSON.parse(localStorage.getItem('studentInfoList')??'[]') as IStudentInfo[]
+	}
+	//UTILS
+	getTotalKeys() {
+		return parseInt(localStorage.getItem('totalKyes')??'0')
+	}
 	clearFile(fileString: string | null){
 		return (fileString??"").split('\r\n').filter(e => e.length > 0)
 	}
-	
+
+	setTotalKeys(total: number) {
+		localStorage.setItem('totalKyes', total.toString())
+	}
+
 }

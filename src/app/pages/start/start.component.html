@@ -37,6 +37,11 @@
         </div>
         <co-box size="6rem"></co-box>
         
-        <p-button label="Siguiente" routerLink="/loadstudents" styleClass="p-button-secondary"></p-button>
+        <p-button label="Siguiente" (click)="nextStep()"  styleClass="p-button-secondary" *ngIf="countKeyperGroup().length > 0"></p-button>
     </div>
 </co-recoverdatalayout>
+
+<co-layout-bottom [wrapper]="false" *ngIf="countKeyperGroup().length > 0">
+    <p-button styleClass="p-button-secondary" (click)="saveInformation()" >Salvar Datos</p-button>
+</co-layout-bottom>
+<p-toast></p-toast>
