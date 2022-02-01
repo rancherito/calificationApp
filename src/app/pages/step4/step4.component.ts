@@ -1,38 +1,73 @@
 import { Component, OnInit } from '@angular/core';
-import { IExcelData, IAnswer, IKeyAnswer, IData } from "../../providersInterfaces";
+import { Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
+import { DatastorageService } from 'src/app/datastorage/datastorage.service';
+import { IExcelData, IAnswer, IKeyAnswer, IRelationCodeBar, IStudentInfo } from "../../providersInterfaces";
 
 @Component({
 	selector: 'page-step4',
 	templateUrl: './step4.component.html',
-	styleUrls: ['./step4.component.scss']
+	styleUrls: ['./step4.component.scss'],
+	providers: [MessageService]
 })
 export class Step4Component implements OnInit {
 	private totalQuestions: number = 0
-	public dataAnswer: IAnswer[] = []
-	public studentList: IExcelData[] = []
-	public keyList: IKeyAnswer[] = []
-	public dataCodeBarList: IData[] = []
-
+	public dataAnswer: string[] = []
+	public asistenceList: IStudentInfo[] = []
+	/*public dataCodeBarList: IRelationCodeBar[] = []*/
+	public totalKeys = 0
+	public JSON = JSON
+	public file: string = ""
 	public processDataList: ICalification[] = []
-	constructor() { }
+	constructor(
+		private dataStorageService: DatastorageService,
+		private router: Router,
+		private message: MessageService
+	) { }
 
 	ngOnInit(): void {
-		this.totalQuestions = parseInt(localStorage.getItem('totalQuestions')??'0')
+		/*this.totalQuestions = parseInt(localStorage.getItem('totalQuestions')??'0')
 		this.dataAnswer = JSON.parse(localStorage.getItem('dataAnswer')??'[]') as IAnswer[]
 		this.studentList = JSON.parse(localStorage.getItem('studentDataOficial')??'[]') as IExcelData[]
 		this.keyList = JSON.parse(localStorage.getItem('keysListOficial')??'[]') as IKeyAnswer[]
-		this.dataCodeBarList = JSON.parse(localStorage.getItem('dataCodeBar')??'[]') as IData[]
-		this.processDataList = JSON.parse(localStorage.getItem('processDataList') ?? '[]') as ICalification[]
+		this.dataCodeBarList = JSON.parse(localStorage.getItem('dataCodeBar')??'[]') as IRelationCodeBar[]
+		this.processDataList = JSON.parse(localStorage.getItem('processDataList') ?? '[]') as ICalification[]*/
+		this.totalKeys = this.dataStorageService.getTotalKeys()
+		this.file = this.dataStorageService.restoreFileResponses() as string
+		this.dataAnswer = this.dataStorageService.clearFile(this.file)
+		this.asistenceList = this.dataStorageService.getStudentInfoList().filter(x => x.idBar != null)
+		this.file = this.file.replace(/\,\,/g, ', ,').replace(/\,\,/g, ', ,')
 	}
-	process(){
-		this.processDataList = this.computeScore()
-		localStorage.setItem('processDataList', JSON.stringify(this.processDataList)) 
+	processAnswers(): IAnswer[] {
+		let keyList: IAnswer[] = []
+		for (let index = 1; index < this.dataAnswer.length; index++) {
+			let rowAnswer = this.dataAnswer[index].split(",")
+			let [idBar, idTheme] = [rowAnswer[0], rowAnswer[1]]
+			for (let e = 2; e < this.totalKeys + 2; e++) {
+				keyList.push({ idBar, idTheme: idTheme == '' ? 'NULL': idTheme, idQuestion: e - 1, answer: rowAnswer[e] == '' ? null : rowAnswer[e] })
+			}
+		}
+		return keyList
 	}
-	computeScore(){
-		let student = this.studentList/*.filter((x, y) => y < 160)*/
+	listCountThemesAnswer(){
+		let themes: { idTheme: string, total: number }[] = []
+		this.processAnswers().forEach(x => {
+			let i = themes.findIndex(y => y.idTheme == x.idTheme)
+			if ( i == -1) themes.push({ idTheme: x.idTheme, total: 1 })
+			else themes[i].total++
+		})
+		themes.map(x => x.total = x.total / this.totalKeys)
+		return themes
+	}
+	totalStudents(){
+		return this.listCountThemesAnswer().reduce((acc, cur) => acc + cur.total, 0)
+	}
+	computeResponses(){
+
+		/*let student = this.studentList/*.filter((x, y) => y < 160)
 
 		let data = student.map(x => {
-			let relationCodeBar = this.dataCodeBarList.find(y => y.idStudent == x.code);
+			let relationCodeBar = this.dataCodeBarList.find(y => y.code == x.code);
 			let score = this.dataAnswer.filter(y => y.idBar == relationCodeBar?.idBar).reduce((acc, cur) => {
 				let points = 0
 				if (cur.answer == null) points = 0.5
@@ -43,7 +78,7 @@ export class Step4Component implements OnInit {
 			return info
 		})
 
-		return data.sort((x, y) => parseFloat(y.calification) - parseFloat(x.calification))
+		return data.sort((x, y) => parseFloat(y.calification) - parseFloat(x.calification))*/
 	}
 	loadData(e: Event){
 
@@ -53,7 +88,15 @@ export class Step4Component implements OnInit {
 			let file = files[0]
 			let reader = new FileReader()
 			reader.onload = () => {
-				let data = reader.result?.toString().split("\r\n").filter(x => x.length > 0) ?? []
+				console.log(reader.result);
+				if (reader.result) {
+					this.dataStorageService.saveFileResponses(reader.result as string)
+					this.totalKeys = this.dataStorageService.getTotalKeys()
+					this.dataAnswer = this.dataStorageService.clearFile(reader.result as string)
+					
+				}
+				
+				/*let data = reader.result?.toString().split("\r\n").filter(x => x.length > 0) ?? []
 				let dataAswer: IAnswer[] = []
 				for (let ind = 1; ind < data.length; ind++) {
 					let rowData = data[ind].split(",");
@@ -63,11 +106,23 @@ export class Step4Component implements OnInit {
 					}
 
 				}
-				this.dataAnswer = dataAswer
-				localStorage.setItem('dataAnswer', JSON.stringify(dataAswer))
+				this.dataAnswer = dataAswer*/
 			}
 			reader.readAsText(file)
 		}
+	}
+	saveData(){
+		this.dataStorageService.setStudentAnswers(this.processAnswers())
+		this.message.add({ severity: "success", detail: 'Datos guardados' })
+	}
+	validate(){
+		let studentData = this.dataStorageService.getSudentAnswers()
+		console.log(studentData);
+		
+		if (studentData.length == 0) {
+			this.message.add({ severity: "warn", detail: 'Primero salve las respuestas de los estudiantes' })
+		}
+		else this.router.navigate(['/report'])
 	}
 }
 

@@ -1,24 +1,60 @@
+<p-toast></p-toast>
 <co-recoverdatalayout label="Paso 4 de 4" [extend]="true">
     <div view class="p-3">
-        <div style="text-align: right;">
-            <p-button (click)="process()">Procesar</p-button>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <co-card class="card">
+                <h4 class="mb-3">Informacion del archivo</h4>
+                <div><b>Grupos:</b> {{listCountThemesAnswer().length}}</div>
+                <div><b>Estudiantes:</b> {{totalStudents()}}</div>
+                <table class="mt-3">
+                    <tr>
+                        <th>Grupo</th>
+                        <th># Estudiantes</th>
+                    </tr>
+                    <tr *ngFor="let item of listCountThemesAnswer()">
+                        <td class="text-center">{{item.idTheme}}</td>
+                        <td class="text-right">{{item.total}}</td>
+                    </tr>
+                </table>
+            </co-card>
+            <co-card style="flex: 1;">
+                <h4 class="mb-3">Comparación</h4>
+                <div><b>Asistencia:</b> {{asistenceList.length}}</div>
+                <div><b>Estudiantes:</b> {{totalStudents()}}</div>
+                <div class="mt-3" *ngIf="asistenceList.length != totalStudents() || listCountThemesAnswer().length > 3">
+                    Algunos datos no concuerdan, esto puede deberse a lo siguiente
+                    <ul>
+                        <li>
+                            El archivo no contiene toda la informaciond de las cartillas escaneadas
+                        </li>
+                        <li>Algunos estudiantes marcaron incorrectamente sus codigos en las cartillas</li>
+                        <li>Algunos estudiantes no estan asignados a un grupo o tema valido</li>
+                    </ul>
+                    
+                </div>
+            </co-card>
+            <co-card style="width: 100%;">
+                <h4 class="mb-3">Contenido del archivo</h4>
+                <textarea style="width: 100%; resize: vertical; min-height: 400px; font-family: monospace;" readonly>{{this.file}}</textarea>
+            </co-card>
         </div>
-        <div style="display: flex; justify-content: center;">
+        
+        <!--<div style="display: flex; justify-content: center;">
             <co-card>
                 <table>
                     <thead>
                         <tr>
-                            <td>DNI</td>
-                            <td>Nombre completo</td>
-                            <td>Puntaje</td>
-                            <td>Calificación</td>
+                            <td>BARCODE</td>
+                            <td>TEMA</td>
+                            <td>PREGUNTA</td>
+                            <td>RESPUESTA</td>
                         </tr>
                     </thead>
-                        <tr *ngFor="let item of processDataList">
-                        <td class="ml-2">{{item.dni}}</td>
-                        <td class="ml-2">{{item.fullname}}</td>
-                        <td class="ml-2 r">{{item.score}}</td>
-                        <td class="ml-2 r">{{item.calification}}</td>
+                        <tr *ngFor="let item of processAnswers()">
+                        <td class="ml-2">{{item.idBar}}</td>
+                        <td class="ml-2">{{item.idTheme}}</td>
+                        <td class="ml-2 r">{{item.idQuestion}}</td>
+                        <td class="ml-2 r">{{item.answer}}</td>
                     </tr>
 
                 </table>
@@ -26,7 +62,7 @@
             </co-card>
         
         </div>
-        
+        -->
     </div>
     <div action class="f-c" style="height: 100%;">
         <img src="/assets/txt-file.svg" class="filter-white" style="height: 6rem;">
@@ -38,10 +74,14 @@
         </label>
 
         <div style="display: flex; justify-content: center;">
-            <p-button [style]="{background: 'var(--green-600)'}" styleClass="mt-3" routerLink="/step3">Paso 3</p-button>
+            <p-button styleClass="mt-3 p-button-secondary" routerLink="/step3">Retroceder</p-button>
             <co-box></co-box>
-            <p-button [style]="{background: 'var(--green-600)'}" styleClass="mt-3" routerLink="/reports">REPORTE</p-button>
+            <p-button styleClass="mt-3 p-button-secondary" (onClick)="validate()">REPORTE</p-button>
         </div>
         
     </div>
 </co-recoverdatalayout>
+
+<co-layout-bottom [wrapper]="false" *ngIf="processAnswers().length">
+    <p-button styleClass="p-button-secondary" label="Salvar datos" (onClick)="saveData()"></p-button>
+</co-layout-bottom>

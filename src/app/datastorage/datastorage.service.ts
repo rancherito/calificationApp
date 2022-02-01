@@ -6,6 +6,12 @@ import { IAnswer, IKeyAnswer, IExcelData, IStudentInfo } from "../providersInter
 })
 export class DatastorageService {
 	//FILE DATA
+	saveFileResponses(fileResponses: string){
+		localStorage.setItem('fileResponses', fileResponses)
+	}
+	restoreFileResponses(){
+		return localStorage.getItem('fileResponses')
+	}
 	restoreFileStudentInfo() {
 		return JSON.parse(localStorage.getItem('fileStudentInfo')??'[]') as Record<string, string>[]
 	}
@@ -20,6 +26,12 @@ export class DatastorageService {
 		localStorage.setItem('fileKeyAnswers', fileKeyAnswer)
 	}
 
+	saveFileRelationCodeBar(fileRelationCodeBar: string) {
+		localStorage.setItem('fileRelationCodeBar', fileRelationCodeBar)
+	}
+	restoreFileRelationCodeBar() {
+		return localStorage.getItem('fileRelationCodeBar')
+	}
 	//GENERAL DATA
 	getKeyAnswerList(): IKeyAnswer[] {
 		return JSON.parse(localStorage.getItem('keyAnswersList') ?? '[]') as IKeyAnswer[]
@@ -36,10 +48,18 @@ export class DatastorageService {
 	}
 
 	setStudentInfoList(studentInfo: IStudentInfo[])  {
+		
 		return localStorage.setItem('studentInfoList', JSON.stringify(studentInfo))
 	}
 	getStudentInfoList(): IStudentInfo[]{
+		
 		return JSON.parse(localStorage.getItem('studentInfoList')??'[]') as IStudentInfo[]
+	}
+	setStudentAnswers(studentAnswers: IAnswer[]) {
+		localStorage.setItem('studentAnswersList', JSON.stringify(studentAnswers))
+	}
+	getSudentAnswers(): IAnswer[] {
+		return JSON.parse(localStorage.getItem('studentAnswersList')??'[]') as IAnswer[]
 	}
 	//UTILS
 	getTotalKeys() {

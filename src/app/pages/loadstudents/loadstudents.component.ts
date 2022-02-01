@@ -49,7 +49,7 @@ export class LoadstudentsComponent implements OnInit {
 	}
 	evAsingHeader(newHeader: string){
 		if (this.currentHeaderChange) {
-			this.templateDataHeaderCustom[this.currentHeaderChange] = newHeader
+			this.templateDataHeaderCustom[this.currentHeaderChange.toLocaleLowerCase()] = newHeader
 			localStorage.setItem('templateDataHeaderCustom', JSON.stringify(this.templateDataHeaderCustom))
 			this.currentHeaderChange = null
 		}
@@ -60,7 +60,8 @@ export class LoadstudentsComponent implements OnInit {
 		if (this.dataExcel.length > 0) {
 
 			let tempHeaders: Record<string, string> = {...this.templateDataHeader, ...this.templateDataHeaderCustom}
-
+			console.log(tempHeaders);
+			
 			this.dataExcel.forEach((student, index) => {
 				let keyss = Object.keys(student);
 				let temporalPush: IExcelData = { career: null, careerName: null, code: null, dni: null, fullname: null, group: null, modality: null}
@@ -103,7 +104,7 @@ export class LoadstudentsComponent implements OnInit {
 			reader.onload = () => {        
 				var workbook = XLSX.read(reader.result, { type: 'binary' });
 				var first_sheet_name = workbook.SheetNames[0];
-				this.dataExcel = XLSX.utils.sheet_to_json(workbook.Sheets[first_sheet_name], { raw: true });
+				this.dataExcel = XLSX.utils.sheet_to_json(workbook.Sheets[first_sheet_name]) as Record<string, string>[];
 				this.datastorageService.saveFileStudentInfo(JSON.stringify(this.dataExcel))
 			}
 			reader.readAsBinaryString(excelFile);
@@ -113,7 +114,6 @@ export class LoadstudentsComponent implements OnInit {
 	ngOnInit(): void {
 		this.dataExcel = this.datastorageService.restoreFileStudentInfo()
 		this.templateDataHeaderCustom = JSON.parse(localStorage.getItem('templateDataHeaderCustom')??'{}') as Record<string, string>;
-		
 	}
 	nextStep(){
 		/*let data = this.computeTableStudent()
@@ -125,6 +125,7 @@ export class LoadstudentsComponent implements OnInit {
 	saveData(){
 		let data = this.computeTableStudent()
 		if (data.length > 0) {
+
 			this.datastorageService.setStudentInfoList(data)
 			this.messageService.add({severity:'success', detail:'Datos salvados correctamente'})
 		}

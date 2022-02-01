@@ -23,6 +23,7 @@ import { ComponentsModule } from "../components/components.module";
 import { Step3Component } from './step3/step3.component';
 import { Step4Component } from './step4/step4.component';
 import { ReportDataComponent } from './report-data/report-data.component';
+import { ReportComponent } from './report/report.component';
 let comps: any[] = [
   StartComponent,
   TestComponent,
@@ -30,8 +31,8 @@ let comps: any[] = [
 ]
 
 @NgModule({
-  declarations: [...comps, Step3Component, Step4Component, ReportDataComponent],
-  exports: [...comps],
+  declarations: [...comps, Step3Component, Step4Component, ReportDataComponent, ReportComponent],
+  exports: [...comps, ReportComponent],
   imports: [
     FormsModule,
     CommonModule,

@@ -1,27 +1,75 @@
-<co-recoverdatalayout label="Paso 3 de 4" [extend]="data.length > 0">
-    <div view>
-        <div class="p-3" style="display: flex; justify-content: center;flex-direction: column; align-items: center;">
-            <co-card styleClass="mb-2">
-                <div style="width:  700px;">
-                    TOTAL: {{data.length}}
-                </div>  
-            </co-card>
-            <co-card styleClass="mb-2">
-                <div style="display: grid; grid-template-columns: repeat(2, 150px) 400px;">
-                    <div class="c" style="display: flex; align-items: center; justify-content: center;">CODIGO BARRA</div>
-                    <div class="c" style="display: flex; align-items: center; justify-content: center;">CODIGO ESTUDIANTE</div>
-                    <div style="display: flex; align-items: center; justify-content: center;">NOMBRE COMPLETO</div>
-                </div>
-            </co-card>
-            <co-card>
-                <div *ngFor="let student of data" style="display: grid; grid-template-columns: repeat(2, 150px) 400px;">
-                    <div class="c">{{student.idStudent}}</div>
-                    <div class="c">{{student.idBar}}</div>
-                    <div>{{findFullnameStudent(student)}}</div>
-                </div>
-            </co-card>
+<co-recoverdatalayout label="Paso 3 de 4" [extend]="dataRelation.length > 0">
+    <div view style="height: 100%; display: grid; grid-template-columns: 1fr 400px; grid-template-rows: 100%;">
+        <p-scrollPanel [style]="{height: '100%'}">
+            <div class="p-3" style="display: flex; justify-content: center;flex-direction: column; align-items: center;">
+                <co-card styleClass="mb-2">
+                    <div style="width: 800px;">
+                        <span>ASISTENCIA: {{dataRelation.length - 1}} de {{computeRelationKeys().length}}</span>
+                    </div>  
+                </co-card>
+                <co-card [style]="{width: '832px'}">
+                    <table style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th width="1px" class="text-left">#</th>
+                                <th width="200px">C. ESTUDIANTE</th>
+                                <th class="text-left">NOMBRES</th>
+                                <th width="200px">C. BARRA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let student of computeRelationKeys(); let i = index">
+                                <td>{{i + 1}}</td>
+                                <td class="text-center">{{student.code}}</td>
+                                <td>{{student.fullname}}</td>
+                                <td class="c">{{student.idBar == null? 'FALTA': student.idBar}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </co-card>
 
+            </div>
+        </p-scrollPanel>
+        <div class="p-3">
+            <div style="display: grid; gap: .5rem;">
+                <co-card *ngIf="dataLost.length">
+                    <h4 class="text-center mb-3">Codigos perdidos</h4>
+                    <table style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>CODIGO</th>
+                                <th>ID BARRA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of dataLost">
+                                <td class="text-center">{{item.code}}</td>
+                                <td class="text-center">{{item.idBar}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </co-card>
+                <co-card *ngIf="inasistenceList.length">
+                    <h4 class="text-center mb-3">
+                        Alumnos faltantes
+                    </h4>
+                    <table style="width: 100%;">
+                        <tr>
+                            <th>#</th>
+                            <th class="text-left">CODIGO</th>
+                            <th class="text-left">NOMBRES</th>
+                        </tr>
+                        <tr *ngFor="let item of inasistenceList; let i = index">
+                            <td>{{i + 1}}</td>
+                            <td>{{item.code}}</td>
+                            <td class="text-xs">{{item.fullname}}</td>
+                        </tr>
+                    </table>
+                </co-card>
+            </div>
+            
         </div>
+        
     </div>
     
     <div action class="f-c" style="height: 100%;">
@@ -30,14 +78,17 @@
         <h3>Seleccione el archivo que contenga la información del codigo de barras y de estudiantes</h3>
         <co-box></co-box>
         <label pButton>Codigo de barras y alumno
-            <input type="file" style="display: none;" (change)="loadIndenty($event)" >
+            <input type="file" style="display: none;" (change)="loadRelationsKeys($event)" >
         </label>
 
-        <div style="display: flex; justify-content: center;">
-            <p-button [style]="{background: 'var(--green-600)'}" styleClass="mt-3" routerLink="/loadstudents">Paso 2</p-button>
-            <co-box></co-box>
-            <p-button [style]="{background: 'var(--green-600)'}" styleClass="mt-3" routerLink="/step4">Paso 4</p-button>
+        <div class="mt-3">
+            <p-button  styleClass="p-button-secondary" routerLink="/loadstudents">Retroceder</p-button>
+            <p-button  styleClass="ml-2 p-button-secondary" (onClick)="nextStep()">Siguiente</p-button>
         </div>
         
     </div>
 </co-recoverdatalayout>
+<p-toast></p-toast>
+<co-layout-bottom *ngIf="dataRelation.length > 0" [wrapper]="false">
+    <p-button  styleClass="p-button-secondary" (onClick)="saveData()">Salvar datos</p-button>
+</co-layout-bottom>

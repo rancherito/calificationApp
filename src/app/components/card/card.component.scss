@@ -1,6 +1,8 @@
-div{
+:host{
     border-radius: .5rem;
     padding: 1rem;
     background-color: #111;
     color: #EEE;
+    box-sizing: border-box;
+    display: block;
 }

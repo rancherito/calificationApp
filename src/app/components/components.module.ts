@@ -24,4 +24,5 @@ let comps = [
 export class ComponentsModule { }
 export interface CComponent {
   styleClass: string | undefined;
+  style: Record<string, string> | undefined;
 }

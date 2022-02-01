@@ -28,7 +28,7 @@ export interface IKeyAnswer {
     idGroup: string,
     index: number
 }
-export interface IData {
+export interface IRelationCodeBar {
     idBar: string,
-    idStudent: string
+    code: string
 }

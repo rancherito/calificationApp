@@ -32,16 +32,16 @@
         </p-scrollPanel>
         
         <div class="p-3">
-            <co-card styleClass="mb-3">
+            <co-card class="mb-3">
                 <p-button styleClass="p-button-sm" (click)="reset()">Reset</p-button>
             </co-card>
-            <co-card class="mb-3" styleClass="mb-3">
+            <co-card class="mb-3">
                 <h4 class="mb-2">Cabeceras encontradas del archivo</h4>
                 <div style="display: flex; gap: .25rem;flex-wrap: wrap;" >
                     <p-chip *ngFor="let header of keyHeaders" [label]="header" [style]="{background: 'var(--primary-color)', height: '28px', color: 'white', 'border-radius': '.25rem'}"></p-chip>
                 </div>
             </co-card>
-            <co-card styleClass="mb-3">
+            <co-card class="mb-3">
                 <h4 class="mb-2">Cabeceras enlazadas</h4>
                 <div style="gap: .25rem; display: grid;">
                     <ng-container *ngFor="let item of relationHeaders">

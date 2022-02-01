@@ -6,9 +6,7 @@ import { CComponent } from '../components.module';
   templateUrl: './card.component.html',
   styleUrls: ['./card.component.scss']
 })
-export class CardComponent implements CComponent {
-  @Input() styleClass: string | undefined;
-
+export class CardComponent {
   constructor() { }
   ngOnInit(): void {
   }
