@@ -1,1 +1,36 @@
-<p>report works!</p>
+<co-recoverdatalayout [extend]="true" label="Reporte">
+    <div action style="display: grid; gap: .5rem;">
+        <div class="p-4 elevation-10 link">
+            <div class="mb-2">Volver a cargar Archivo de alternativas</div>
+            <div class="text-right">
+                <p-button styleClass="p-button-sm" routerLink="/">Ir paso 1</p-button>
+            </div>
+        </div>
+        <div class="p-4 elevation-10 link">
+            <div class="mb-2">Volver a cargar Excel de información de los alumnos</div>
+            <div class="text-right">
+                <p-button styleClass="p-button-sm" routerLink="/loadstudents">Ir paso 2</p-button>
+            </div>
+        </div>
+        <div class="p-4 elevation-10 link">
+            <div class="mb-2">Volver a cargar Archivo con la relacion de código de barras y de estudiante</div>
+            <div class="text-right">
+                <p-button styleClass="p-button-sm" routerLink="/step3">Ir paso 3</p-button>
+            </div>
+        </div>
+        <div class="p-4 elevation-10 link">
+            <div class="mb-2">Volver a cargar Archivo de respuestas</div>
+            <div class="text-right">
+                <p-button styleClass="p-button-sm" routerLink="/step4">Ir paso 4</p-button>
+            </div>
+        </div>
+    </div>
+    <div view class="p-4">
+        <!--<p-dropdown>
+            <option [value]="info.career" *ngFor="let info of careerInfoList">{{info.careerName}}</option>
+        </p-dropdown>-->
+        <select name="" id="">
+            <option [value]="info.career" *ngFor="let info of careerInfoList">{{info.careerName}}</option>
+        </select>
+    </div>
+</co-recoverdatalayout>

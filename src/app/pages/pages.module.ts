@@ -16,6 +16,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { ToastModule } from 'primeng/toast';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
+import { DropdownModule } from 'primeng/dropdown';
 
 import { FormsModule } from '@angular/forms';
 
@@ -34,6 +35,7 @@ let comps: any[] = [
   declarations: [...comps, Step3Component, Step4Component, ReportDataComponent, ReportComponent],
   exports: [...comps, ReportComponent],
   imports: [
+    DropdownModule,
     FormsModule,
     CommonModule,
     ButtonModule,
