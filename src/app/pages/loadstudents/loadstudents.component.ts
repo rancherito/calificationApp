@@ -87,9 +87,7 @@ export class LoadstudentsComponent implements OnInit {
 					fullname: temporalPush.fullname,
 					group: temporalPush.group,
 					idBar: null,
-					modality: temporalPush.modality,
-					score: null,
-					calification: null
+					modality: temporalPush.modality
 				 })
 			})
 			

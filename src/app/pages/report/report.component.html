@@ -26,7 +26,7 @@
         </div>
     </div>
     <div view class="p-4">
-        <div class="mb-4">
+        <div>
             <p-dropdown
                 [options]="careerInfoList"
                 optionLabel="careerName"
@@ -36,35 +36,7 @@
                 [style]="{width: '400px'}"
             >
             </p-dropdown>
-            <p-button>HOLA</p-button>
         </div>
-        <p-table
-            [value]="studentDataList"
-            [rows]="10"
-            [showCurrentPageReport]="true"
-        >
-            <ng-template pTemplate="header">
-                <tr>
-                    <th pSortableColumn="career">Carrera<p-sortIcon field="career"></p-sortIcon></th>
-                    <th pSortableColumn="code">Código<p-sortIcon field="career"></p-sortIcon></th>
-                    <th pSortableColumn="fullname">Nombres<p-sortIcon field="career"></p-sortIcon></th>
-                    <th pSortableColumn="group">Grupo<p-sortIcon field="career"></p-sortIcon></th>
-                    <th pSortableColumn="modality">Modalidad<p-sortIcon field="career"></p-sortIcon></th>
-                    <th pSortableColumn="score">Puntaje<p-sortIcon field="career"></p-sortIcon></th>
-                    <th pSortableColumn="calification">Calificación<p-sortIcon field="career"></p-sortIcon></th>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-student>
-                <tr>
-                    <td>{{student.career}}</td>
-                    <td>{{student.code}}</td>
-                    <td>{{student.fullname}}</td>
-                    <td>{{student.group}}</td>
-                    <td>{{student.modality}}</td>
-                    <td>{{student.score}}</td>
-                    <td>{{student.calification}}</td>
-                </tr>
-            </ng-template>
-        </p-table>
+        
     </div>
 </co-recoverdatalayout>

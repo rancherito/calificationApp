@@ -15,9 +15,7 @@ export interface IStudentInfo {
     dni: string | null,
     fullname: string | null,
     group: string | null,
-    modality: string | null,
-    score: number | null,
-    calification: number | null
+    modality: string | null
 }
 export interface IAnswer {
     idBar: string
