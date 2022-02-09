@@ -39,14 +39,14 @@ export class DatastorageService {
 	setKeyAnswerList(keyAnswerList: IKeyAnswer[]) {
 		localStorage.setItem('keyAnswersList', JSON.stringify(keyAnswerList))
 	}
-	
+	/*
 	getAnswerList(): IAnswer[] {
 		return JSON.parse(localStorage.getItem('answersList') ?? '[]') as IAnswer[]
 	}
 	setAnswerList(answerList: IAnswer[]) {
 		localStorage.setItem('answersList', JSON.stringify(answerList))
 	}
-
+*/
 	setStudentInfoList(studentInfo: IStudentInfo[])  {
 		
 		return localStorage.setItem('studentInfoList', JSON.stringify(studentInfo))
