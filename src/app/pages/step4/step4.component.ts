@@ -33,10 +33,13 @@ export class Step4Component implements OnInit {
 		this.dataCodeBarList = JSON.parse(localStorage.getItem('dataCodeBar')??'[]') as IRelationCodeBar[]
 		this.processDataList = JSON.parse(localStorage.getItem('processDataList') ?? '[]') as ICalification[]*/
 		this.totalKeys = this.dataStorageService.getTotalKeys()
-		this.file = this.dataStorageService.restoreFileResponses() as string
-		this.dataAnswer = this.dataStorageService.clearFile(this.file)
+		
 		this.asistenceList = this.dataStorageService.getStudentInfoList().filter(x => x.idBar != null)
-		this.file = this.file.replace(/\,\,/g, ', ,').replace(/\,\,/g, ', ,')
+		this.file = this.dataStorageService.restoreFileResponses() as string
+		if (this.file?.length) {
+			this.dataAnswer = this.dataStorageService.clearFile(this.file)
+			this.file = this.file.replace(/\,\,/g, ', ,').replace(/\,\,/g, ', ,')
+		}
 	}
 	processAnswers(): IAnswer[] {
 		let keyList: IAnswer[] = []
@@ -90,6 +93,7 @@ export class Step4Component implements OnInit {
 			reader.onload = () => {
 				console.log(reader.result);
 				if (reader.result) {
+					this.file = reader.result as string
 					this.dataStorageService.saveFileResponses(reader.result as string)
 					this.totalKeys = this.dataStorageService.getTotalKeys()
 					this.dataAnswer = this.dataStorageService.clearFile(reader.result as string)

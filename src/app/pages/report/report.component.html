@@ -26,11 +26,17 @@
         </div>
     </div>
     <div view class="p-4">
-        <!--<p-dropdown>
-            <option [value]="info.career" *ngFor="let info of careerInfoList">{{info.careerName}}</option>
-        </p-dropdown>-->
-        <select name="" id="">
-            <option [value]="info.career" *ngFor="let info of careerInfoList">{{info.careerName}}</option>
-        </select>
+        <div>
+            <p-dropdown
+                [options]="careerInfoList"
+                optionLabel="careerName"
+                [(ngModel)]="careerSelected"
+                placeholder="Seleccione una carrera"
+                (onChange)="selectChange()"
+                [style]="{width: '400px'}"
+            >
+            </p-dropdown>
+        </div>
+        
     </div>
 </co-recoverdatalayout>

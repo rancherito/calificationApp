@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DatastorageService } from 'src/app/datastorage/datastorage.service';
+import { IAnswer } from 'src/app/providersInterfaces';
 
 @Component({
 	selector: 'page-report',
@@ -8,6 +9,8 @@ import { DatastorageService } from 'src/app/datastorage/datastorage.service';
 })
 export class ReportComponent implements OnInit {
 	public careerInfoList: ICareer[] = []
+	public careerSelected: ICareer | null = null
+	public studentAnswerList: IAnswer[] = []
 	constructor(
 		private storage: DatastorageService
 	) { }
@@ -27,9 +30,12 @@ export class ReportComponent implements OnInit {
 			});
 			return ac;
 		}, [] as ICareer[])
-
-		console.log(this.careerInfoList);
+		this.studentAnswerList = this.storage.getSudentAnswers()
 		
+	}
+	selectChange(){
+		console.log('data change');
+		console.log(this.careerSelected);
 		
 	}
 

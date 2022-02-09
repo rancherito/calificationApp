@@ -1,7 +1,7 @@
 <p-toast></p-toast>
 <co-recoverdatalayout [extend]="dataExcel.length > 0" label="PASO 2 DE 4">
     <section class="action-table" view>
-        <p-scrollPanel [style]="{height: '100%'}" >
+        <div [style]="{height: '100%'}" style="overflow-y: auto;">
             <div class="py-3 pl-3">
                 <p-table 
                 [paginator]="true" [rows]="30" styleClass="p-datatable-sm" responsiveLayout="scroll" [value]="computeTableStudent()"
@@ -29,7 +29,7 @@
                     </ng-template>
                 </p-table>
             </div>
-        </p-scrollPanel>
+        </div>
         
         <div class="p-3">
             <co-card class="mb-3">

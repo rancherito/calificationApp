@@ -25,6 +25,7 @@ import { Step3Component } from './step3/step3.component';
 import { Step4Component } from './step4/step4.component';
 import { ReportDataComponent } from './report-data/report-data.component';
 import { ReportComponent } from './report/report.component';
+
 let comps: any[] = [
   StartComponent,
   TestComponent,
