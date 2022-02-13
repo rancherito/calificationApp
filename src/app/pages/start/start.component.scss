@@ -10,7 +10,27 @@
     padding: 1rem;
 }
 .content-groups{
-    display: flex;
-    justify-content: space-around;
+    display: grid;
+    gap: 1rem;
     padding: 1rem;
+}
+.keys-content{
+    display: grid;
+    gap: .5rem;
+    grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+}
+.item-key{
+    display: grid;
+    background-color: rgb(231, 231, 231);
+    border-radius: .5rem;
+    overflow: hidden;
+    text-align: center;
+}
+.item-key span{
+    font-weight: bold;
+    padding: .25rem;
+}
+.item-key span:nth-child(1){
+    font-weight: normal;
+    background-color: rgb(170, 170, 170);
 }

@@ -2,24 +2,19 @@
     <ng-container view>
         <div class="content-groups" *ngIf="countKeyperGroup().length">
             <div *ngFor="let item of countKeyperGroup()">
-                <div class="c co-card" style="background-color: var(--primary-color);">TOTAL CLAVES: {{item.total}}</div>
+                <div class="c co-card" style="background-color: var(--primary-color); color: #fff">TOTAL CLAVES:
+                    {{item.total}} | {{item.group}}</div>
                 <co-box></co-box>
-                <div class="co-card" >
-                    <div style="display: grid; grid-template-columns: repeat(3, 60PX);">
-                        <span class="c">GRUPO</span>
-                        <span class="c">INDICE</span>
-                        <span class="c">CLAVE</span>
-                    </div>
-                    <div style="display: grid; grid-template-columns: repeat(3, 60PX);" *ngFor="let tableKeys of computeKeys()">
-                        <ng-container *ngIf="tableKeys.idGroup == item.group">
-                            <span class="c">{{tableKeys.idGroup}}</span>
+                <div class="co-card keys-content">
+                    <ng-container *ngFor="let tableKeys of computeKeys()">
+                        <div class="item-key" *ngIf="tableKeys.idGroup == item.group">
                             <span class="c">{{tableKeys.index}}</span>
                             <span class="c">{{tableKeys.key}}</span>
-                        </ng-container>
-                    </div>
+                        </div>
+                    </ng-container>
                 </div>
             </div>
-            
+
         </div>
     </ng-container>
     <div action class="f-c" style="height: 100%;">
@@ -36,12 +31,13 @@
             <p-checkbox [(ngModel)]="isDeleteCabecera" label="Quitar cabecera" [binary]="true"></p-checkbox>
         </div>
         <co-box size="6rem"></co-box>
-        
-        <p-button label="Siguiente" (click)="nextStep()"  styleClass="p-button-secondary" *ngIf="countKeyperGroup().length > 0"></p-button>
+
+        <p-button label="Siguiente" (click)="nextStep()" styleClass="p-button-secondary"
+            *ngIf="countKeyperGroup().length > 0"></p-button>
     </div>
 </co-recoverdatalayout>
 
 <co-layout-bottom [wrapper]="false" *ngIf="countKeyperGroup().length > 0">
-    <p-button styleClass="p-button-secondary" (click)="saveInformation()" >Salvar Datos</p-button>
+    <p-button styleClass="p-button-secondary" (click)="saveInformation()">Salvar Datos</p-button>
 </co-layout-bottom>
 <p-toast></p-toast>

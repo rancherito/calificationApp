@@ -1,31 +1,29 @@
 <co-recoverdatalayout label="Paso 3 de 4" [extend]="dataRelation.length > 0">
     <div view style="height: 100%; display: grid; grid-template-columns: 1fr 400px; grid-template-rows: 100%;">
         <div style="overflow-y: auto; height: 100%;">
-            <div class="p-3" style="display: flex; justify-content: center;flex-direction: column; align-items: center;">
+            <div class="p-4">
                 <co-card styleClass="mb-2">
-                    <div style="width: 800px;">
                         <span>ASISTENCIA: {{dataRelation.length - 1}} de {{computeRelationKeys().length}}</span>
-                    </div>  
                 </co-card>
-                <co-card [style]="{width: '832px'}">
-                    <table style="width: 100%;">
-                        <thead>
+                <co-box></co-box>
+                <co-card>
+                    <p-table [value]="computeRelationKeys()">
+                        <ng-template pTemplate="header">
                             <tr>
-                                <th width="1px" class="text-left">#</th>
                                 <th width="200px">C. ESTUDIANTE</th>
                                 <th class="text-left">NOMBRES</th>
                                 <th width="200px">C. BARRA</th>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let student of computeRelationKeys(); let i = index">
-                                <td>{{i + 1}}</td>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-student>
+                            <tr>
                                 <td class="text-center">{{student.code}}</td>
                                 <td>{{student.fullname}}</td>
                                 <td class="c">{{student.idBar == null? 'FALTA': student.idBar}}</td>
                             </tr>
-                        </tbody>
-                    </table>
+                        </ng-template>
+                    
+                    </p-table>
                 </co-card>
 
             </div>

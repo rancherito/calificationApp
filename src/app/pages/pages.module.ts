@@ -17,6 +17,7 @@ import { ToastModule } from 'primeng/toast';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
 import { DropdownModule } from 'primeng/dropdown';
+import { ChartModule } from 'primeng/chart';
 
 import { FormsModule } from '@angular/forms';
 
@@ -50,7 +51,8 @@ let comps: any[] = [
     RouterModule,
     ToastModule,
     MessagesModule,
-    MessageModule
+    MessageModule,
+    ChartModule
   ]
 })
 export class PagesModule { }
