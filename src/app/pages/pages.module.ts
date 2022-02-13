@@ -5,6 +5,7 @@ import { TestComponent } from './test/test.component';
 import { LoadstudentsComponent } from './loadstudents/loadstudents.component';
 import { StartComponent } from './start/start.component';
 
+
 //IMPORT PRIMENG MODULES
 import { ButtonModule } from 'primeng/button';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
@@ -21,11 +22,14 @@ import { ChartModule } from 'primeng/chart';
 
 import { FormsModule } from '@angular/forms';
 
+import { CodemirrorModule } from '@ctrl/ngx-codemirror';
+
 import { ComponentsModule } from "../components/components.module";
 import { Step3Component } from './step3/step3.component';
 import { Step4Component } from './step4/step4.component';
 import { ReportDataComponent } from './report-data/report-data.component';
 import { ReportComponent } from './report/report.component';
+import { CoModalityListComponent } from './report/co-modality-list/co-modality-list.component';
 
 let comps: any[] = [
   StartComponent,
@@ -34,7 +38,7 @@ let comps: any[] = [
 ]
 
 @NgModule({
-  declarations: [...comps, Step3Component, Step4Component, ReportDataComponent, ReportComponent],
+  declarations: [...comps, Step3Component, Step4Component, ReportDataComponent, ReportComponent, CoModalityListComponent],
   exports: [...comps, ReportComponent],
   imports: [
     DropdownModule,
@@ -52,7 +56,8 @@ let comps: any[] = [
     ToastModule,
     MessagesModule,
     MessageModule,
-    ChartModule
+    ChartModule,
+    CodemirrorModule
   ]
 })
 export class PagesModule { }

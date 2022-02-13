@@ -1,0 +1,8 @@
+<div style="display: grid; gap: 1rem;" *ngIf="modalitys.length > 1">
+    <co-card class="shadow-1">
+        <div style="display: grid; grid-template-columns: 2fr 1fr;" *ngFor="let item of charts">
+            <p-chart type="bar" [data]="item.data"></p-chart>
+            <p-chart type="doughnut" [data]="item.data"></p-chart>
+        </div>
+    </co-card>
+</div>

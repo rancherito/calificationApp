@@ -16,6 +16,7 @@ export class Step3Component implements OnInit {
 	public dataLost: IRelationCodeBar[] = []
 	public dataRelation: string[] = []
 	public inasistenceList: IStudentInfo[] = []
+	public file: string = ''
 	constructor(
 		private datastorageService: DatastorageService,
 		private router: Router,
@@ -24,6 +25,7 @@ export class Step3Component implements OnInit {
 
 	ngOnInit(): void {
 		let fileRelation = this.datastorageService.restoreFileRelationCodeBar()
+		this.file = fileRelation??''
 		this.dataRelation = this.datastorageService.clearFile(fileRelation)    
 	}
 	computeRelationKeys(){

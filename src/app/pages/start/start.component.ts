@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 export class StartComponent implements OnInit {
 	public claves: string[] = []
 	public isDeleteCabecera = true;
+	public file: string = ""
 	
 	constructor(private datastorageService: DatastorageService, private messageService: MessageService, private router: Router) { }
 
@@ -53,6 +54,7 @@ export class StartComponent implements OnInit {
 	ngOnInit(): void {
 
 		let fileKeyAnswer = this.datastorageService.restoreFileKeyAnswer()
+		this.file = fileKeyAnswer??''
 		this.claves = this.datastorageService.clearFile(fileKeyAnswer)
 
 	}

@@ -34,3 +34,8 @@ export interface IRelationCodeBar {
     idBar: string,
     code: string
 }
+export interface ICareer {
+    career: string | null
+    careerName: string | null
+    totalStundets: number
+}

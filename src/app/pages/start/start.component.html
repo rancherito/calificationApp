@@ -1,28 +1,40 @@
 <co-recoverdatalayout [extend]="countKeyperGroup().length > 0" label="PASO 1 DE 4">
-    <ng-container view>
+    <div view class="p-4">
+        <co-card class="mb-4" style="background-color: #263238;">
+            <h3 class="mb-4" style="color: white;">Contenido del archivo</h3>
+            <ngx-codemirror [(ngModel)]="file" [options]="{
+                        lineNumbers: true,
+                        theme: 'material',
+                        mode: 'javascript',
+                        readOnly: true
+                      }"></ngx-codemirror>
+        </co-card>
         <div class="content-groups" *ngIf="countKeyperGroup().length">
             <div *ngFor="let item of countKeyperGroup()">
-                <div class="c co-card" style="background-color: var(--primary-color); color: #fff">TOTAL CLAVES:
-                    {{item.total}} | {{item.group}}</div>
+                
                 <co-box></co-box>
-                <div class="co-card keys-content">
-                    <ng-container *ngFor="let tableKeys of computeKeys()">
-                        <div class="item-key" *ngIf="tableKeys.idGroup == item.group">
-                            <span class="c">{{tableKeys.index}}</span>
-                            <span class="c">{{tableKeys.key}}</span>
-                        </div>
-                    </ng-container>
+                <div class="co-card">
+                    <h3 class="pb-4">CLAVES: {{item.total}} | TEMA {{item.group}}</h3>
+                    <div class="keys-content">
+                        <ng-container *ngFor="let tableKeys of computeKeys()">
+                            <div class="item-key" *ngIf="tableKeys.idGroup == item.group">
+                                <span class="c">{{tableKeys.index}}</span>
+                                <span class="c">{{tableKeys.key}}</span>
+                            </div>
+                        </ng-container>
+                    </div>
                 </div>
             </div>
 
         </div>
-    </ng-container>
+        
+    </div>
     <div action class="f-c" style="height: 100%;">
         <img src="/assets/txt-file.svg" style="height: 6rem;" class="filter-white">
         <co-box size="2rem"></co-box>
         <h3>Para empezar es necesario cargar las claves</h3>
         <co-box size="2rem"></co-box>
-        <label pButton>
+        <label pButton class="p-button-raised">
             {{countKeyperGroup().length?'Volver a cargar':'Cargar claves'}}
             <input type="file" style="display: none;" (change)="onLoadKeys($event)">
         </label>
@@ -32,7 +44,7 @@
         </div>
         <co-box size="6rem"></co-box>
 
-        <p-button label="Siguiente" (click)="nextStep()" styleClass="p-button-secondary"
+        <p-button label="Siguiente" (click)="nextStep()" styleClass="p-button-secondary p-button-raised"
             *ngIf="countKeyperGroup().length > 0"></p-button>
     </div>
 </co-recoverdatalayout>

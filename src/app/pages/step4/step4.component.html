@@ -2,7 +2,7 @@
 <co-recoverdatalayout label="Paso 4 de 4" [extend]="true">
     <div view class="p-3">
         <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-            <co-card class="card">
+            <co-card class="shadow-1">
                 <h4 class="mb-3">Informacion del archivo</h4>
                 <div><b>Grupos:</b> {{listCountThemesAnswer().length}}</div>
                 <div><b>Estudiantes:</b> {{totalStudents()}}</div>
@@ -17,7 +17,7 @@
                     </tr>
                 </table>
             </co-card>
-            <co-card style="flex: 1;">
+            <co-card style="flex: 1;" class="shadow-1">
                 <h4 class="mb-3">Comparación</h4>
                 <div><b>Asistencia:</b> {{asistenceList.length}}</div>
                 <div><b>Estudiantes:</b> {{totalStudents()}}</div>
@@ -33,9 +33,15 @@
                     
                 </div>
             </co-card>
-            <co-card style="width: 100%;">
-                <h4 class="mb-3">Contenido del archivo</h4>
-                <textarea style="width: 100%; resize: vertical; min-height: 400px; font-family: monospace;" readonly>{{this.file}}</textarea>
+            <co-card style="background-color: #263238; width: 100%;">
+                <h3 class="mb-4" style="color: white;">Contenido del archivo</h3>
+                <ngx-codemirror [(ngModel)]="file" [options]="{
+                                    lineNumbers: true,
+                                    theme: 'material',
+                                    readOnly: true,
+                                    mode: 'javascript'
+                                    }">
+                </ngx-codemirror>
             </co-card>
         </div>
         
