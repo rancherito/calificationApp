@@ -9,6 +9,9 @@ import { AppComponent } from './app.component';
 
 //IMPORT PROJECT MODULES AND COMPONENTS
 import { PagesModule } from "./pages/pages.module";
+import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
+import { environment } from '../environments/environment';
+import { provideFirestore,getFirestore } from '@angular/fire/firestore';
 @NgModule({
   declarations: [
     AppComponent
@@ -18,7 +21,9 @@ import { PagesModule } from "./pages/pages.module";
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
-    PagesModule
+    PagesModule,
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideFirestore(() => getFirestore())
   ],
   providers: [],
   bootstrap: [AppComponent]
