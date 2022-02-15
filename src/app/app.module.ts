@@ -6,7 +6,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 
-
 //IMPORT PROJECT MODULES AND COMPONENTS
 import { PagesModule } from "./pages/pages.module";
 import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
