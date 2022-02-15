@@ -235,7 +235,13 @@ export class DatastorageService {
 			900: '#F57F17',
 		}
 	}
+	private currentProject: IProject | null;
 
+	constructor() {
+		this.currentProject = this.getCurrentProject();
+		console.log(this.currentProject);
+		
+	}
 	getColors(): string[] {
 		let colors: string[] = [];
 		Object.keys(this.matColors).forEach(color => {
@@ -243,72 +249,116 @@ export class DatastorageService {
 		})
 		return colors;
 	}
+	private getCurrentProjectData(){
+		if (this.currentProject == null) return {}
+		else return JSON.parse(localStorage.getItem(this.currentProject.uuid)??'{}') as any;
+	}
+	private getCurrentProjectDataKey(key: string){
+		//let project = this.getCurrentProjectData();
+		if (this.currentProject == null) return null
+		return JSON.parse(localStorage.getItem(`${this.currentProject.uuid}-${key}`) ?? 'null');
+	}
+	private setCurrentProjectData(key: string, data: any){
+		if (this.currentProject == null) return;
+		localStorage.setItem(`${this.currentProject.uuid}-${key}`, JSON.stringify(data));
+		/*let project = this.getCurrentProjectData();
+		project[key] = data;
+		localStorage.setItem(this.currentProject.uuid, JSON.stringify(project));*/
+	}
 	//FILE DATA
 	saveFileResponses(fileResponses: string) {
-		localStorage.setItem('fileResponses', fileResponses)
+		this.setCurrentProjectData('fileResponses', fileResponses);
+		//localStorage.setItem('fileResponses', fileResponses)
 	}
 	restoreFileResponses() {
-		return localStorage.getItem('fileResponses')
+		return this.getCurrentProjectDataKey('fileResponses');
+		//return localStorage.getItem('fileResponses')
 	}
 	restoreFileStudentInfo() {
-		return JSON.parse(localStorage.getItem('fileStudentInfo') ?? '[]') as Record<string, string>[]
+		return this.getCurrentProjectDataKey('fileStudentInfo') ?? [] as Record<string, string>[];
+		//return JSON.parse(localStorage.getItem('fileStudentInfo') ?? '[]') as Record<string, string>[]
 	}
 	saveFileStudentInfo(fileStudentInfo: string) {
-		localStorage.setItem('fileStudentInfo', fileStudentInfo)
+		this.setCurrentProjectData('fileStudentInfo', fileStudentInfo);
+		//localStorage.setItem('fileStudentInfo', fileStudentInfo)
 	}
 
 	restoreFileKeyAnswer() {
-		return localStorage.getItem('fileKeyAnswers')
+		return this.getCurrentProjectDataKey('fileKeyAnswer');
+		//return localStorage.getItem('fileKeyAnswers')
 	}
 	saveFileKeyAnswer(fileKeyAnswer: string) {
-		localStorage.setItem('fileKeyAnswers', fileKeyAnswer)
+		this.setCurrentProjectData('fileKeyAnswer', fileKeyAnswer);
+		//localStorage.setItem('fileKeyAnswers', fileKeyAnswer)
 	}
 
 	saveFileRelationCodeBar(fileRelationCodeBar: string) {
-		localStorage.setItem('fileRelationCodeBar', fileRelationCodeBar)
+		this.setCurrentProjectData('fileRelationCodeBar', fileRelationCodeBar);
+		//localStorage.setItem('fileRelationCodeBar', fileRelationCodeBar)
 	}
 	restoreFileRelationCodeBar() {
-		return localStorage.getItem('fileRelationCodeBar')
+		return this.getCurrentProjectDataKey('fileRelationCodeBar');
+		//return localStorage.getItem('fileRelationCodeBar')
 	}
 	//GENERAL DATA
 	getKeyAnswerList(): IKeyAnswer[] {
-		return JSON.parse(localStorage.getItem('keyAnswersList') ?? '[]') as IKeyAnswer[]
+		return this.getCurrentProjectDataKey('keyAnswerList') ?? [] as IKeyAnswer[];
+		//return JSON.parse(localStorage.getItem('keyAnswersList') ?? '[]') as IKeyAnswer[]
 	}
 	setKeyAnswerList(keyAnswerList: IKeyAnswer[]) {
-		localStorage.setItem('keyAnswersList', JSON.stringify(keyAnswerList))
+		this.setCurrentProjectData('keyAnswerList', keyAnswerList);
+		//localStorage.setItem('keyAnswersList', JSON.stringify(keyAnswerList))
 	}
-	/*
-	getAnswerList(): IAnswer[] {
-		return JSON.parse(localStorage.getItem('answersList') ?? '[]') as IAnswer[]
-	}
-	setAnswerList(answerList: IAnswer[]) {
-		localStorage.setItem('answersList', JSON.stringify(answerList))
-	}
-*/
-	setStudentInfoList(studentInfo: IStudentInfo[]) {
 
-		return localStorage.setItem('studentInfoList', JSON.stringify(studentInfo))
+	setStudentInfoList(studentInfo: IStudentInfo[]) {
+		this.setCurrentProjectData('studentInfoList', studentInfo);
+		//localStorage.setItem('studentInfoList', JSON.stringify(studentInfo))
 	}
 	getStudentInfoList(): IStudentInfo[] {
-
-		return JSON.parse(localStorage.getItem('studentInfoList') ?? '[]') as IStudentInfo[]
+		return this.getCurrentProjectDataKey('studentInfoList') ?? [] as IStudentInfo[];
+		//eturn JSON.parse(localStorage.getItem('studentInfoList') ?? '[]') as IStudentInfo[]
 	}
 	setStudentAnswers(studentAnswers: IAnswer[]) {
-		localStorage.setItem('studentAnswersList', JSON.stringify(studentAnswers))
+		this.setCurrentProjectData('studentAnswersList', studentAnswers);
+		//localStorage.setItem('studentAnswersList', JSON.stringify(studentAnswers))
 	}
 	getSudentAnswers(): IAnswer[] {
-		return JSON.parse(localStorage.getItem('studentAnswersList') ?? '[]') as IAnswer[]
+		return this.getCurrentProjectDataKey('studentAnswersList') ?? [] as IAnswer[];
+		//return JSON.parse(localStorage.getItem('studentAnswersList') ?? '[]') as IAnswer[]
 	}
 	//UTILS
 	getTotalKeys() {
-		return parseInt(localStorage.getItem('totalKyes') ?? '0')
+		return parseInt(this.getCurrentProjectDataKey('totalKeys') ?? '0');
+		//return parseInt(localStorage.getItem('totalKyes') ?? '0')
 	}
 	clearFile(fileString: string | null) {
 		return (fileString ?? "").split('\r\n').filter(e => e.length > 0)
 	}
 
 	setTotalKeys(total: number) {
-		localStorage.setItem('totalKyes', total.toString())
+		this.setCurrentProjectData('totalKeys', total.toString());
+		//localStorage.setItem('totalKyes', total.toString())
 	}
 
+	//File project gestor
+	getProjects(): IProject[] {
+		return JSON.parse(localStorage.getItem('projects') ?? '[]') as IProject[]
+	}
+	saveProject(project: IProject) {
+		let projects = this.getProjects();
+		projects.push(project);
+		localStorage.setItem('projects', JSON.stringify(projects))
+	}
+	setCurrentProject(project: IProject) {
+		localStorage.setItem('currentProject', JSON.stringify(project))
+	}
+	getCurrentProject(): IProject {
+		return JSON.parse(localStorage.getItem('currentProject') ?? 'null') as IProject
+	}
+
+}
+export interface IProject {
+	name: string
+	uuid: string
+	createdDate: number
 }

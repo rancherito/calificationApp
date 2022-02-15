@@ -11,7 +11,7 @@
         </co-card>
         <div class="content-groups" *ngIf="countKeyperGroup().length">
             <div *ngFor="let item of countKeyperGroup()">
-                
+
                 <co-box></co-box>
                 <div class="co-card">
                     <h3 class="pb-4">CLAVES: {{item.total}} | TEMA {{item.group}}</h3>
@@ -27,7 +27,7 @@
             </div>
 
         </div>
-        
+
     </div>
     <div action class="f-c" style="height: 100%;">
         <img src="/assets/txt-file.svg" style="height: 6rem;" class="filter-white">
@@ -44,8 +44,14 @@
         </div>
         <co-box size="6rem"></co-box>
 
-        <p-button label="Siguiente" (click)="nextStep()" styleClass="p-button-secondary p-button-raised"
-            *ngIf="countKeyperGroup().length > 0"></p-button>
+        <div class="flex">
+            <p-button routerLink="/" styleClass="p-button-secondary p-button-raised" icon="pi pi-home"></p-button>
+            <co-box></co-box>
+            <p-button label="Siguiente" (click)="nextStep()" styleClass="p-button-secondary p-button-raised"
+                *ngIf="countKeyperGroup().length > 0"></p-button>
+
+        </div>
+
     </div>
 </co-recoverdatalayout>
 

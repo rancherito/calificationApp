@@ -1,0 +1,19 @@
+<section>
+    <div style="width: 100%; max-width: 400px; display: grid; gap: .5rem;">
+        <co-card class="shadow-1 item-project" style="height: 60px;" *ngIf="!onNew" (click)="onNew = true">
+            <i class="pi pi-plus"></i><span>Crear nuevo proyecto</span>
+        </co-card>
+        <co-card class="shadow-1 item-project" style="height: 60px; display: flex; gap: .5rem;" *ngIf="onNew">
+            <input type="text" autofocus style="border: 0; flex: 1" [(ngModel)]="newProject">
+            <button pButton icon="pi pi-send" (click)="saveProject()"></button>
+            <button pButton icon="pi pi-times" (click)="onNew = false"></button>
+        </co-card>
+        <co-card *ngFor="let item of projects" class="item-project" (click)="setProject(item)">
+            <i class="pi pi-box"></i><span>{{item.name}}</span>
+        </co-card>
+    </div>
+    <div class="text-center">
+        <img src="/assets/present.svg" alt="s">
+        <div class="label-project">Proyectos de calificación</div>
+    </div>
+</section>

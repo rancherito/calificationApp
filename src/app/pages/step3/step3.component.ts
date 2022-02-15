@@ -71,6 +71,7 @@ export class Step3Component implements OnInit {
 				reader.onload = () => {
 					if (reader.result) {
 						this.datastorageService.saveFileRelationCodeBar(reader.result as string)
+						this.file = (reader.result as string) ?? ''
 						this.dataRelation = this.datastorageService.clearFile(reader.result as string)
 						
 					}          

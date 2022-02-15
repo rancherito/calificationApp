@@ -46,6 +46,7 @@ export class StartComponent implements OnInit {
 			let reader = new FileReader();
 			reader.onload = () => {
 				this.datastorageService.saveFileKeyAnswer(reader.result as string)
+				this.file = (reader.result as string)??''
 				this.claves = this.datastorageService.clearFile(reader.result as string)
 			}
 			reader.readAsText(file)

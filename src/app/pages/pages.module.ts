@@ -30,6 +30,7 @@ import { Step4Component } from './step4/step4.component';
 import { ReportDataComponent } from './report-data/report-data.component';
 import { ReportComponent } from './report/report.component';
 import { CoModalityListComponent } from './report/co-modality-list/co-modality-list.component';
+import { LoadprojectComponent } from './loadproject/loadproject.component';
 
 let comps: any[] = [
   StartComponent,
@@ -38,7 +39,7 @@ let comps: any[] = [
 ]
 
 @NgModule({
-  declarations: [...comps, Step3Component, Step4Component, ReportDataComponent, ReportComponent, CoModalityListComponent],
+  declarations: [...comps, Step3Component, Step4Component, ReportDataComponent, ReportComponent, CoModalityListComponent, LoadprojectComponent],
   exports: [...comps, ReportComponent],
   imports: [
     DropdownModule,
