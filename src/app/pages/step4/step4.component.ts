@@ -14,6 +14,8 @@ export class Step4Component implements OnInit {
 	private totalQuestions: number = 0
 	public dataAnswer: string[] = []
 	public asistenceList: IStudentInfo[] = []
+	public studentList: IStudentInfo[] = []
+
 	/*public dataCodeBarList: IRelationCodeBar[] = []*/
 	public totalKeys = 0
 	public JSON = JSON
@@ -25,21 +27,18 @@ export class Step4Component implements OnInit {
 		private message: MessageService
 	) { }
 
-	ngOnInit(): void {
-		/*this.totalQuestions = parseInt(localStorage.getItem('totalQuestions')??'0')
-		this.dataAnswer = JSON.parse(localStorage.getItem('dataAnswer')??'[]') as IAnswer[]
-		this.studentList = JSON.parse(localStorage.getItem('studentDataOficial')??'[]') as IExcelData[]
-		this.keyList = JSON.parse(localStorage.getItem('keysListOficial')??'[]') as IKeyAnswer[]
-		this.dataCodeBarList = JSON.parse(localStorage.getItem('dataCodeBar')??'[]') as IRelationCodeBar[]
-		this.processDataList = JSON.parse(localStorage.getItem('processDataList') ?? '[]') as ICalification[]*/
-		this.totalKeys = this.dataStorageService.getTotalKeys()
-		
-		this.asistenceList = this.dataStorageService.getStudentInfoList().filter(x => x.idBar != null)
-		this.file = this.dataStorageService.restoreFileResponses() as string
+	async ngOnInit(): Promise<void> {
+		this.totalKeys = await this.dataStorageService.getTotalKeys()
+		this.studentList = await this.dataStorageService.getStudentInfoList()
+		this.asistenceList = this.studentList.filter(x => x.idBar != null)
+		this.file = (await this.dataStorageService.restoreFileResponses()) as string
 		if (this.file?.length) {
 			this.dataAnswer = this.dataStorageService.clearFile(this.file)
-			this.file = this.file.replace(/\,\,/g, ', ,').replace(/\,\,/g, ', ,')
+			//this.file = this.file.replace(/\,\,/g, ', ,').replace(/\,\,/g, ', ,')
 		}
+	}
+	fileProcess(){
+		return this.file.replace(/\,\,/g, ', ,').replace(/\,\,/g, ', ,')
 	}
 	processAnswers(): IAnswer[] {
 		let keyList: IAnswer[] = []
@@ -65,24 +64,6 @@ export class Step4Component implements OnInit {
 	totalStudents(){
 		return this.listCountThemesAnswer().reduce((acc, cur) => acc + cur.total, 0)
 	}
-	computeResponses(){
-
-		/*let student = this.studentList/*.filter((x, y) => y < 160)
-
-		let data = student.map(x => {
-			let relationCodeBar = this.dataCodeBarList.find(y => y.code == x.code);
-			let score = this.dataAnswer.filter(y => y.idBar == relationCodeBar?.idBar).reduce((acc, cur) => {
-				let points = 0
-				if (cur.answer == null) points = 0.5
-				else points = this.keyList.find(z => z.idGroup == cur.idTheme && z.index == cur.idQuestion && z.key == cur.answer) == undefined ? 0 : 5
-				return acc + points
-			},0)
-			let info: ICalification = {dni: x.dni??"", code: x.code??"", fullname: x.fullname??"", score, calification: ((score / 300) * 20).toFixed(2) }
-			return info
-		})
-
-		return data.sort((x, y) => parseFloat(y.calification) - parseFloat(x.calification))*/
-	}
 	loadData(e: Event){
 
 		let target = e.target as HTMLInputElement;
@@ -95,9 +76,9 @@ export class Step4Component implements OnInit {
 				if (reader.result) {
 					this.file = reader.result as string
 					this.dataStorageService.saveFileResponses(reader.result as string)
-					this.totalKeys = this.dataStorageService.getTotalKeys()
+					this.dataStorageService.getTotalKeys().then(x => this.totalKeys = x)
 					this.dataAnswer = this.dataStorageService.clearFile(reader.result as string)
-					
+					this.processCalification()
 				}
 				
 				/*let data = reader.result?.toString().split("\r\n").filter(x => x.length > 0) ?? []
@@ -115,18 +96,42 @@ export class Step4Component implements OnInit {
 			reader.readAsText(file)
 		}
 	}
+	normalizeString(str: string){
+		return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w\s]/gi, '').trim().split(" ").filter(x => x.length > 3).join(" ").toUpperCase()
+
+	}
+	processCalification() {
+
+
+		
+		let careers = this.dataStorageService.getCareers()
+
+		careers.forEach(x => {
+			console.log(this.normalizeString(x.careerName));
+			
+			//console.log(x.careerName.normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
+			
+		})
+		
+
+		let list = this.studentList.filter((x,i) => i < 120)
+		console.log(list);
+		
+	}
 	saveData(){
-		this.dataStorageService.setStudentAnswers(this.processAnswers())
-		this.message.add({ severity: "success", detail: 'Datos guardados' })
+		this.processCalification()
+		/*this.dataStorageService.setStudentAnswers(this.processAnswers())
+		this.message.add({ severity: "success", detail: 'Datos guardados' })*/
 	}
 	validate(){
-		let studentData = this.dataStorageService.getSudentAnswers()
-		console.log(studentData);
+		this.router.navigate(['/report'])
+		/*this.dataStorageService.getSudentAnswers().then(studentData => {
+			if (studentData.length == 0) {
+				this.message.add({ severity: "warn", detail: 'Primero salve las respuestas de los estudiantes' })
+			}
+			else this.router.navigate(['/report'])
+		})*/
 		
-		if (studentData.length == 0) {
-			this.message.add({ severity: "warn", detail: 'Primero salve las respuestas de los estudiantes' })
-		}
-		else this.router.navigate(['/report'])
 	}
 }
 

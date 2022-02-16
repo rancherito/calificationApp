@@ -79,11 +79,11 @@ export class ReportComponent implements OnInit {
 		}
 	
 	}
-	ngOnInit(): void {
+	async ngOnInit(): Promise<void> {
 
 		
 		
-		this.stidentInfoList = this.storage.getStudentInfoList()//.filter(x => x.idBar != null);
+		this.stidentInfoList = await this.storage.getStudentInfoList()//.filter(x => x.idBar != null);
 		
 		this.careerInfoList = this.stidentInfoList.reduce((ac, i) => {
 			let index = ac.findIndex(x => x.career == i.career);
@@ -98,8 +98,8 @@ export class ReportComponent implements OnInit {
 			return ac;
 		}, [] as ICareer[]).sort((a, b) => (b.careerName??'') < (a.careerName??'') ? 1 : -1);
 
-		this.studentAnswerList = this.storage.getSudentAnswers()
-		this.answerList = this.storage.getKeyAnswerList();
+		this.studentAnswerList = await this.storage.getSudentAnswers()
+		this.answerList = await this.storage.getKeyAnswerList();
 		
 		this.loadChartData()
 		

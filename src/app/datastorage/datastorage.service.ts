@@ -1,10 +1,27 @@
 import { Injectable } from '@angular/core';
-import { IAnswer, IKeyAnswer, IExcelData, IStudentInfo } from "../providersInterfaces";
+import { addDoc, collection, doc, Firestore, getDoc, getDocs, setDoc } from '@angular/fire/firestore';
+import { IAnswer, IKeyAnswer, IExcelData, IStudentInfo, ICareer, ICareerInfo } from "../providersInterfaces";
 
 @Injectable({
 	providedIn: 'root'
 })
 export class DatastorageService {
+	getCareers(): ICareerInfo[] {
+		return [
+			{ careerName: 'Administración y Negocios Internacionales', idGroup: 'R', career: 'AN' },
+			{ careerName: 'Contabilidad y Finanzas', idGroup: 'R', career: 'CF' },
+			{ careerName: 'Derecho y Ciencias Políticas', idGroup: 'R', career: 'DC' },
+			{ careerName: 'Ecoturismo', idGroup: 'R', career: 'EC' },
+			{ careerName: 'Educación Matemática y Computación', idGroup: 'R', career: 'ED' },
+			{ careerName: 'Educación Inicial y Especial', idGroup: 'R', career: 'EI' },
+			{ careerName: 'Educación Primaria e Informática', idGroup: 'R', career: 'EP' },
+			{ careerName: 'Enfermeria', idGroup: 'Q', career: 'EF' },
+			{ careerName: 'Medicina Veterinaria - Zootecnia', idGroup: 'Q', career: 'MV' },
+			{ careerName: 'Ingeniería Agroindustrial', idGroup: 'P', career: 'IA' },
+			{ careerName: 'Ingeniería Forestal y Medio Ambiente', idGroup: 'P', career: 'IF' },
+			{ careerName: 'Ingeniería de Sistemas e Informática', idGroup: 'P', career: 'IS' }
+		]
+	}
 	private matColors: any = {
 		"Amber": {
 			50: '#fff8e1',
@@ -237,9 +254,20 @@ export class DatastorageService {
 	}
 	private currentProject: IProject | null;
 
-	constructor() {
+	constructor(
+		private firestore: Firestore,
+	) {
 		this.currentProject = this.getCurrentProject();
-		console.log(this.currentProject);
+		//console.log(this.currentProject);
+		/*let docRef = collection(this.firestore, 'project');
+		let data = getDocs(docRef).then(data => {
+			console.log(data.docs);
+		})
+		//let documentData: DocumentData = {}
+		setDoc(doc(this.firestore, 'project', 'nataLOS'), { jamon: 'queso', telepata: 444 }).then(() => {
+			console.log('Document successfully written!');
+		})*/
+
 		
 	}
 	getColors(): string[] {
@@ -249,18 +277,30 @@ export class DatastorageService {
 		})
 		return colors;
 	}
-	private getCurrentProjectData(){
-		if (this.currentProject == null) return {}
-		else return JSON.parse(localStorage.getItem(this.currentProject.uuid)??'{}') as any;
-	}
-	private getCurrentProjectDataKey(key: string){
+	private async getCurrentProjectDataKey(key: string){
+
+		if (this.currentProject != null) {
+			let docInfo = await getDoc(doc(this.firestore, this.currentProject.uuid, key))
+			if (docInfo.exists()) {
+				let data = JSON.parse(docInfo.data().data ?? 'null')
+				return data;
+			}
+		}
+		
+		return null;
+
 		//let project = this.getCurrentProjectData();
-		if (this.currentProject == null) return null
-		return JSON.parse(localStorage.getItem(`${this.currentProject.uuid}-${key}`) ?? 'null');
+		//if (this.currentProject == null) return null
+		//return JSON.parse(localStorage.getItem(`${this.currentProject.uuid}-${key}`) ?? 'null');
 	}
-	private setCurrentProjectData(key: string, data: any){
+	private setCurrentProjectData(key: string, data: any, enableStringify: boolean = true) {
 		if (this.currentProject == null) return;
-		localStorage.setItem(`${this.currentProject.uuid}-${key}`, JSON.stringify(data));
+		if (enableStringify) {
+			setDoc(doc(this.firestore, this.currentProject.uuid, key), { data: JSON.stringify(data) });
+		}
+		else
+			setDoc(doc(this.firestore, this.currentProject.uuid, key), data);
+		//localStorage.setItem(`${this.currentProject.uuid}-${key}`, JSON.stringify(data));
 		/*let project = this.getCurrentProjectData();
 		project[key] = data;
 		localStorage.setItem(this.currentProject.uuid, JSON.stringify(project));*/
@@ -274,11 +314,12 @@ export class DatastorageService {
 		return this.getCurrentProjectDataKey('fileResponses');
 		//return localStorage.getItem('fileResponses')
 	}
-	restoreFileStudentInfo() {
-		return this.getCurrentProjectDataKey('fileStudentInfo') ?? [] as Record<string, string>[];
+	restoreFileStudentInfo(): Promise<Record<string, string>[]> {
+		
+		return this.getCurrentProjectDataKey('fileStudentInfo') ?? [];
 		//return JSON.parse(localStorage.getItem('fileStudentInfo') ?? '[]') as Record<string, string>[]
 	}
-	saveFileStudentInfo(fileStudentInfo: string) {
+	saveFileStudentInfo(fileStudentInfo: any) {
 		this.setCurrentProjectData('fileStudentInfo', fileStudentInfo);
 		//localStorage.setItem('fileStudentInfo', fileStudentInfo)
 	}
@@ -301,8 +342,8 @@ export class DatastorageService {
 		//return localStorage.getItem('fileRelationCodeBar')
 	}
 	//GENERAL DATA
-	getKeyAnswerList(): IKeyAnswer[] {
-		return this.getCurrentProjectDataKey('keyAnswerList') ?? [] as IKeyAnswer[];
+	async getKeyAnswerList(): Promise<IKeyAnswer[]> {
+		return (await this.getCurrentProjectDataKey('keyAnswerList')) ?? [] as IKeyAnswer[];
 		//return JSON.parse(localStorage.getItem('keyAnswersList') ?? '[]') as IKeyAnswer[]
 	}
 	setKeyAnswerList(keyAnswerList: IKeyAnswer[]) {
@@ -314,21 +355,23 @@ export class DatastorageService {
 		this.setCurrentProjectData('studentInfoList', studentInfo);
 		//localStorage.setItem('studentInfoList', JSON.stringify(studentInfo))
 	}
-	getStudentInfoList(): IStudentInfo[] {
-		return this.getCurrentProjectDataKey('studentInfoList') ?? [] as IStudentInfo[];
+	async getStudentInfoList(): Promise<IStudentInfo[]> {
+		return (await this.getCurrentProjectDataKey('studentInfoList')) ?? [] as IStudentInfo[];
 		//eturn JSON.parse(localStorage.getItem('studentInfoList') ?? '[]') as IStudentInfo[]
 	}
 	setStudentAnswers(studentAnswers: IAnswer[]) {
-		this.setCurrentProjectData('studentAnswersList', studentAnswers);
+		/*let arrayToJson = studentAnswers.reduce((acc, cur, i) => {
+			return acc[i] = cur}, {} as any)*/
+		this.setCurrentProjectData('studentAnswersList', studentAnswers, false);
 		//localStorage.setItem('studentAnswersList', JSON.stringify(studentAnswers))
 	}
-	getSudentAnswers(): IAnswer[] {
-		return this.getCurrentProjectDataKey('studentAnswersList') ?? [] as IAnswer[];
+	async getSudentAnswers(): Promise<IAnswer[]> {
+		return (await this.getCurrentProjectDataKey('studentAnswersList')) ?? [] as IAnswer[];
 		//return JSON.parse(localStorage.getItem('studentAnswersList') ?? '[]') as IAnswer[]
 	}
 	//UTILS
-	getTotalKeys() {
-		return parseInt(this.getCurrentProjectDataKey('totalKeys') ?? '0');
+	async getTotalKeys() {
+		return parseInt((await this.getCurrentProjectDataKey('totalKeys')) ?? '0');
 		//return parseInt(localStorage.getItem('totalKyes') ?? '0')
 	}
 	clearFile(fileString: string | null) {
@@ -341,13 +384,17 @@ export class DatastorageService {
 	}
 
 	//File project gestor
-	getProjects(): IProject[] {
-		return JSON.parse(localStorage.getItem('projects') ?? '[]') as IProject[]
+	async getProjects(): Promise<IProject[]> {
+		let list: IProject[] = [];
+		let docs = await getDocs(collection(this.firestore, 'projects'))
+		docs.docs.forEach(doc => {
+			list.push(doc.data() as IProject);
+		})
+		return list;
 	}
 	saveProject(project: IProject) {
-		let projects = this.getProjects();
-		projects.push(project);
-		localStorage.setItem('projects', JSON.stringify(projects))
+		let docRef = collection(this.firestore, 'projects');
+		setDoc(doc(docRef, project.uuid), project)
 	}
 	setCurrentProject(project: IProject) {
 		localStorage.setItem('currentProject', JSON.stringify(project))

@@ -17,8 +17,8 @@ export class CoModalityListComponent implements OnInit {
 		private storage: DatastorageService
 	) { }
 
-	ngOnInit(): void {
-		this.studentInfoList = this.storage.getStudentInfoList()
+	async ngOnInit(): Promise<void> {
+		this.studentInfoList = await this.storage.getStudentInfoList()
 		this.studentInfoList.forEach(x => {
 			if (this.modalitys.find(e => e == x.modality) == undefined) this.modalitys.push(x.modality ?? '');
 		})

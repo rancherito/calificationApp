@@ -3,7 +3,7 @@
         <div style="overflow-y: auto; height: 100%;">
             <div class="p-4">
                 <co-card class="shadow-1">
-                    <span>ASISTENCIA: {{dataRelation.length - 1}} de {{computeRelationKeys().length}}</span>
+                    <span>ASISTENCIA: {{dataRelation.length - 1}} de {{computeRelationKeys.length}}</span>
                 </co-card>
                 <co-card class="my-4" style="background-color: #263238;">
                     <h3 class="mb-4" style="color: white;">Contenido del archivo</h3>
@@ -16,7 +16,7 @@
                     </ngx-codemirror>
                 </co-card>
                 <co-card class="shadow-1">
-                    <p-table [value]="computeRelationKeys()">
+                    <p-table [value]="computeRelationKeys">
                         <ng-template pTemplate="header">
                             <tr>
                                 <th width="200px">C. ESTUDIANTE</th>

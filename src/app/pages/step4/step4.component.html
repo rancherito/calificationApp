@@ -35,7 +35,7 @@
             </co-card>
             <co-card style="background-color: #263238; width: 100%;">
                 <h3 class="mb-4" style="color: white;">Contenido del archivo</h3>
-                <ngx-codemirror [(ngModel)]="file" [options]="{
+                <ngx-codemirror [ngModel]="fileProcess()" [options]="{
                                     lineNumbers: true,
                                     theme: 'material',
                                     readOnly: true,

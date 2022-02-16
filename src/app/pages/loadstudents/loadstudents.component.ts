@@ -57,11 +57,11 @@ export class LoadstudentsComponent implements OnInit {
 	computeTableStudent(): IStudentInfo[]{
 		let data: IStudentInfo[] = []
 		let templateGroups: Record<string, string> = {A: 'P', B: 'Q', C: 'R'}
+
 		if (this.dataExcel.length > 0) {
 
 			let tempHeaders: Record<string, string> = {...this.templateDataHeader, ...this.templateDataHeaderCustom}
-			console.log(tempHeaders);
-			
+	
 			this.dataExcel.forEach((student, index) => {
 				let keyss = Object.keys(student);
 				let temporalPush: IExcelData = { career: null, careerName: null, code: null, dni: null, fullname: null, group: null, modality: null}
@@ -107,22 +107,28 @@ export class LoadstudentsComponent implements OnInit {
 				var workbook = XLSX.read(reader.result, { type: 'binary' });
 				var first_sheet_name = workbook.SheetNames[0];
 				this.dataExcel = XLSX.utils.sheet_to_json(workbook.Sheets[first_sheet_name]) as Record<string, string>[];
-				this.datastorageService.saveFileStudentInfo(JSON.stringify(this.dataExcel))
+				this.datastorageService.saveFileStudentInfo(this.dataExcel)
 			}
 			reader.readAsBinaryString(excelFile);
 		}
 		
 	}
 	ngOnInit(): void {
-		this.dataExcel = this.datastorageService.restoreFileStudentInfo()
+		this.datastorageService.restoreFileStudentInfo().then(x => {
+			this.dataExcel = x
+		})
 		this.templateDataHeaderCustom = JSON.parse(localStorage.getItem('templateDataHeaderCustom')??'{}') as Record<string, string>;
 	}
 	nextStep(){
 		/*let data = this.computeTableStudent()
 		this.datastorageService.saveFileStudentInfo(JSON.stringify(data))
 		this.router.navigate(['/students/loadstudents/step2'])*/
-		if (this.datastorageService.getStudentInfoList().length > 0) this.router.navigate(['/step3'])
-		else this.messageService.add({severity:'warn', detail:'No se han salvado los datos de los estudiantes'})	
+		this.datastorageService.getStudentInfoList().then(data => {
+			if (data.length > 0) this.router.navigate(['/step3'])
+			else this.messageService.add({ severity: 'warn', detail: 'No se han salvado los datos de los estudiantes' })	
+		})
+		
+		
 	}
 	saveData(){
 		let data = this.computeTableStudent()

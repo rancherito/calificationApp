@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Guid } from 'guid-typescript';
 import { DatastorageService, IProject } from 'src/app/datastorage/datastorage.service';
-
+import { addDoc, collection, doc, DocumentData, Firestore, getDoc, setDoc } from '@angular/fire/firestore';
+import { getDocs } from 'firebase/firestore';
+//import {addDoc, collection, Firestore} from 'firebase/firestore';
 @Component({
 	selector: 'page-loadproject',
 	templateUrl: './loadproject.component.html',
@@ -14,11 +16,17 @@ export class LoadprojectComponent implements OnInit {
 	public onNew = false
 	constructor(
 		private storage: DatastorageService,
-		private route: Router
+		private route: Router,
+		private firestore: Firestore
 	) { }
+	
 
 	ngOnInit(): void {
-		this.projects = this.storage.getProjects().sort((a, b) => b.createdDate - a.createdDate);
+		this.storage.getProjects().then(projects => {
+			 this.projects = projects.sort((a, b) => b.createdDate - a.createdDate);
+		})
+		
+		
 	}
 	
 	saveProject(){
@@ -29,8 +37,10 @@ export class LoadprojectComponent implements OnInit {
 				uuid: Guid.create().toString()
 			}
 			this.storage.saveProject(project);
-			this.projects = this.storage.getProjects().sort((a, b) => b.createdDate - a.createdDate);
-			this.onNew = false;
+			this.storage.getProjects().then(projects => {
+				this.projects = projects.sort((a, b) => b.createdDate - a.createdDate);
+				this.onNew = false;
+			})
 		}
 		
 	}

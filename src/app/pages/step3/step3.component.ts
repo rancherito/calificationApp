@@ -1,3 +1,4 @@
+import { ThisReceiver } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
@@ -24,43 +25,49 @@ export class Step3Component implements OnInit {
 	) { }
 
 	ngOnInit(): void {
-		let fileRelation = this.datastorageService.restoreFileRelationCodeBar()
-		this.file = fileRelation??''
-		this.dataRelation = this.datastorageService.clearFile(fileRelation)    
+		this.datastorageService.restoreFileRelationCodeBar().then(e => {
+			this.file = e ?? ''
+			this.dataRelation = this.datastorageService.clearFile(e)    
+		})
+		
 	}
-	computeRelationKeys(){
+	computeRelationKeys: IStudentInfo[] = []
+	async _computeRelationKeys(){
 		this.dataLost = []
 		this.inasistenceList = []
-		let studentInfo = this.datastorageService.getStudentInfoList()
-		let relationcodebarList: IRelationCodeBar[] = []
-		if (this.dataRelation.length > 1) {
-			for (let i = 1; i < this.dataRelation.length; i++) {
-				let [idBar, code] = this.dataRelation[i].split(',')
-				relationcodebarList.push({idBar, code})
-			}
-			studentInfo.forEach(e => {
-				let idbar = relationcodebarList.find(r => r.code == e.code)
-				e.idBar = idbar?.idBar??null
-				if(idbar == undefined) this.inasistenceList.push({...e})
-			})
-			relationcodebarList.forEach(e => {
-				if (studentInfo.find(t => t.code == e.code) == undefined) this.dataLost.push({...e})
-			})
-		}
+		let studentInfo = await this.datastorageService.getStudentInfoList()
+			 let relationcodebarList: IRelationCodeBar[] = []
+			 if (this.dataRelation.length > 1) {
+				 for (let i = 1; i < this.dataRelation.length; i++) {
+					 let [idBar, code] = this.dataRelation[i].split(',')
+					 relationcodebarList.push({ idBar, code })
+				 }
+				 studentInfo.forEach(e => {
+					 let idbar = relationcodebarList.find(r => r.code == e.code)
+					 e.idBar = idbar?.idBar ?? null
+					 if (idbar == undefined) this.inasistenceList.push({ ...e })
+				 })
+				 relationcodebarList.forEach(e => {
+					 if (studentInfo.find(t => t.code == e.code) == undefined) this.dataLost.push({ ...e })
+				 })
+			 }
 		return studentInfo
 	}
 	nextStep(){
-		let studentData = this.datastorageService.getStudentInfoList()
-		
-		if (studentData.every(e => e.idBar == null)) {
-			this.message.add({severity: "warn", detail: 'Primero salve los datos de los estudiantes'})
-		}
-		else this.router.navigate(['/step4'])
+		this.datastorageService.getStudentInfoList().then(studentData=>{
+			if (studentData.every(e => e.idBar == null)) {
+				this.message.add({ severity: "warn", detail: 'Primero salve los datos de los estudiantes' })
+			}
+			else this.router.navigate(['/step4'])
+		})
 		
 	}
 	saveData(){
-		this.datastorageService.setStudentInfoList(this.computeRelationKeys())
-		this.message.add({ severity: "success", detail: 'Datos guardados' })
+		this._computeRelationKeys().then(e=>{
+			this.datastorageService.setStudentInfoList(e)
+			this.message.add({ severity: "success", detail: 'Datos guardados' })
+		})
+		
 	}
 	loadRelationsKeys(e: Event) {
 			let target = e.target as HTMLInputElement;
@@ -73,7 +80,7 @@ export class Step3Component implements OnInit {
 						this.datastorageService.saveFileRelationCodeBar(reader.result as string)
 						this.file = (reader.result as string) ?? ''
 						this.dataRelation = this.datastorageService.clearFile(reader.result as string)
-						
+						this._computeRelationKeys()
 					}          
 				}
 				reader.readAsText(file)

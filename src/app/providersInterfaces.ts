@@ -39,3 +39,8 @@ export interface ICareer {
     careerName: string | null
     totalStundets: number
 }
+export interface ICareerInfo {
+    career: string 
+    careerName: string
+    idGroup: string
+}

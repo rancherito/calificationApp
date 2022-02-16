@@ -54,10 +54,10 @@ export class StartComponent implements OnInit {
 	}
 	ngOnInit(): void {
 
-		let fileKeyAnswer = this.datastorageService.restoreFileKeyAnswer()
-		this.file = fileKeyAnswer??''
-		this.claves = this.datastorageService.clearFile(fileKeyAnswer)
-
+		this.datastorageService.restoreFileKeyAnswer().then(e => {
+			this.file = e
+			this.claves = this.datastorageService.clearFile(e)
+		})
 	}
 	saveInformation(){
 		let correct = false
@@ -77,13 +77,10 @@ export class StartComponent implements OnInit {
 		//
 	}
 	nextStep(){
-		let data = this.datastorageService.getKeyAnswerList()
-		console.log(data);
-		
-		if (data.length > 0) {
-			this.router.navigate(['/loadstudents'])
-		}
-		else this.messageService.add({ severity: 'warn', detail: 'Primero guarde la información' });
+		this.datastorageService.getKeyAnswerList().then(e => {
+			if (e.length > 0) this.router.navigate(['/loadstudents'])
+			else this.messageService.add({ severity: 'warn', detail: 'Primero guarde la información' });
+		})
 	}
 
 }
