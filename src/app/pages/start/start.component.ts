@@ -31,7 +31,7 @@ export class StartComponent implements OnInit {
 	}
 	//count keys per group
 	countKeyperGroup() {
-		let count: groupCount[] = []
+		let count: IGroupCount[] = []
 		this.computeKeys().forEach(e => {
 			let index = count.findIndex(f => f.group === e.idGroup)
 			if (index < 0) count.push({ group: e.idGroup, total: 1 })
@@ -67,7 +67,7 @@ export class StartComponent implements OnInit {
 			let averageTotal = count.reduce((ac, i) => ac + i.total,0) / count.length
 			if (referenceCount == averageTotal) {
 				this.datastorageService.setKeyAnswerList(this.computeKeys())
-				this.datastorageService.setTotalKeys(averageTotal);
+				this.datastorageService.setAverageKeys(averageTotal);
 				this.messageService.add({ severity: 'success', detail: 'Lista de claves de respuesta guardados' });
 			}
 			else this.messageService.add({ severity: 'warn', detail: 'Asegure que los grupos tengan la misma cantidad de preguntan' });
@@ -85,4 +85,4 @@ export class StartComponent implements OnInit {
 
 }
 
-interface groupCount { group: string, total: number }
+interface IGroupCount { group: string, total: number }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IExcelData, IStudentInfo } from "../../providersInterfaces";
+import { ICareerInfo, IExcelData, IStudentInfo } from "../../providersInterfaces";
 import { DatastorageService } from "../../datastorage/datastorage.service";
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
@@ -15,6 +15,7 @@ import * as XLSX from "xlsx";
 export class LoadstudentsComponent implements OnInit {
 	public dataExcel: Record<string, string>[] = []
 	public keyHeaders: string[] = []
+	public referenceCareer: ICareerInfo[] = []
 	public dataHeaders: Record<string, string> = {
 		career: "Carrera",
 		careerName: "Nombre Carrera",
@@ -73,11 +74,18 @@ export class LoadstudentsComponent implements OnInit {
 				for (const key in temporalPush) {
 					let findKey = keyss.find(x => x.toLowerCase() == tempHeaders[key.toLowerCase()].toLowerCase())
 					if (findKey) temporalPush[key] = student[findKey] ?? null
-					if (key == 'group' && findKey && student[findKey]) temporalPush[key] = templateGroups[temporalPush[key]?.toUpperCase()??""]??null
+					if (key == 'group' && findKey && student[findKey]) temporalPush[key] = templateGroups[temporalPush[key]?.toUpperCase()??""]?? 'N'
 					if (index == 0) this.relationHeaders.push({ headerkey: key, relationkey: findKey})
 				}
 
-
+				if (true) {
+					let indexCareer = this.referenceCareer.findIndex(x => this.datastorageService.normalizeString(x.careerName) == this.datastorageService.normalizeString(temporalPush.careerName??''))
+					if (indexCareer > -1) {
+						temporalPush.career = this.referenceCareer[indexCareer].career
+						temporalPush.careerName = this.referenceCareer[indexCareer].careerName.toUpperCase()
+						
+					}
+				}
 				
 				data.push({ 
 					code: temporalPush.code,
@@ -113,10 +121,10 @@ export class LoadstudentsComponent implements OnInit {
 		}
 		
 	}
-	ngOnInit(): void {
-		this.datastorageService.restoreFileStudentInfo().then(x => {
-			this.dataExcel = x
-		})
+	async ngOnInit() {
+		this.referenceCareer = await this.datastorageService.getCareers()
+		this.dataExcel = await this.datastorageService.restoreFileStudentInfo()
+	
 		this.templateDataHeaderCustom = JSON.parse(localStorage.getItem('templateDataHeaderCustom')??'{}') as Record<string, string>;
 	}
 	nextStep(){

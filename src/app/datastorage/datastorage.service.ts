@@ -6,7 +6,7 @@ import { IAnswer, IKeyAnswer, IExcelData, IStudentInfo, ICareer, ICareerInfo } f
 	providedIn: 'root'
 })
 export class DatastorageService {
-	getCareers(): ICareerInfo[] {
+	async getCareers(): Promise<ICareerInfo[]> {
 		return [
 			{ careerName: 'Administración y Negocios Internacionales', idGroup: 'R', career: 'AN' },
 			{ careerName: 'Contabilidad y Finanzas', idGroup: 'R', career: 'CF' },
@@ -16,7 +16,7 @@ export class DatastorageService {
 			{ careerName: 'Educación Inicial y Especial', idGroup: 'R', career: 'EI' },
 			{ careerName: 'Educación Primaria e Informática', idGroup: 'R', career: 'EP' },
 			{ careerName: 'Enfermeria', idGroup: 'Q', career: 'EF' },
-			{ careerName: 'Medicina Veterinaria - Zootecnia', idGroup: 'Q', career: 'MV' },
+			{ careerName: 'Medicina Veterinaria y Zootecnia', idGroup: 'Q', career: 'MV' },
 			{ careerName: 'Ingeniería Agroindustrial', idGroup: 'P', career: 'IA' },
 			{ careerName: 'Ingeniería Forestal y Medio Ambiente', idGroup: 'P', career: 'IF' },
 			{ careerName: 'Ingeniería de Sistemas e Informática', idGroup: 'P', career: 'IS' }
@@ -257,18 +257,11 @@ export class DatastorageService {
 	constructor(
 		private firestore: Firestore,
 	) {
-		this.currentProject = this.getCurrentProject();
-		//console.log(this.currentProject);
-		/*let docRef = collection(this.firestore, 'project');
-		let data = getDocs(docRef).then(data => {
-			console.log(data.docs);
-		})
-		//let documentData: DocumentData = {}
-		setDoc(doc(this.firestore, 'project', 'nataLOS'), { jamon: 'queso', telepata: 444 }).then(() => {
-			console.log('Document successfully written!');
-		})*/
+		this.currentProject = this.getCurrentProject();		
+	}
+	normalizeString(str: string) {
+		return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w\s]/gi, '').trim().split(" ").filter(x => x.length > 3).join(" ").toUpperCase()
 
-		
 	}
 	getColors(): string[] {
 		let colors: string[] = [];
@@ -370,16 +363,16 @@ export class DatastorageService {
 		//return JSON.parse(localStorage.getItem('studentAnswersList') ?? '[]') as IAnswer[]
 	}
 	//UTILS
-	async getTotalKeys() {
-		return parseInt((await this.getCurrentProjectDataKey('totalKeys')) ?? '0');
+	async getAverageKeys() {
+		return parseInt((await this.getCurrentProjectDataKey('averageKeys')) ?? '0');
 		//return parseInt(localStorage.getItem('totalKyes') ?? '0')
 	}
 	clearFile(fileString: string | null) {
 		return (fileString ?? "").split('\r\n').filter(e => e.length > 0)
 	}
 
-	setTotalKeys(total: number) {
-		this.setCurrentProjectData('totalKeys', total.toString());
+	setAverageKeys(total: number) {
+		this.setCurrentProjectData('averageKeys', total.toString());
 		//localStorage.setItem('totalKyes', total.toString())
 	}
 

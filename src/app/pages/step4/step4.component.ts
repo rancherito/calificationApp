@@ -28,7 +28,7 @@ export class Step4Component implements OnInit {
 	) { }
 
 	async ngOnInit(): Promise<void> {
-		this.totalKeys = await this.dataStorageService.getTotalKeys()
+		this.totalKeys = await this.dataStorageService.getAverageKeys()
 		this.studentList = await this.dataStorageService.getStudentInfoList()
 		this.asistenceList = this.studentList.filter(x => x.idBar != null)
 		this.file = (await this.dataStorageService.restoreFileResponses()) as string
@@ -76,7 +76,7 @@ export class Step4Component implements OnInit {
 				if (reader.result) {
 					this.file = reader.result as string
 					this.dataStorageService.saveFileResponses(reader.result as string)
-					this.dataStorageService.getTotalKeys().then(x => this.totalKeys = x)
+					this.dataStorageService.getAverageKeys().then(x => this.totalKeys = x)
 					this.dataAnswer = this.dataStorageService.clearFile(reader.result as string)
 					this.processCalification()
 				}
@@ -96,26 +96,25 @@ export class Step4Component implements OnInit {
 			reader.readAsText(file)
 		}
 	}
-	normalizeString(str: string){
-		return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w\s]/gi, '').trim().split(" ").filter(x => x.length > 3).join(" ").toUpperCase()
-
-	}
+	
 	processCalification() {
 
 
 		
-		let careers = this.dataStorageService.getCareers()
+		this.dataStorageService.getCareers().then(careers => {
+			careers.forEach(x => {
+				console.log(this.dataStorageService.normalizeString(x.careerName));
 
-		careers.forEach(x => {
-			console.log(this.normalizeString(x.careerName));
-			
-			//console.log(x.careerName.normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
-			
+				//console.log(x.careerName.normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
+
+			})
+
+
+			let list = this.studentList.filter((x, i) => i < 120)
+			console.log(list);
 		})
-		
 
-		let list = this.studentList.filter((x,i) => i < 120)
-		console.log(list);
+		
 		
 	}
 	saveData(){

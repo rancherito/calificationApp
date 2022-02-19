@@ -1,11 +1,8 @@
 <co-recoverdatalayout label="Paso 3 de 4" [extend]="dataRelation.length > 0">
-    <div view style="height: 100%; display: grid; grid-template-columns: 1fr 400px; grid-template-rows: 100%;">
+    <div view style="height: 100%; display: grid; grid-template-columns: 1fr 500px; grid-template-rows: 100%;">
         <div style="overflow-y: auto; height: 100%;">
             <div class="p-4">
-                <co-card class="shadow-1">
-                    <span>ASISTENCIA: {{dataRelation.length - 1}} de {{computeRelationKeys.length}}</span>
-                </co-card>
-                <co-card class="my-4" style="background-color: #263238;">
+                <co-card class="mb-4" style="background-color: #263238;">
                     <h3 class="mb-4" style="color: white;">Contenido del archivo</h3>
                     <ngx-codemirror [(ngModel)]="file" [options]="{
                         lineNumbers: true,
@@ -16,7 +13,7 @@
                     </ngx-codemirror>
                 </co-card>
                 <co-card class="shadow-1">
-                    <p-table [value]="computeRelationKeys">
+                    <p-table [value]="relationKeys">
                         <ng-template pTemplate="header">
                             <tr>
                                 <th width="200px">C. ESTUDIANTE</th>
@@ -39,6 +36,9 @@
         </div>
         <div class="p-3">
             <div style="display: grid; gap: .5rem;">
+                <co-card class="shadow-1">
+                    <span>ASISTENCIA: {{dataRelation.length - 1}} de {{relationKeys.length}}</span>
+                </co-card>
                 <co-card *ngIf="dataLost.length" class="shadow-1">
                     <div class="mb-4">
                         <h3>Codigos perdidos</h3>
