@@ -13,7 +13,7 @@ export class ReportComponent implements OnInit {
 
 	public careerSelected: ICareer | null = null
 	public studentAnswerList: IAnswer[] = []
-	public stidentInfoList: IStudentInfo[] = [];
+	public studentInfoList: IStudentInfo[] = [];
 	public answerList: IKeyAnswer[] = [];
 	public studentDataList: IStudentInfo[] = [];
 
@@ -83,9 +83,9 @@ export class ReportComponent implements OnInit {
 
 
 
-		this.stidentInfoList = await this.storage.getStudentInfoList()//.filter(x => x.idBar != null);
+		this.studentInfoList = await this.storage.getStudentInfoList()//.filter(x => x.idBar != null);
 
-		this.careerInfoList = this.stidentInfoList.reduce((ac, i) => {
+		this.careerInfoList = this.studentInfoList.reduce((ac, i) => {
 			let index = ac.findIndex(x => x.career == i.career);
 			if (index > -1) {
 				ac[index].totalStundets++;
@@ -109,9 +109,9 @@ export class ReportComponent implements OnInit {
 		}
 	}
 	filterResultsPerCareer(career: string | null) {
-		let filterStundentCareerList = this.stidentInfoList.filter(x => x.career == career)
-		
-		return filterStundentCareerList.sort((a, b) => parseFloat(b.score ?? '0.00') - parseFloat(a.score ?? '0.00'));
+		let filterStundentCareerList = this.studentInfoList.filter(x => x.career == career).sort((a, b) => parseFloat(b.score ?? '0.00') - parseFloat(a.score ?? '0.00'))
+		filterStundentCareerList.forEach(x => x.merith = filterStundentCareerList.findIndex(y => y.score == x.score) + 1)
+		return filterStundentCareerList;
 	}
 
 }
