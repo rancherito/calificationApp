@@ -6,6 +6,7 @@ import { IAnswer, IKeyAnswer, IExcelData, IStudentInfo, ICareer, ICareerInfo } f
 	providedIn: 'root'
 })
 export class DatastorageService {
+	
 	async getCareers(): Promise<ICareerInfo[]> {
 		return [
 			{ careerName: 'Administración y Negocios Internacionales', idGroup: 'R', career: 'AN' },
@@ -254,6 +255,7 @@ export class DatastorageService {
 	}
 	private currentProject: IProject | null;
 
+
 	constructor(
 		private firestore: Firestore,
 	) {
@@ -286,13 +288,11 @@ export class DatastorageService {
 		//if (this.currentProject == null) return null
 		//return JSON.parse(localStorage.getItem(`${this.currentProject.uuid}-${key}`) ?? 'null');
 	}
-	private setCurrentProjectData(key: string, data: any, enableStringify: boolean = true) {
-		if (this.currentProject == null) return;
-		if (enableStringify) {
-			setDoc(doc(this.firestore, this.currentProject.uuid, key), { data: JSON.stringify(data) });
-		}
-		else
-			setDoc(doc(this.firestore, this.currentProject.uuid, key), data);
+	private setCurrentProjectData(key: string, data: any) {
+		
+		if (this.currentProject == null) return new Promise<void>(resolve => resolve());
+		return setDoc(doc(this.firestore, this.currentProject.uuid, key), { data: JSON.stringify(data)});
+
 		//localStorage.setItem(`${this.currentProject.uuid}-${key}`, JSON.stringify(data));
 		/*let project = this.getCurrentProjectData();
 		project[key] = data;
@@ -345,22 +345,12 @@ export class DatastorageService {
 	}
 
 	setStudentInfoList(studentInfo: IStudentInfo[]) {
-		this.setCurrentProjectData('studentInfoList', studentInfo);
+		return this.setCurrentProjectData('studentInfoList', studentInfo);
 		//localStorage.setItem('studentInfoList', JSON.stringify(studentInfo))
 	}
 	async getStudentInfoList(): Promise<IStudentInfo[]> {
 		return (await this.getCurrentProjectDataKey('studentInfoList')) ?? [] as IStudentInfo[];
 		//eturn JSON.parse(localStorage.getItem('studentInfoList') ?? '[]') as IStudentInfo[]
-	}
-	setStudentAnswers(studentAnswers: IAnswer[]) {
-		/*let arrayToJson = studentAnswers.reduce((acc, cur, i) => {
-			return acc[i] = cur}, {} as any)*/
-		this.setCurrentProjectData('studentAnswersList', studentAnswers, false);
-		//localStorage.setItem('studentAnswersList', JSON.stringify(studentAnswers))
-	}
-	async getSudentAnswers(): Promise<IAnswer[]> {
-		return (await this.getCurrentProjectDataKey('studentAnswersList')) ?? [] as IAnswer[];
-		//return JSON.parse(localStorage.getItem('studentAnswersList') ?? '[]') as IAnswer[]
 	}
 	//UTILS
 	async getAverageKeys() {
@@ -394,6 +384,12 @@ export class DatastorageService {
 	}
 	getCurrentProject(): IProject {
 		return JSON.parse(localStorage.getItem('currentProject') ?? 'null') as IProject
+	}
+	async getTemplateDataHeaderCustom(): Promise<Record<string, string>> {
+		return (await this.getCurrentProjectDataKey('templateDataHeaderCustom')) ?? {} as Record<string, string>;
+	}
+	setTemplateDataHeaderCustom(data: Record<string, string>): Promise<void> {
+		return this.setCurrentProjectData('templateDataHeaderCustom', data);
 	}
 
 }

@@ -41,7 +41,7 @@ export class LoadstudentsComponent implements OnInit {
 	private templateDataHeaderCustom: Record<string, string> = {}
 
 	constructor(
-		private datastorageService: DatastorageService,
+		private store: DatastorageService,
 		private messageService: MessageService,
 		private router: Router
 	) {} 
@@ -50,8 +50,10 @@ export class LoadstudentsComponent implements OnInit {
 	}
 	evAsingHeader(newHeader: string){
 		if (this.currentHeaderChange) {
+			console.log(this.templateDataHeaderCustom);
+			
 			this.templateDataHeaderCustom[this.currentHeaderChange.toLocaleLowerCase()] = newHeader
-			localStorage.setItem('templateDataHeaderCustom', JSON.stringify(this.templateDataHeaderCustom))
+			this.store.setTemplateDataHeaderCustom(this.templateDataHeaderCustom)
 			this.currentHeaderChange = null
 		}
 	}
@@ -79,7 +81,7 @@ export class LoadstudentsComponent implements OnInit {
 				}
 
 				if (true) {
-					let indexCareer = this.referenceCareer.findIndex(x => this.datastorageService.normalizeString(x.careerName) == this.datastorageService.normalizeString(temporalPush.careerName??''))
+					let indexCareer = this.referenceCareer.findIndex(x => this.store.normalizeString(x.careerName) == this.store.normalizeString(temporalPush.careerName??''))
 					if (indexCareer > -1) {
 						temporalPush.career = this.referenceCareer[indexCareer].career
 						temporalPush.careerName = this.referenceCareer[indexCareer].careerName.toUpperCase()
@@ -87,7 +89,7 @@ export class LoadstudentsComponent implements OnInit {
 					}
 				}
 				
-				data.push({ 
+				data.push({
 					code: temporalPush.code,
 					career: temporalPush.career,
 					careerName: temporalPush.careerName,
@@ -96,14 +98,15 @@ export class LoadstudentsComponent implements OnInit {
 					group: temporalPush.group,
 					idBar: null,
 					modality: temporalPush.modality,
-					score: null,
-					calification: null
+					score: '0.00',
+					calification: '0.00',
+					merith: null
 				 })
 			})
 			
 		}
 		let isModalitydataNull = data.every(x => x.modality == null );
-		if (isModalitydataNull) data.forEach(x => {x.modality = "UNIQUE" })
+		if (isModalitydataNull) data.forEach(x => {x.modality = "SIN MODALIDAD" })
 		return data
 	}
 	readExcel(e: Event) {
@@ -115,41 +118,38 @@ export class LoadstudentsComponent implements OnInit {
 				var workbook = XLSX.read(reader.result, { type: 'binary' });
 				var first_sheet_name = workbook.SheetNames[0];
 				this.dataExcel = XLSX.utils.sheet_to_json(workbook.Sheets[first_sheet_name]) as Record<string, string>[];
-				this.datastorageService.saveFileStudentInfo(this.dataExcel)
+				this.store.saveFileStudentInfo(this.dataExcel)
 			}
 			reader.readAsBinaryString(excelFile);
 		}
 		
 	}
 	async ngOnInit() {
-		this.referenceCareer = await this.datastorageService.getCareers()
-		this.dataExcel = await this.datastorageService.restoreFileStudentInfo()
+		this.referenceCareer = await this.store.getCareers()
+		this.dataExcel = await this.store.restoreFileStudentInfo()
 	
-		this.templateDataHeaderCustom = JSON.parse(localStorage.getItem('templateDataHeaderCustom')??'{}') as Record<string, string>;
+		console.log(await this.store.getTemplateDataHeaderCustom());
+		
+		this.templateDataHeaderCustom = await this.store.getTemplateDataHeaderCustom() //JSON.parse(localStorage.getItem('templateDataHeaderCustom')??'{}') as Record<string, string>;
 	}
 	nextStep(){
-		/*let data = this.computeTableStudent()
-		this.datastorageService.saveFileStudentInfo(JSON.stringify(data))
-		this.router.navigate(['/students/loadstudents/step2'])*/
-		this.datastorageService.getStudentInfoList().then(data => {
+		this.store.getStudentInfoList().then(data => {
 			if (data.length > 0) this.router.navigate(['/step3'])
 			else this.messageService.add({ severity: 'warn', detail: 'No se han salvado los datos de los estudiantes' })	
 		})
-		
-		
 	}
 	saveData(){
 		let data = this.computeTableStudent()
 		if (data.length > 0) {
 
-			this.datastorageService.setStudentInfoList(data)
+			this.store.setStudentInfoList(data)
 			this.messageService.add({severity:'success', detail:'Datos salvados correctamente'})
 		}
 		else this.messageService.add({severity:'warn', detail:'Cargar información de estudiantes antes de salvar'})
 	}
 	reset(){
 		this.templateDataHeaderCustom = {}
-		localStorage.setItem('templateDataHeaderCustom', '{}')
+		this.store.setTemplateDataHeaderCustom(this.templateDataHeaderCustom)
 	}
 
 }

@@ -17,33 +17,33 @@ export class ReportComponent implements OnInit {
 	public answerList: IKeyAnswer[] = [];
 	public studentDataList: IStudentInfo[] = [];
 
-	public data: ChartData | null= null;
-	
+	public data: ChartData | null = null;
+
 
 	constructor(
 		private storage: DatastorageService
-	) { 
+	) {
 	}
 
-	selectCareer(career: ICareer){
+	selectCareer(career: ICareer) {
 		this.careerSelected = career;
 		this.studentDataList = this.filterResultsPerCareer(career.career);
 	}
-	prepareExcelPerCareer(career: ICareer){
+	prepareExcelPerCareer(career: ICareer) {
 		let studentDataList = this.filterResultsPerCareer(career.career);
 		this.generateExcelFileBase(studentDataList, career);
 	}
-	generateExcelFile(){
+	generateExcelFile() {
 		if (this.careerSelected != null) this.generateExcelFileBase(this.studentDataList, this.careerSelected);
 	}
-	generateExcelFileBase(studentList: IStudentInfo[], career: ICareer){
+	generateExcelFileBase(studentList: IStudentInfo[], career: ICareer) {
 		const book = xlsx.utils.book_new();
 		const sheet = xlsx.utils.json_to_sheet(studentList);
 		xlsx.utils.book_append_sheet(book, sheet, 'Sheet1');
 		xlsx.writeFile(book, career?.career + '_REPORT.xlsx');
 	}
-	generateExcelFileAll(){
-		
+	generateExcelFileAll() {
+
 		const book = xlsx.utils.book_new();
 		this.careerInfoList.forEach(x => {
 			let studentDataList = this.filterResultsPerCareer(x.career);
@@ -52,11 +52,11 @@ export class ReportComponent implements OnInit {
 		})
 		xlsx.writeFile(book, 'REPORT_ALL.xlsx');
 	}
-	randomColor(){
+	randomColor() {
 		return '#' + Math.floor(Math.random() * 16777215).toString(16);
 	}
 
-	loadChartData(){
+	loadChartData() {
 
 		let chartTotalStudentsLabel: string[] = []
 		let chartTotalStudentsDataset: ChartDataset[] = [
@@ -67,7 +67,7 @@ export class ReportComponent implements OnInit {
 			}
 		]
 		this.careerInfoList.forEach(x => {
-			
+
 			chartTotalStudentsLabel.push(x.career ?? '');
 			chartTotalStudentsDataset[0].data.push(x.totalStundets);
 		})
@@ -77,14 +77,14 @@ export class ReportComponent implements OnInit {
 			labels: chartTotalStudentsLabel,
 			datasets: chartTotalStudentsDataset
 		}
-	
+
 	}
 	async ngOnInit(): Promise<void> {
 
-		
-		
+
+
 		this.stidentInfoList = await this.storage.getStudentInfoList()//.filter(x => x.idBar != null);
-		
+
 		this.careerInfoList = this.stidentInfoList.reduce((ac, i) => {
 			let index = ac.findIndex(x => x.career == i.career);
 			if (index > -1) {
@@ -96,48 +96,22 @@ export class ReportComponent implements OnInit {
 				careerName: i.careerName,
 			});
 			return ac;
-		}, [] as ICareer[]).sort((a, b) => (b.careerName??'') < (a.careerName??'') ? 1 : -1);
+		}, [] as ICareer[]).sort((a, b) => (b.careerName ?? '') < (a.careerName ?? '') ? 1 : -1);
 
-		this.studentAnswerList = await this.storage.getSudentAnswers()
 		this.answerList = await this.storage.getKeyAnswerList();
-		
+
 		this.loadChartData()
-		
+
 	}
-	selectChange(){
+	selectChange() {
 		if (this.careerSelected?.career) {
 			this.studentDataList = this.filterResultsPerCareer(this.careerSelected?.career);
 		}
 	}
-	filterResultsPerCareer(career: string | null){
-		let filterStundentCareerList = this.stidentInfoList.filter(x => x.career == career)//.filter((x, i) => i < 6);
-
-		filterStundentCareerList.forEach(x => {
-			if (x.idBar == null) {
-				x.score = 0;
-				x.calification = 0
-			}
-			else{
-				let filterGroup = this.answerList.filter(e => e.idGroup == x.group);
-				let studentAnswer = this.studentAnswerList.filter(y => y.idBar == x.idBar);
-				if (studentAnswer.length > 0 && filterGroup.length > 0) {
-
-
-					let score = studentAnswer.reduce((ac, i) => {
-						let find = filterGroup.find(e => e.index == i.idQuestion);
-						if (find != undefined) {
-							if (i.answer == null) return ac + .5;
-							else if (i.answer == find.key) return ac + 5;
-						}
-						return ac;
-					}, 0)
-					x.score = score;
-					x.calification = parseFloat(((score / (filterGroup.length * 5)) * 20).toFixed(2));
-				}
-			}
-			
-		})
-		return filterStundentCareerList.sort((a, b) => (b.score??0) - (a.score??0))
+	filterResultsPerCareer(career: string | null) {
+		let filterStundentCareerList = this.stidentInfoList.filter(x => x.career == career)
+		
+		return filterStundentCareerList.sort((a, b) => parseFloat(b.score ?? '0.00') - parseFloat(a.score ?? '0.00'));
 	}
 
 }

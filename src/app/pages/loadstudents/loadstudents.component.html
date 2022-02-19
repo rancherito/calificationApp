@@ -94,7 +94,7 @@
             <input type="file" accept=".xlsx,.xls" style="display: none;" (change)="readExcel($event)">
         </label>
         <div style="display: flex; justify-content: center;">
-            <p-button styleClass="mt-3 p-button-secondary p-button-raised" routerLink="/">Retroceder</p-button>
+            <p-button styleClass="mt-3 p-button-secondary p-button-raised" routerLink="/loadkeys">Retroceder</p-button>
             <p-button styleClass="mt-3 p-button-secondary p-button-raised ml-2" (onClick)="nextStep()" *ngIf="computeTableStudent().length">Siguiente</p-button>
         </div>
         

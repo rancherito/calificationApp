@@ -21,6 +21,7 @@ export class Step4Component implements OnInit {
 	public JSON = JSON
 	public file: string = ""
 	public processDataList: ICalification[] = []
+	public answerList: IKeyAnswer[] = [];
 	constructor(
 		private dataStorageService: DatastorageService,
 		private router: Router,
@@ -28,16 +29,16 @@ export class Step4Component implements OnInit {
 	) { }
 
 	async ngOnInit(): Promise<void> {
+		this.answerList = await this.dataStorageService.getKeyAnswerList();
 		this.totalKeys = await this.dataStorageService.getAverageKeys()
 		this.studentList = await this.dataStorageService.getStudentInfoList()
 		this.asistenceList = this.studentList.filter(x => x.idBar != null)
 		this.file = (await this.dataStorageService.restoreFileResponses()) as string
 		if (this.file?.length) {
 			this.dataAnswer = this.dataStorageService.clearFile(this.file)
-			//this.file = this.file.replace(/\,\,/g, ', ,').replace(/\,\,/g, ', ,')
 		}
 	}
-	fileProcess(){
+	fileProcess() {
 		return this.file.replace(/\,\,/g, ', ,').replace(/\,\,/g, ', ,')
 	}
 	processAnswers(): IAnswer[] {
@@ -46,25 +47,25 @@ export class Step4Component implements OnInit {
 			let rowAnswer = this.dataAnswer[index].split(",")
 			let [idBar, idTheme] = [rowAnswer[0], rowAnswer[1]]
 			for (let e = 2; e < this.totalKeys + 2; e++) {
-				keyList.push({ idBar, idTheme: idTheme == '' ? 'NULL': idTheme, idQuestion: e - 1, answer: rowAnswer[e] == '' ? null : rowAnswer[e] })
+				keyList.push({ idBar, idTheme: idTheme == '' ? 'NULL' : idTheme, idQuestion: e - 1, answer: rowAnswer[e] == '' ? null : rowAnswer[e] })
 			}
 		}
 		return keyList
 	}
-	listCountThemesAnswer(){
+	listCountThemesAnswer() {
 		let themes: { idTheme: string, total: number }[] = []
 		this.processAnswers().forEach(x => {
 			let i = themes.findIndex(y => y.idTheme == x.idTheme)
-			if ( i == -1) themes.push({ idTheme: x.idTheme, total: 1 })
+			if (i == -1) themes.push({ idTheme: x.idTheme, total: 1 })
 			else themes[i].total++
 		})
 		themes.map(x => x.total = x.total / this.totalKeys)
 		return themes
 	}
-	totalStudents(){
+	totalStudents() {
 		return this.listCountThemesAnswer().reduce((acc, cur) => acc + cur.total, 0)
 	}
-	loadData(e: Event){
+	loadData(e: Event) {
 
 		let target = e.target as HTMLInputElement;
 		let files = target.files ?? []
@@ -80,61 +81,66 @@ export class Step4Component implements OnInit {
 					this.dataAnswer = this.dataStorageService.clearFile(reader.result as string)
 					this.processCalification()
 				}
-				
-				/*let data = reader.result?.toString().split("\r\n").filter(x => x.length > 0) ?? []
-				let dataAswer: IAnswer[] = []
-				for (let ind = 1; ind < data.length; ind++) {
-					let rowData = data[ind].split(",");
-					let [idBar, idTheme] = [rowData[0], rowData[1]]
-					for (let e = 2; e < this.totalQuestions + 2; e++) {
-						dataAswer.push({ idBar, idTheme, idQuestion: e - 1, answer: rowData[e] == '' ? null : rowData[e] })
-					}
 
-				}
-				this.dataAnswer = dataAswer*/
 			}
 			reader.readAsText(file)
 		}
 	}
-	
+
 	processCalification() {
 
+		let list = this.studentList
+		let answers = this.processAnswers();
 
-		
-		this.dataStorageService.getCareers().then(careers => {
-			careers.forEach(x => {
-				console.log(this.dataStorageService.normalizeString(x.careerName));
+		list.forEach(student => {
+			if (student.idBar == null) {
+				student.score = '0.00';
+				student.calification = '0.00';
+			}
+			else {
+				let filterGroup = this.answerList.filter(e => e.idGroup == student.group);
+				let studentAnswer = answers.filter(x => x.idBar == student.idBar)
 
-				//console.log(x.careerName.normalize("NFD").replace(/[\u0300-\u036f]/g, ""));
+				if (studentAnswer.length > 0 && filterGroup.length > 0) {
 
+
+					let score = studentAnswer.reduce((ac, i) => {
+						let find = filterGroup.find(e => e.index == i.idQuestion);
+						if (find != undefined) {
+							if (i.answer == null) return ac + .5;
+							else if (i.answer == find.key) return ac + 5;
+						}
+						return ac;
+					}, 0)
+					student.score = score.toFixed(2);
+					student.calification = ((score / (filterGroup.length * 5)) * 20).toFixed(2);
+				}
+			}
+		})
+		let promise = this.dataStorageService.setStudentInfoList(list)
+		if (promise != null) {
+			promise.then(() => {
+				this.message.add({ severity: 'success', summary: 'Guardado', detail: 'Datos guardados correctamente' })
 			})
+		}
 
 
-			let list = this.studentList.filter((x, i) => i < 120)
-			console.log(list);
+	}
+	saveData() {
+		this.processCalification()
+	}
+	validate() {
+		this.dataStorageService.getStudentInfoList().then(x => {
+			let every = x.every(e => e.calification != null)
+			if (every) this.router.navigate(['/report'])
+			else this.message.add({ detail: 'Guarde antes las notas', severity: 'warn' })
+
 		})
 
-		
-		
-	}
-	saveData(){
-		this.processCalification()
-		/*this.dataStorageService.setStudentAnswers(this.processAnswers())
-		this.message.add({ severity: "success", detail: 'Datos guardados' })*/
-	}
-	validate(){
-		this.router.navigate(['/report'])
-		/*this.dataStorageService.getSudentAnswers().then(studentData => {
-			if (studentData.length == 0) {
-				this.message.add({ severity: "warn", detail: 'Primero salve las respuestas de los estudiantes' })
-			}
-			else this.router.navigate(['/report'])
-		})*/
-		
 	}
 }
 
-interface ICalification{
+interface ICalification {
 	code: string,
 	fullname: string,
 	score: number,
