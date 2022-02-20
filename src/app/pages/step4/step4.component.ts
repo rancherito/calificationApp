@@ -94,8 +94,8 @@ export class Step4Component implements OnInit {
 
 		list.forEach(student => {
 			if (student.idBar == null) {
-				student.score = '0.00';
-				student.calification = '0.00';
+				student.score = 0;
+				student.calification = 0;
 			}
 			else {
 				let filterGroup = this.answerList.filter(e => e.idGroup == student.group);
@@ -112,8 +112,8 @@ export class Step4Component implements OnInit {
 						}
 						return ac;
 					}, 0)
-					student.score = score.toFixed(2);
-					student.calification = ((score / (filterGroup.length * 5)) * 20).toFixed(2);
+					student.score = score;
+					student.calification = parseFloat(((score / (filterGroup.length * 5)) * 20).toFixed(2));
 				}
 			}
 		})

@@ -14,7 +14,6 @@ export class ReportComponent implements OnInit {
 	public careerSelected: ICareer | null = null
 	public studentAnswerList: IAnswer[] = []
 	public studentInfoList: IStudentInfo[] = [];
-	public answerList: IKeyAnswer[] = [];
 	public studentDataList: IStudentInfo[] = [];
 
 	public data: ChartData | null = null;
@@ -45,15 +44,14 @@ export class ReportComponent implements OnInit {
 	generateExcelFileAll() {
 
 		const book = xlsx.utils.book_new();
+		let list: IStudentInfo[] = []
 		this.careerInfoList.forEach(x => {
 			let studentDataList = this.filterResultsPerCareer(x.career);
-			const sheet = xlsx.utils.json_to_sheet(studentDataList);
-			xlsx.utils.book_append_sheet(book, sheet, x.career + '');
+			list.push(...studentDataList)
 		})
+		const sheet = xlsx.utils.json_to_sheet(list);
+		xlsx.utils.book_append_sheet(book, sheet, 'LISTA DE ESTUDIANTES');
 		xlsx.writeFile(book, 'REPORT_ALL.xlsx');
-	}
-	randomColor() {
-		return '#' + Math.floor(Math.random() * 16777215).toString(16);
 	}
 
 	loadChartData() {
@@ -98,8 +96,6 @@ export class ReportComponent implements OnInit {
 			return ac;
 		}, [] as ICareer[]).sort((a, b) => (b.careerName ?? '') < (a.careerName ?? '') ? 1 : -1);
 
-		this.answerList = await this.storage.getKeyAnswerList();
-
 		this.loadChartData()
 
 	}
@@ -109,9 +105,22 @@ export class ReportComponent implements OnInit {
 		}
 	}
 	filterResultsPerCareer(career: string | null) {
-		let filterStundentCareerList = this.studentInfoList.filter(x => x.career == career).sort((a, b) => parseFloat(b.score ?? '0.00') - parseFloat(a.score ?? '0.00'))
-		filterStundentCareerList.forEach(x => x.merith = filterStundentCareerList.findIndex(y => y.score == x.score) + 1)
-		return filterStundentCareerList;
+		let modality: Record<string, IStudentInfo[]> = {}
+		let list: IStudentInfo[] = []
+		this.studentInfoList.filter(x => x.career == career).forEach(x => {
+			if (modality[x.modality ?? 'SIN MODALIDAD'] == null) modality[x.modality ?? 'SIN MODALIDAD'] = []
+			modality[x.modality ?? 'SIN MODALIDAD'].push(x);
+		})
+		for (const iterator in modality) {
+
+			let filterStundentCareerList = modality[iterator].filter(x => x.career == career).sort((a, b) => b.score - a.score)
+			filterStundentCareerList.forEach((x, i) => {
+				x.merith = filterStundentCareerList.findIndex(y => y.score == x.score) + 1
+				x.n = i + 1
+			})
+			list.push(...filterStundentCareerList)
+		}
+		return list;
 	}
 
 }

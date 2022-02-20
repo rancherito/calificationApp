@@ -8,6 +8,8 @@ export interface IExcelData {
     modality: string | null
 }
 export interface IStudentInfo {
+    n: number | null,
+    merith: null | number,
     code: string | null,
     idBar: string | null,
     career: string | null,
@@ -15,10 +17,9 @@ export interface IStudentInfo {
     dni: string | null,
     fullname: string | null,
     group: string | null,
-    modality: string | null,
-    score: null | string, 
-    calification: null | string,
-    merith: null | number,
+    modality: string,
+    score: number, 
+    calification: number
 }
 export interface IAnswer {
     idBar: string

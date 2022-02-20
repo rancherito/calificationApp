@@ -90,6 +90,7 @@ export class LoadstudentsComponent implements OnInit {
 				}
 				
 				data.push({
+					n: null,
 					code: temporalPush.code,
 					career: temporalPush.career,
 					careerName: temporalPush.careerName,
@@ -97,9 +98,9 @@ export class LoadstudentsComponent implements OnInit {
 					fullname: temporalPush.fullname,
 					group: temporalPush.group,
 					idBar: null,
-					modality: temporalPush.modality,
-					score: '0.00',
-					calification: '0.00',
+					modality: temporalPush.modality??"SIN MODALIDAD",
+					score: 0,
+					calification: 0,
 					merith: null
 				 })
 			})

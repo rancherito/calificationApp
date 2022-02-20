@@ -1,6 +1,8 @@
 <co-recoverdatalayout [extend]="true" label="Reporte">
+    <button pButton routerLink="/">Regresar al inicio</button>
+    <co-box></co-box>
     <div action style="display: grid; gap: .5rem; grid-template-columns: repeat(2, 1fr);">
-        <div class="p-3 shadow-1 link f-c" routerLink="/">Cargar Claves</div>
+        <div class="p-3 shadow-1 link f-c" routerLink="/loadkeys">Cargar Claves</div>
         <div class="p-3 shadow-1 link f-c" routerLink="/loadstudents">Cargar Alumnos</div>
         <div class="p-3 shadow-1 link f-c" routerLink="/step3">Cargar Asistencia</div>
         <div class="p-3 shadow-1 link f-c" routerLink="/step4">Cargar Respuestas</div>
@@ -24,6 +26,7 @@
                 <ng-template pTemplate="header">
                     <tr>
                         <!--<th pSortableColumn="career">Carrera<p-sortIcon field="career"></p-sortIcon></th>-->
+                        <th pSortableColumn="code">#<p-sortIcon field="n"></p-sortIcon></th>
                         <th pSortableColumn="code">Código<p-sortIcon field="career"></p-sortIcon>
                         </th>
                         <th pSortableColumn="fullname">Nombres<p-sortIcon field="career"></p-sortIcon>
@@ -42,7 +45,7 @@
                 </ng-template>
                 <ng-template pTemplate="body" let-student>
                     <tr>
-                        <!--<td>{{student.career}}</td>-->
+                        <td>{{student.n}}</td>
                         <td>{{student.code}}</td>
                         <td>{{student.fullname}}</td>
                         <td>{{student.group}}</td>
