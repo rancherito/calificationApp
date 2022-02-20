@@ -17,7 +17,7 @@
                     <h3 class="pb-4">CLAVES: {{item.total}} | TEMA {{item.group}}</h3>
                     <div class="keys-content">
                         <ng-container *ngFor="let tableKeys of computeKeys()">
-                            <div class="item-key" *ngIf="tableKeys.idGroup == item.group">
+                            <div class="item-key" *ngIf="tableKeys.idGroup == item.group" [class]="{notValid: validateResponseCode(tableKeys.key)}">
                                 <span class="c">{{tableKeys.index}}</span>
                                 <span class="c">{{tableKeys.key}}</span>
                             </div>
@@ -39,8 +39,11 @@
             <input type="file" style="display: none;" (change)="onLoadKeys($event)">
         </label>
         <co-box size="4rem"></co-box>
-        <div *ngIf="countKeyperGroup().length">
-            <p-checkbox [(ngModel)]="isDeleteCabecera" label="Quitar cabecera" [binary]="true"></p-checkbox>
+        <div *ngIf="countKeyperGroup().length" style="text-align: left;">
+            <p-checkbox [(ngModel)]="isDropHeader" label="Quitar cabecera" [binary]="true" (onChange)="dropHeader()"></p-checkbox>
+            <co-box></co-box>
+            <p-checkbox [(ngModel)]="isDropFirstColumn" label="Quitar primera columna" [binary]="true" (onChange)="dropHeader()"></p-checkbox>
+
         </div>
         <co-box size="6rem"></co-box>
 

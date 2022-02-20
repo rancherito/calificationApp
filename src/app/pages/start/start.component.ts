@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { IKeyAnswer} from '../../providersInterfaces';
-import { DatastorageService } from "../../datastorage/datastorage.service";
+import { DatastorageService, IProject } from "../../datastorage/datastorage.service";
 import { Router } from '@angular/router';
 @Component({
 	selector: 'page-start',
@@ -11,16 +11,44 @@ import { Router } from '@angular/router';
 })
 export class StartComponent implements OnInit {
 	public claves: string[] = []
-	public isDeleteCabecera = true;
+	public isDropHeader = true;
+	public isDropFirstColumn = true;
 	public file: string = ""
-	
-	constructor(private datastorageService: DatastorageService, private messageService: MessageService, private router: Router) { }
-
+	public currentProject: IProject | null = null;
+	constructor(private store: DatastorageService, private messageService: MessageService, private router: Router) {
+		this.store.getCurrentProject().subscribe(e => {
+			
+			if (e == null) this.router.navigate(['/'])
+			else {
+				this.currentProject = e
+				this.isDropFirstColumn = e.fileKeysRemoveFirstColumn
+				this.isDropHeader = e.fileKeysHeader
+			}
+		})
+		this.store.restoreFileKeyAnswer().then(e => {
+			this.file = e
+			this.claves = this.store.clearFile(e)
+		})
+	 }
+	dropHeader(){
+		if (this.currentProject != null) {
+			this.currentProject.fileKeysHeader = this.isDropHeader
+			this.currentProject.fileKeysRemoveFirstColumn = this.isDropFirstColumn
+			this.store.setCurrentProject(this.currentProject)
+		}
+		
+	}
+	validateResponseCode(e: string){
+		let reponsesValid = ['A', 'B', 'C', 'D', 'E', 'F']
+		return !reponsesValid.includes(e.toUpperCase())
+	}
 	computeKeys(): IKeyAnswer[]{
+		let startCut = this.isDropFirstColumn ? 1 : 0
 		let tableKeys: IKeyAnswer[] = []
-		let keys = [...this.claves].map(e => e.split(',').filter(e => e.length > 0))
-		if (this.isDeleteCabecera && keys.length > 0) keys = keys.filter((e, i) => i > 0)
+		let keys = [...this.claves].map(e => e.split(',').filter((e, i) => e.length > 0 && i >= startCut))
+		if (this.isDropHeader && keys.length > 0) keys = keys.filter((e, i) => i > 0)
 
+		
 		keys.forEach(e => {
 			if (e.length > 0) {
 				let group = e[0]
@@ -45,19 +73,16 @@ export class StartComponent implements OnInit {
 			let file = a[0]
 			let reader = new FileReader();
 			reader.onload = () => {
-				this.datastorageService.saveFileKeyAnswer(reader.result as string)
+				this.store.saveFileKeyAnswer(reader.result as string)
 				this.file = (reader.result as string)??''
-				this.claves = this.datastorageService.clearFile(reader.result as string)
+				this.claves = this.store.clearFile(reader.result as string)
 			}
 			reader.readAsText(file)
 		}
 	}
 	ngOnInit(): void {
 
-		this.datastorageService.restoreFileKeyAnswer().then(e => {
-			this.file = e
-			this.claves = this.datastorageService.clearFile(e)
-		})
+		
 	}
 	saveInformation(){
 		let correct = false
@@ -66,8 +91,8 @@ export class StartComponent implements OnInit {
 			let referenceCount = count[0].total
 			let averageTotal = count.reduce((ac, i) => ac + i.total,0) / count.length
 			if (referenceCount == averageTotal) {
-				this.datastorageService.setKeyAnswerList(this.computeKeys())
-				this.datastorageService.setAverageKeys(averageTotal);
+				this.store.setKeyAnswerList(this.computeKeys())
+				this.store.setAverageKeys(averageTotal);
 				this.messageService.add({ severity: 'success', detail: 'Lista de claves de respuesta guardados' });
 			}
 			else this.messageService.add({ severity: 'warn', detail: 'Asegure que los grupos tengan la misma cantidad de preguntan' });
@@ -77,7 +102,7 @@ export class StartComponent implements OnInit {
 		//
 	}
 	nextStep(){
-		this.datastorageService.getKeyAnswerList().then(e => {
+		this.store.getKeyAnswerList().then(e => {
 			if (e.length > 0) this.router.navigate(['/loadstudents'])
 			else this.messageService.add({ severity: 'warn', detail: 'Primero guarde la información' });
 		})

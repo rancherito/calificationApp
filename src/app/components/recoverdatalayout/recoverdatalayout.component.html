@@ -1,6 +1,6 @@
 <section [class]="extend?'extend':null">
     <div [class]="extend ? '': null" style="height: 100%;">
-        <div class="action shadow-4 px-4">
+        <div class="action shadow-4 p-4">
             <div style="display: flex; align-items: center; justify-content: flex-end;">
                 <div class="super-title">{{label}}</div>
                 <button routerLink="/" icon="pi pi-home" pButton></button>
@@ -8,6 +8,7 @@
             <div class="action-content">
                 <ng-content select="[action]"></ng-content>
             </div>
+            <div class="nameProject" *ngIf="currentProject != null">{{currentProject.name}}</div>
         </div>
     </div>
 

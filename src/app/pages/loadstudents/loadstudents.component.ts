@@ -44,14 +44,14 @@ export class LoadstudentsComponent implements OnInit {
 		private store: DatastorageService,
 		private messageService: MessageService,
 		private router: Router
-	) {} 
+	) {
+		this.store.reLocationPage()
+	} 
 	evChangeHeader(headerName: string) {
 		this.currentHeaderChange = headerName
 	}
 	evAsingHeader(newHeader: string){
 		if (this.currentHeaderChange) {
-			console.log(this.templateDataHeaderCustom);
-			
 			this.templateDataHeaderCustom[this.currentHeaderChange.toLocaleLowerCase()] = newHeader
 			this.store.setTemplateDataHeaderCustom(this.templateDataHeaderCustom)
 			this.currentHeaderChange = null
@@ -84,7 +84,8 @@ export class LoadstudentsComponent implements OnInit {
 					let indexCareer = this.referenceCareer.findIndex(x => this.store.normalizeString(x.careerName) == this.store.normalizeString(temporalPush.careerName??''))
 					if (indexCareer > -1) {
 						temporalPush.career = this.referenceCareer[indexCareer].career
-						temporalPush.careerName = this.referenceCareer[indexCareer].careerName.toUpperCase()
+						temporalPush.careername = this.referenceCareer[indexCareer].normalize
+						temporalPush.group = this.referenceCareer[indexCareer].idGroup
 						
 					}
 				}
@@ -129,7 +130,9 @@ export class LoadstudentsComponent implements OnInit {
 		this.referenceCareer = await this.store.getCareers()
 		this.dataExcel = await this.store.restoreFileStudentInfo()
 	
-		console.log(await this.store.getTemplateDataHeaderCustom());
+
+		
+		console.log(JSON.stringify(this.referenceCareer.map(x => {return {...x, normalize: x.careerName.toUpperCase()}})));
 		
 		this.templateDataHeaderCustom = await this.store.getTemplateDataHeaderCustom() //JSON.parse(localStorage.getItem('templateDataHeaderCustom')??'{}') as Record<string, string>;
 	}

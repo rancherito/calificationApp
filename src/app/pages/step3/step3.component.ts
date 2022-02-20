@@ -19,21 +19,27 @@ export class Step3Component implements OnInit {
 	public inasistenceList: IStudentInfo[] = []
 	public file: string = ''
 	public relationKeys: IStudentInfo[] = []
+	public repeatedCode: IRelationCodeBar[] = []
 	constructor(
 		private datastorageService: DatastorageService,
 		private router: Router,
 		private message: MessageService
 	) { }
 
-	async ngOnInit() {
+	async loadingData(){
 		this.file = (await this.datastorageService.restoreFileRelationCodeBar()) ?? ''
 		this.dataRelation = this.datastorageService.clearFile(this.file)
-		this.relationKeys = await this._computeRelationKeys()
+		this.relationKeys = (await this._computeRelationKeys()).filter(x => x.idBar != null).sort((a, b) => parseInt(a.code ?? '0') - parseInt(b.idBar ?? '0'))
+		
 
+	}
+	ngOnInit() {
+		this.loadingData()
 	}
 	async _computeRelationKeys() {
 		this.dataLost = []
 		this.inasistenceList = []
+		this.repeatedCode = []
 		let studentInfo = await this.datastorageService.getStudentInfoList()
 		let relationcodebarList: IRelationCodeBar[] = []
 		if (this.dataRelation.length > 1) {
@@ -41,6 +47,21 @@ export class Step3Component implements OnInit {
 				let [idBar, code] = this.dataRelation[i].split(',')
 				relationcodebarList.push({ idBar, code })
 			}
+
+			relationcodebarList.reduce((acc, cur) => {
+				let i = acc.findIndex(x => x.code == cur.code)
+				if (i >= 0) {
+					this.repeatedCode.push(cur)
+					if(this.repeatedCode.findIndex(x => x.idBar == acc[i].idBar) == -1) this.repeatedCode.push(acc[i])
+					return acc
+				}
+				else {
+					acc.push(cur)
+					return acc
+				}
+			}, [] as IRelationCodeBar[])
+
+
 			studentInfo.forEach(e => {
 				let idbar = relationcodebarList.find(r => r.code == e.code)
 				e.idBar = idbar?.idBar ?? null
@@ -50,6 +71,8 @@ export class Step3Component implements OnInit {
 				if (studentInfo.find(t => t.code == e.code) == undefined) this.dataLost.push({ ...e })
 			})
 		}
+		console.log(this.repeatedCode);
+		
 		return studentInfo
 	}
 	nextStep() {
@@ -77,9 +100,12 @@ export class Step3Component implements OnInit {
 			reader.onload = () => {
 				if (reader.result) {
 					this.datastorageService.saveFileRelationCodeBar(reader.result as string)
-					this.file = (reader.result as string) ?? ''
-					this.dataRelation = this.datastorageService.clearFile(reader.result as string)
-					this._computeRelationKeys()
+					/*this.file = (reader.result as string) ?? ''
+					this.dataRelation = this.datastorageService.clearFile(this.file)
+					this._computeRelationKeys().then(e => {
+						this.relationKeys = e.filter(x => x.idBar != null).sort((a, b) => parseInt(a.idBar ?? '0') - parseInt(b.idBar ?? '0'))
+					})*/
+					this.loadingData()
 				}
 			}
 			reader.readAsText(file)

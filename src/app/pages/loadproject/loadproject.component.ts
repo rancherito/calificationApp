@@ -18,13 +18,15 @@ export class LoadprojectComponent implements OnInit {
 		private storage: DatastorageService,
 		private route: Router,
 		private firestore: Firestore
-	) { }
+	) {
+		this.storage.getProjects().then(projects => {
+			this.projects = projects.sort((a, b) => b.createdDate - a.createdDate);
+		})
+	 }
 	
 
 	ngOnInit(): void {
-		this.storage.getProjects().then(projects => {
-			 this.projects = projects.sort((a, b) => b.createdDate - a.createdDate);
-		})
+		
 		
 		
 	}
@@ -34,7 +36,9 @@ export class LoadprojectComponent implements OnInit {
 			let project: IProject = {
 				createdDate: new Date().getTime(),
 				name: this.newProject,
-				uuid: Guid.create().toString()
+				uuid: Guid.create().toString(),
+				fileKeysHeader: true,
+				fileKeysRemoveFirstColumn: true
 			}
 			this.storage.saveProject(project);
 			this.storage.getProjects().then(projects => {
@@ -45,10 +49,16 @@ export class LoadprojectComponent implements OnInit {
 		
 	}
 	setProject(project: IProject){
-		console.log(project);
 		
 		this.storage.setCurrentProject(project);
-		this.route.navigate(['/loadkeys']);
+		this.storage.getStudentInfoList().then(students => {
+			if (students.every(x => x.calification == 0)) {
+				this.route.navigate(['/loadkeys']);
+			}
+			else
+				this.route.navigate(['/report']);
+		})
+		//
 	}
 
 }

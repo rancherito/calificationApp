@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { addDoc, collection, doc, Firestore, getDoc, getDocs, setDoc } from '@angular/fire/firestore';
 import { IAnswer, IKeyAnswer, IExcelData, IStudentInfo, ICareer, ICareerInfo } from "../providersInterfaces";
+import { Observable, of } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Injectable({
 	providedIn: 'root'
@@ -9,19 +11,21 @@ export class DatastorageService {
 	
 	async getCareers(): Promise<ICareerInfo[]> {
 		return [
-			{ careerName: 'Administración y Negocios Internacionales', idGroup: 'R', career: 'AN' },
-			{ careerName: 'Contabilidad y Finanzas', idGroup: 'R', career: 'CF' },
-			{ careerName: 'Derecho y Ciencias Políticas', idGroup: 'R', career: 'DC' },
-			{ careerName: 'Ecoturismo', idGroup: 'R', career: 'EC' },
-			{ careerName: 'Educación Matemática y Computación', idGroup: 'R', career: 'ED' },
-			{ careerName: 'Educación Inicial y Especial', idGroup: 'R', career: 'EI' },
-			{ careerName: 'Educación Primaria e Informática', idGroup: 'R', career: 'EP' },
-			{ careerName: 'Enfermeria', idGroup: 'Q', career: 'EF' },
-			{ careerName: 'Medicina Veterinaria y Zootecnia', idGroup: 'Q', career: 'MV' },
-			{ careerName: 'Ingeniería Agroindustrial', idGroup: 'P', career: 'IA' },
-			{ careerName: 'Ingeniería Forestal y Medio Ambiente', idGroup: 'P', career: 'IF' },
-			{ careerName: 'Ingeniería de Sistemas e Informática', idGroup: 'P', career: 'IS' }
-		]
+			{ "careerName": "Administración y Negocios Internacionales", "idGroup": "R", "career": "AN", "normalize": "ADMINISTRACIÓN Y NEGOCIOS INTERNACIONALES" }, 
+			{ "careerName": "Contabilidad y Finanzas", "idGroup": "R", "career": "CF", "normalize": "CONTABILIDAD Y FINANZAS" }, 
+			{ "careerName": "Derecho y Ciencias Políticas", "idGroup": "R", "career": "DC", "normalize": "DERECHO Y CIENCIAS POLÍTICAS" }, 
+			{ "careerName": "Ecoturismo", "idGroup": "R", "career": "EC", "normalize": "ECOTURISMO" }, 
+			{ "careerName": "Educación Especialidad Inicial y Especial", "idGroup": "R", "career": "EI", "normalize": "EDUCACIÓN: ESPECIALIDAD INICIAL Y ESPECIAL" }, 
+			{ "careerName": "Educación Especialidad Primaria e Informática", "idGroup": "R", "career": "EP", "normalize": "EDUCACIÓN: ESPECIALIDAD PRIMARIA E INFORMÁTICA" }, 
+			{ "careerName": "Educación Especialidad Matemática y Computación", "idGroup": "R", "career": "ED", "normalize": "EDUCACIÓN: ESPECIALIDAD MATEMÁTICA Y COMPUTACIÓN" }, 
+			{ "careerName": "Educación Matemática y Computación", "idGroup": "R", "career": "ED", "normalize": "EDUCACIÓN: ESPECIALIDAD MATEMÁTICA Y COMPUTACIÓN" }, 
+			{ "careerName": "Educación Inicial y Especial", "idGroup": "R", "career": "EI", "normalize": "EDUCACIÓN: ESPECIALIDAD INICIAL Y ESPECIAL" }, 
+			{ "careerName": "Educación Primaria e Informática", "idGroup": "R", "career": "EP", "normalize": "EDUCACIÓN: ESPECIALIDAD PRIMARIA E INFORMÁTICA" }, 
+			{ "careerName": "Enfermeria", "idGroup": "Q", "career": "EF", "normalize": "ENFERMERIA" }, 
+			{ "careerName": "Medicina Veterinaria y Zootecnia", "idGroup": "Q", "career": "MV", "normalize": "MEDICINA VETERINARIA Y ZOOTECNIA" }, 
+			{ "careerName": "Ingeniería Agroindustrial", "idGroup": "P", "career": "IA", "normalize": "INGENIERÍA AGROINDUSTRIAL" }, 
+			{ "careerName": "Ingeniería Forestal y Medio Ambiente", "idGroup": "P", "career": "IF", "normalize": "INGENIERÍA FORESTAL Y MEDIO AMBIENTE" }, 
+			{ "careerName": "Ingeniería de Sistemas e Informática", "idGroup": "P", "career": "IS", "normalize": "INGENIERÍA DE SISTEMAS E INFORMÁTICA" }]
 	}
 	private matColors: any = {
 		"Amber": {
@@ -253,13 +257,18 @@ export class DatastorageService {
 			900: '#F57F17',
 		}
 	}
-	private currentProject: IProject | null;
-
+	private currentProject: IProject | null = null;
 
 	constructor(
 		private firestore: Firestore,
+		private route: Router,
 	) {
-		this.currentProject = this.getCurrentProject();		
+
+		this.currentProject = JSON.parse(localStorage.getItem('currentProject') ?? 'null');
+	}
+
+	reLocationPage(){
+		if (this.currentProject == null) this.route.navigate(['/']);
 	}
 	normalizeString(str: string) {
 		return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w\s]/gi, '').trim().split(" ").filter(x => x.length > 3).join(" ").toUpperCase()
@@ -273,9 +282,8 @@ export class DatastorageService {
 		return colors;
 	}
 	private async getCurrentProjectDataKey(key: string){
-		let current = this.getCurrentProject()
-		if (current != null) {
-			let docInfo = await getDoc(doc(this.firestore, current.uuid, key))
+		if (this.currentProject != null) {
+			let docInfo = await getDoc(doc(this.firestore, this.currentProject.uuid, key))
 			if (docInfo.exists()) {
 				let data = JSON.parse(docInfo.data().data ?? 'null')
 				return data;
@@ -283,20 +291,11 @@ export class DatastorageService {
 		}
 		
 		return null;
-
-		//let project = this.getCurrentProjectData();
-		//if (this.currentProject == null) return null
-		//return JSON.parse(localStorage.getItem(`${this.currentProject.uuid}-${key}`) ?? 'null');
 	}
 	private setCurrentProjectData(key: string, data: any) {
 		
 		if (this.currentProject == null) return new Promise<void>(resolve => resolve());
 		return setDoc(doc(this.firestore, this.currentProject.uuid, key), { data: JSON.stringify(data)});
-
-		//localStorage.setItem(`${this.currentProject.uuid}-${key}`, JSON.stringify(data));
-		/*let project = this.getCurrentProjectData();
-		project[key] = data;
-		localStorage.setItem(this.currentProject.uuid, JSON.stringify(project));*/
 	}
 	//FILE DATA
 	saveFileResponses(fileResponses: string) {
@@ -307,9 +306,9 @@ export class DatastorageService {
 		return this.getCurrentProjectDataKey('fileResponses');
 		//return localStorage.getItem('fileResponses')
 	}
-	restoreFileStudentInfo(): Promise<Record<string, string>[]> {
+	async restoreFileStudentInfo(): Promise<Record<string, string>[]> {
 		
-		return this.getCurrentProjectDataKey('fileStudentInfo') ?? [];
+		return (await this.getCurrentProjectDataKey('fileStudentInfo')) ?? [];
 		//return JSON.parse(localStorage.getItem('fileStudentInfo') ?? '[]') as Record<string, string>[]
 	}
 	saveFileStudentInfo(fileStudentInfo: any) {
@@ -381,10 +380,13 @@ export class DatastorageService {
 		setDoc(doc(docRef, project.uuid), project)
 	}
 	setCurrentProject(project: IProject) {
+		this.currentProject = project;
+		this.saveProject(project)
 		localStorage.setItem('currentProject', JSON.stringify(project))
 	}
-	getCurrentProject(): IProject {
-		return JSON.parse(localStorage.getItem('currentProject') ?? 'null') as IProject
+	getCurrentProject() {
+		const c = of(this.currentProject);
+		return c
 	}
 	async getTemplateDataHeaderCustom(): Promise<Record<string, string>> {
 		return (await this.getCurrentProjectDataKey('templateDataHeaderCustom')) ?? {} as Record<string, string>;
@@ -397,5 +399,7 @@ export class DatastorageService {
 export interface IProject {
 	name: string
 	uuid: string
-	createdDate: number
+	createdDate: number,
+	fileKeysHeader: boolean
+	fileKeysRemoveFirstColumn: boolean
 }

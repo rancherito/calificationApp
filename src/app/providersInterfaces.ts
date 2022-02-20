@@ -44,5 +44,6 @@ export interface ICareer {
 export interface ICareerInfo {
     career: string 
     careerName: string
-    idGroup: string
+    idGroup: string,
+    normalize: string
 }

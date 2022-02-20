@@ -34,14 +34,14 @@
 
             </div>
         </div>
-        <div class="p-3">
+        <div class="p-3" style="overflow-y: auto; height: 100%;">
             <div style="display: grid; gap: .5rem;">
                 <co-card class="shadow-1">
-                    <span>ASISTENCIA: {{dataRelation.length - 1}} de {{relationKeys.length}}</span>
+                    <span>{{relationKeys.length}} ENCONTRADOS  DE {{dataRelation.length - 1}} ESCANEADOS</span>
                 </co-card>
                 <co-card *ngIf="dataLost.length" class="shadow-1">
                     <div class="mb-4">
-                        <h3>Codigos perdidos</h3>
+                        <h3>Identificadores perdidos</h3>
                         Los siguientes codigos en cartillas no corresponden a ningun estudiante registrado.
                     </div>
                     <table style="width: 100%;">
@@ -53,6 +53,26 @@
                         </thead>
                         <tbody>
                             <tr *ngFor="let item of dataLost">
+                                <td>{{item.code}}</td>
+                                <td>{{item.idBar}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </co-card>
+                <co-card *ngIf="dataLost.length" class="shadow-1">
+                    <div class="mb-4">
+                        <h3>Identificadores duplicados</h3>
+                        Los siguientes Identificadores estan asociados a un mismo alumno.
+                    </div>
+                    <table style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th class="text-left">CODIGO</th>
+                                <th class="text-left">ID BARRA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of repeatedCode">
                                 <td>{{item.code}}</td>
                                 <td>{{item.idBar}}</td>
                             </tr>

@@ -33,3 +33,13 @@
     font-weight: normal;
     background-color: rgb(170, 170, 170);
 }
+
+.notValid.item-key span{
+    font-weight: bold;
+    padding: .25rem;
+    background-color: rgb(255, 237, 237);
+}
+.notValid.item-key span:nth-child(1){
+    background-color: rgb(255, 113, 113);
+    font-weight: normal;
+}
