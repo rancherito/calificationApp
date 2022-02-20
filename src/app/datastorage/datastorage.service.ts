@@ -273,9 +273,9 @@ export class DatastorageService {
 		return colors;
 	}
 	private async getCurrentProjectDataKey(key: string){
-
-		if (this.currentProject != null) {
-			let docInfo = await getDoc(doc(this.firestore, this.currentProject.uuid, key))
+		let current = this.getCurrentProject()
+		if (current != null) {
+			let docInfo = await getDoc(doc(this.firestore, current.uuid, key))
 			if (docInfo.exists()) {
 				let data = JSON.parse(docInfo.data().data ?? 'null')
 				return data;
@@ -318,6 +318,7 @@ export class DatastorageService {
 	}
 
 	restoreFileKeyAnswer() {
+		
 		return this.getCurrentProjectDataKey('fileKeyAnswer');
 		//return localStorage.getItem('fileKeyAnswers')
 	}

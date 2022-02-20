@@ -1,15 +1,17 @@
 <section [class]="extend?'extend':null">
     <div [class]="extend ? '': null" style="height: 100%;">
-       <div class="action shadow-4">
-            <div class="super-title">{{label}}</div>
+        <div class="action shadow-4 px-4">
+            <div style="display: flex; align-items: center; justify-content: flex-end;">
+                <div class="super-title">{{label}}</div>
+                <button routerLink="/" icon="pi pi-home" pButton></button>
+            </div>
             <div class="action-content">
                 <ng-content select="[action]"></ng-content>
             </div>
         </div>
     </div>
-    
-    <div class="view" *ngIf="extend" style="width: 100%; height: 100%; overflow-y: auto;"> 
+
+    <div class="view" *ngIf="extend" style="width: 100%; height: 100%; overflow-y: auto;">
         <ng-content select="[view]"></ng-content>
     </div>
 </section>
-

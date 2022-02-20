@@ -1,11 +1,14 @@
 <co-recoverdatalayout [extend]="true" label="Reporte">
-    <button pButton routerLink="/">Regresar al inicio</button>
-    <co-box></co-box>
-    <div action style="display: grid; gap: .5rem; grid-template-columns: repeat(2, 1fr);">
-        <div class="p-3 shadow-1 link f-c" routerLink="/loadkeys">Cargar Claves</div>
-        <div class="p-3 shadow-1 link f-c" routerLink="/loadstudents">Cargar Alumnos</div>
-        <div class="p-3 shadow-1 link f-c" routerLink="/step3">Cargar Asistencia</div>
-        <div class="p-3 shadow-1 link f-c" routerLink="/step4">Cargar Respuestas</div>
+    
+    <div action>
+        <button pButton routerLink="/" style="width: 100%;">Regresar al inicio</button>
+        <co-box></co-box>
+        <div style="display: grid; gap: .5rem; grid-template-columns: repeat(2, 1fr);">
+            <div class="p-3 shadow-1 link f-c" routerLink="/loadkeys">Cargar Clave</div>
+            <div class="p-3 shadow-1 link f-c" routerLink="/loadstudents">Cargar Alumnos</div>
+            <div class="p-3 shadow-1 link f-c" routerLink="/step3">Cargar Asistencia</div>
+            <div class="p-3 shadow-1 link f-c" routerLink="/step4">Cargar Respuestas</div>
+        </div>
     </div>
     <div view style="height: 100%; width: 100%; overflow-y: auto;">
         <div class="p-4" *ngIf="careerSelected != null">
@@ -17,7 +20,6 @@
                     <p-button *ngIf="studentDataList.length" (onClick)="generateExcelFile()"
                         [style]="{background: 'var(--cyan-600)'}">
                         Exportar selección a Excel</p-button>
-
                 </div>
                 <button pButton type="button" icon="pi pi-times" class="p-button-text p-button-rounded"
                     (click)="careerSelected = null"></button>

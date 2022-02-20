@@ -1,12 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { RouterModule } from '@angular/router';
 import { BoxComponent } from './box/box.component';
 import { CardComponent } from './card/card.component';
 import { RecoverdatalayoutComponent } from "./recoverdatalayout/recoverdatalayout.component";
 
 import { ScrollPanelModule } from "primeng/scrollpanel";
 import { LayoutBottomComponent } from './layout-bottom/layout-bottom.component';
+import {ButtonModule} from 'primeng/button'
 let comps = [
   BoxComponent,
   CardComponent,
@@ -18,7 +19,9 @@ let comps = [
   exports: [...comps],
   imports: [
     CommonModule,
-    ScrollPanelModule
+    ButtonModule,
+    ScrollPanelModule,
+    RouterModule
   ]
 })
 export class ComponentsModule { }
