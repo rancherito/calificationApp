@@ -264,7 +264,7 @@ export class DatastorageService {
 		private route: Router,
 	) {
 
-		this.currentProject = JSON.parse(localStorage.getItem('currentProject') ?? 'null');
+		this.currentProject = JSON.parse(localStorage.getItem('currentProject') ?? 'null') as IProject | null;
 	}
 
 	reLocationPage(){
@@ -282,20 +282,26 @@ export class DatastorageService {
 		return colors;
 	}
 	private async getCurrentProjectDataKey(key: string){
+		let data: string | null = null;
+
 		if (this.currentProject != null) {
 			let docInfo = await getDoc(doc(this.firestore, this.currentProject.uuid, key))
-			if (docInfo.exists()) {
-				let data = JSON.parse(docInfo.data().data ?? 'null')
-				return data;
-			}
+			if (docInfo.exists()) data = docInfo.data().data as string;
 		}
-		
-		return null;
+		return new Promise<any>((resolve, reject) => {
+			if (data != null) resolve(JSON.parse(data))
+			else reject('Null data')
+		});
 	}
-	private setCurrentProjectData(key: string, data: any) {
-		
-		if (this.currentProject == null) return new Promise<void>(resolve => resolve());
-		return setDoc(doc(this.firestore, this.currentProject.uuid, key), { data: JSON.stringify(data)});
+	private async setCurrentProjectData(key: string, data: any) {
+		let callback: void | null = null;
+		if (this.currentProject != null) {
+			callback = await setDoc(doc(this.firestore, this.currentProject.uuid, key), { data: JSON.stringify(data) })
+		}
+		return new Promise<void>((resolve, reject) => {
+			if (callback != null) resolve()
+			else reject('Null data')
+		});
 	}
 	//FILE DATA
 	saveFileResponses(fileResponses: string) {
@@ -369,15 +375,25 @@ export class DatastorageService {
 	//File project gestor
 	async getProjects(): Promise<IProject[]> {
 		let list: IProject[] = [];
-		let docs = await getDocs(collection(this.firestore, 'projects'))
-		docs.docs.forEach(doc => {
-			list.push(doc.data() as IProject);
-		})
-		return list;
+		let localProjects = localStorage.getItem('projects')
+		if (localProjects == null) {
+			let docs = await getDocs(collection(this.firestore, 'projects'))
+
+			docs.docs.forEach(doc => {
+				list.push(doc.data() as IProject);
+			})
+			localStorage.setItem('projects', JSON.stringify(list));
+			return list;
+		}
+		return JSON.parse(localProjects) as IProject[];
 	}
 	saveProject(project: IProject) {
-		let docRef = collection(this.firestore, 'projects');
-		setDoc(doc(docRef, project.uuid), project)
+		let list = JSON.parse(localStorage.getItem('projects')??'[]') as IProject[];
+		let index = list.findIndex(e => e.uuid == project.uuid);
+		if (index != -1) list[index] = project;
+		else list.push(project);
+		localStorage.setItem('projects', JSON.stringify(list));		
+		setDoc(doc(collection(this.firestore, 'projects'), project.uuid), project)
 	}
 	setCurrentProject(project: IProject) {
 		this.currentProject = project;
@@ -394,12 +410,12 @@ export class DatastorageService {
 	setTemplateDataHeaderCustom(data: Record<string, string>): Promise<void> {
 		return this.setCurrentProjectData('templateDataHeaderCustom', data);
 	}
-
 }
 export interface IProject {
 	name: string
 	uuid: string
-	createdDate: number,
+	createdDate: number
 	fileKeysHeader: boolean
 	fileKeysRemoveFirstColumn: boolean
+	unidad?: string
 }

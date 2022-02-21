@@ -31,7 +31,8 @@ import { ReportDataComponent } from './report-data/report-data.component';
 import { ReportComponent } from './report/report.component';
 import { CoModalityListComponent } from './report/co-modality-list/co-modality-list.component';
 import { LoadprojectComponent } from './loadproject/loadproject.component';
-
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { DialogModule } from 'primeng/dialog';
 let comps: any[] = [
   StartComponent,
   TestComponent,
@@ -58,7 +59,9 @@ let comps: any[] = [
     MessagesModule,
     MessageModule,
     ChartModule,
-    CodemirrorModule
+    CodemirrorModule,
+    DialogModule,
+    RadioButtonModule
   ]
 })
 export class PagesModule { }

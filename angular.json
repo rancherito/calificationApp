@@ -24,7 +24,10 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "allowedCommonJsDependencies": [
-              "lodash"
+              "lodash",
+              "xlsx",
+              "codemirror/mode/javascript/javascript",
+              "codemirror/mode/markdown/markdown"
             ],
             "outputPath": "dist/calificationApp",
             "index": "src/index.html",

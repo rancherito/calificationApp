@@ -1,19 +1,58 @@
 <section>
-    <div style="width: 100%; max-width: 400px; display: grid; gap: .5rem;">
-        <co-card class="shadow-1 item-project" style="height: 60px;" *ngIf="!onNew" (click)="onNew = true">
+    <div class="project-content">
+        <co-card class="shadow-1 item-project-button" style="height: 60px;" (click)="newProject()">
             <i class="pi pi-plus"></i><span>Crear nuevo proyecto</span>
         </co-card>
-        <co-card class="shadow-1 item-project" style="height: 60px; display: flex; gap: .5rem;" *ngIf="onNew">
-            <input type="text" autofocus style="border: 0; flex: 1" [(ngModel)]="newProject">
-            <button pButton icon="pi pi-send" (click)="saveProject()"></button>
-            <button pButton icon="pi pi-times" (click)="onNew = false"></button>
-        </co-card>
-        <co-card *ngFor="let item of projects" class="item-project" (click)="setProject(item)">
-            <i class="pi pi-box"></i><span>{{item.name}}</span>
-        </co-card>
+        <div *ngFor="let item of projects" class="item-project">
+            <co-card class="item-project-button" (click)="setProject(item)">
+                <i class="pi pi-box"></i><span>{{item.name}}</span>
+            </co-card>
+            <button pButton icon="pi pi-pencil" class="shadow-1 b-edit" (click)="editProject(item)"></button>
+        </div>
+
     </div>
     <div class="text-center">
         <img src="/assets/present.svg" alt="s">
         <div class="label-project">Proyectos de calificación</div>
     </div>
 </section>
+    <p-dialog [header]="onNew == 1? 'CREAR PROYECTO': 'EDITAR: '+ currentEditProject.name" [visible]="onNew != 0" (visibleChange)="onNew = 0" [modal]="true"
+        [style]="{width: '90%', 'max-width': '800px'}">
+        <div class="py-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="f-c">
+                <img src="/assets/edit.svg" alt="edit file" style="max-height: 160px;">
+            </div>
+            <div>
+                <span class="p-float-label">
+                    <input id="float-input" type="text" pInputText [(ngModel)]="currentEditProject.name">
+                    <label for="float-input">Nombre del proyecto</label>
+                </span>
+                <div class="mt-4">
+                    <h4 class="mb-4">Elegir unidad</h4>
+                    <div class="field-radiobutton">
+                        <p-radioButton name="admision" value="admision" [(ngModel)]="currentEditProject.unidad"
+                            inputId="admision">
+                        </p-radioButton>
+                        <label for="admision">ADMISIÓN</label>
+                    </div>
+                    <div class="field-radiobutton">
+                        <p-radioButton name="cepre" value="cepre" [(ngModel)]="currentEditProject.unidad"
+                            inputId="cepre">
+                        </p-radioButton>
+                        <label for="cepre">CEPRE</label>
+                    </div>
+                    <div class="field-radiobutton">
+                        <p-radioButton name="otros" value="otros" [(ngModel)]="currentEditProject.unidad"
+                            inputId="otros">
+                        </p-radioButton>
+                        <label for="otros">OTROS</label>
+                    </div>
+
+                </div>
+                <div class="mt-4 text-right">
+                    <button pButton (click)="saveProject()" class="p-button-sm">Salvar</button>
+                </div>
+            </div>
+            
+        </div>
+    </p-dialog>

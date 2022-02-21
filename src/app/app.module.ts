@@ -10,7 +10,9 @@ import { AppComponent } from './app.component';
 import { PagesModule } from "./pages/pages.module";
 import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
 import { environment } from '../environments/environment';
-import { provideFirestore,getFirestore } from '@angular/fire/firestore';
+import { provideFirestore,getFirestore, enableIndexedDbPersistence } from '@angular/fire/firestore';
+
+
 @NgModule({
   declarations: [
     AppComponent
@@ -22,7 +24,11 @@ import { provideFirestore,getFirestore } from '@angular/fire/firestore';
     AppRoutingModule,
     PagesModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
-    provideFirestore(() => getFirestore())
+    provideFirestore(() => {
+      const firesotre = getFirestore()
+      enableIndexedDbPersistence(firesotre)
+      return firesotre
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]

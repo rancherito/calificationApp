@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Guid } from 'guid-typescript';
 import { DatastorageService, IProject } from 'src/app/datastorage/datastorage.service';
-import { addDoc, collection, doc, DocumentData, Firestore, getDoc, setDoc } from '@angular/fire/firestore';
-import { getDocs } from 'firebase/firestore';
+
 //import {addDoc, collection, Firestore} from 'firebase/firestore';
 @Component({
 	selector: 'page-loadproject',
@@ -12,40 +11,46 @@ import { getDocs } from 'firebase/firestore';
 })
 export class LoadprojectComponent implements OnInit {
 	public projects: IProject[] = [];
-	public newProject = "Nuevo proyecto";
-	public onNew = false
+	public currentEditProject: IProject
+	public onNew = 0
+	public openCrud = false
 	constructor(
 		private storage: DatastorageService,
-		private route: Router,
-		private firestore: Firestore
+		private route: Router
 	) {
 		this.storage.getProjects().then(projects => {
 			this.projects = projects.sort((a, b) => b.createdDate - a.createdDate);
 		})
+		this.currentEditProject = {
+			createdDate: new Date().getTime(),
+			name: "Nuevo proyecto",
+			uuid: Guid.create().toString(),
+			fileKeysHeader: true,
+			fileKeysRemoveFirstColumn: true,
+			unidad: 'otros'
+		}
 	 }
 	
-
+	newProject(){
+		this.onNew = 1;
+	}
 	ngOnInit(): void {
 		
-		
-		
 	}
-	
+	editProject(project: IProject){
+		this.currentEditProject = {...project};
+		this.openCrud = true;
+		this.onNew = 2;
+	}
 	saveProject(){
-		if (this.newProject != null) {
-			let project: IProject = {
-				createdDate: new Date().getTime(),
-				name: this.newProject,
-				uuid: Guid.create().toString(),
-				fileKeysHeader: true,
-				fileKeysRemoveFirstColumn: true
-			}
-			this.storage.saveProject(project);
-			this.storage.getProjects().then(projects => {
-				this.projects = projects.sort((a, b) => b.createdDate - a.createdDate);
-				this.onNew = false;
-			})
-		}
+		if (this.onNew == 1) this.currentEditProject.createdDate = new Date().getTime();
+		
+		this.storage.saveProject(this.currentEditProject);
+		this.storage.getProjects().then(projects => {
+			this.projects = projects.sort((a, b) => b.createdDate - a.createdDate);
+			this.onNew = 0;
+		})
+	
 		
 	}
 	setProject(project: IProject){
