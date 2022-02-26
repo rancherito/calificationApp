@@ -17,6 +17,7 @@ export class ReportComponent implements OnInit {
 	public studentDataList: IStudentInfo[] = [];
 	public totalStudents: number = 0;
 	public data: ChartData | null = null;
+	public average: number = 0;
 
 
 	constructor(
@@ -24,6 +25,9 @@ export class ReportComponent implements OnInit {
 	) {
 	}
 
+	percentCalcule(num: number, total: number) {
+		return ((num * 100) / total) + '%';
+	}
 	selectCareer(career: ICareer) {
 		this.careerSelected = career;
 		this.studentDataList = this.filterResultsPerCareer(career.career);
@@ -67,7 +71,7 @@ export class ReportComponent implements OnInit {
 		this.careerInfoList.forEach(x => {
 
 			chartTotalStudentsLabel.push(x.career ?? '');
-			chartTotalStudentsDataset[0].data.push(x.totalStundets);
+			chartTotalStudentsDataset[0].data.push(x.totalStundents);
 		})
 		chartTotalStudentsDataset[0].backgroundColor = this.storage.getColors()
 
@@ -82,16 +86,19 @@ export class ReportComponent implements OnInit {
 
 
 		this.studentInfoList = await this.storage.getStudentInfoList()//.filter(x => x.idBar != null);
-
+		this.average = await this.storage.getAverageKeys();
 		this.careerInfoList = this.studentInfoList.reduce((ac, i) => {
 			let index = ac.findIndex(x => x.career == i.career);
 			if (index > -1) {
-				ac[index].totalStundets++;
+				ac[index].totalStundents++;
+				ac[index].asistence += (i.idBar != null ? 1 : 0)
+
 			}
 			else ac.push({
-				career: i.career,
-				totalStundets: 1,
+				career: i.career, 
+				totalStundents: 1,
 				careerName: i.careerName,
+				asistence: i.idBar != null ? 1 : 0
 			});
 			return ac;
 		}, [] as ICareer[]).sort((a, b) => (b.careerName ?? '') < (a.careerName ?? '') ? 1 : -1);

@@ -93,11 +93,17 @@ export class Step4Component implements OnInit {
 		let answers = this.processAnswers();
 
 		list.forEach(student => {
+			student.score = 0;
+			student.calification = 0;
+			student._b = 0
+			student._c = 0
+			student._n = 0
+
 			if (student.idBar == null) {
-				student.score = 0;
-				student.calification = 0;
+				student._b = 60
 			}
 			else {
+
 				let filterGroup = this.answerList.filter(e => e.idGroup == student.group);
 				let studentAnswer = answers.filter(x => x.idBar == student.idBar)
 
@@ -105,10 +111,19 @@ export class Step4Component implements OnInit {
 
 
 					let score = studentAnswer.reduce((ac, i) => {
+
 						let find = filterGroup.find(e => e.index == i.idQuestion);
 						if (find != undefined) {
-							if (i.answer == null) return ac + .5;
-							else if (i.answer == find.key) return ac + 5;
+							if (i.answer == null) {
+								ac += .5;
+								student._b = (student._b ?? 0) + 1
+							}
+							else if (i.answer == find.key) {
+								
+								ac += 5;
+								student._c = (student._c ?? 0) + 1
+							}
+							else student._n = (student._n ?? 0) + 1
 						}
 						return ac;
 					}, 0)
@@ -117,6 +132,8 @@ export class Step4Component implements OnInit {
 				}
 			}
 		})
+		console.log(list);
+
 		let promise = this.dataStorageService.setStudentInfoList(list)
 		if (promise != null) {
 			promise.then(() => {
@@ -131,9 +148,12 @@ export class Step4Component implements OnInit {
 	}
 	validate() {
 		this.dataStorageService.getStudentInfoList().then(x => {
-			let every = x.every(e => e.calification != null)
-			if (every) this.router.navigate(['/report'])
-			else this.message.add({ detail: 'Guarde antes las notas', severity: 'warn' })
+			let everyNull = x.every(e => e.calification == null)
+			let everyZero = x.every(e => e.calification == 0)
+
+
+			if (everyZero || everyNull) this.message.add({ detail: 'Guarde antes las notas', severity: 'warn' })
+			else this.router.navigate(['/report'])
 
 		})
 

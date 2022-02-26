@@ -28,12 +28,14 @@ export class CoModalityListComponent implements OnInit {
 				if (i.modality == mod) {
 					let index = ac.findIndex(x => x.career == i.career);
 					if (index > -1) {
-						ac[index].totalStundets++;
+						ac[index].totalStundents++;
+						ac[index].asistence += i.idBar != null ? 1 : 0
 					}
 					else ac.push({
 						career: i.career,
-						totalStundets: 1,
+						totalStundents: 1,
 						careerName: i.careerName,
+						asistence: i.idBar != null ? 1 : 0
 					});
 				}
 				return ac;
@@ -58,13 +60,13 @@ export class CoModalityListComponent implements OnInit {
 			mod.careers.forEach(x => {
 
 				chartTotalStudentsLabel.push(x.career ?? '');
-				chartTotalStudentsDataset[0].data.push(x.totalStundets);
+				chartTotalStudentsDataset[0].data.push(x.totalStundents);
 			})
 			chartTotalStudentsDataset[0].backgroundColor = this.storage.getColors()
 
 			this.charts.push({
 				label: mod.modality,
-				totalStudents: mod.careers.reduce((ac, i) => ac + i.totalStundets, 0),
+				totalStudents: mod.careers.reduce((ac, i) => ac + i.totalStundents, 0),
 				data: {
 					labels: chartTotalStudentsLabel,
 					datasets: chartTotalStudentsDataset

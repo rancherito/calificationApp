@@ -17,9 +17,12 @@ export interface IStudentInfo {
     dni: string | null,
     fullname: string | null,
     group: string | null,
-    modality: string,
-    score: number, 
+    modality: string
+    score: number
     calification: number
+    _b?: number
+    _c?: number
+    _n?: number
 }
 export interface IAnswer {
     idBar: string
@@ -39,7 +42,8 @@ export interface IRelationCodeBar {
 export interface ICareer {
     career: string | null
     careerName: string | null
-    totalStundets: number
+    totalStundents: number,
+    asistence: number
 }
 export interface ICareerInfo {
     career: string 

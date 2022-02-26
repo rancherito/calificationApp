@@ -102,7 +102,10 @@ export class LoadstudentsComponent implements OnInit {
 					modality: temporalPush.modality??"SIN MODALIDAD",
 					score: 0,
 					calification: 0,
-					merith: null
+					merith: null,
+					_b: 0,
+					_n: 0,
+					_c: 0
 				 })
 			})
 			

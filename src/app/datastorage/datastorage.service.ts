@@ -282,25 +282,30 @@ export class DatastorageService {
 		return colors;
 	}
 	private async getCurrentProjectDataKey(key: string){
-		let data: string | null = null;
-
-		if (this.currentProject != null) {
-			let docInfo = await getDoc(doc(this.firestore, this.currentProject.uuid, key))
-			if (docInfo.exists()) data = docInfo.data().data as string;
-		}
 		return new Promise<any>((resolve, reject) => {
-			if (data != null) resolve(JSON.parse(data))
-			else reject('Null data')
+			if (this.currentProject == null) reject('Null project')
+			else {
+				getDoc(doc(this.firestore, this.currentProject.uuid, key)).then(docInfo => {
+					docInfo.exists() ? resolve(JSON.parse(docInfo.data().data as string)) : reject('No data')
+				}).catch(err => {
+					reject(err)
+				})
+			}
 		});
 	}
-	private async setCurrentProjectData(key: string, data: any) {
-		let callback: void | null = null;
-		if (this.currentProject != null) {
-			callback = await setDoc(doc(this.firestore, this.currentProject.uuid, key), { data: JSON.stringify(data) })
-		}
+	private setCurrentProjectData(key: string, data: any) {
+
 		return new Promise<void>((resolve, reject) => {
-			if (callback != null) resolve()
-			else reject('Null data')
+			if(this.currentProject == null){
+				reject('Null project')
+			}
+			else{
+				setDoc(doc(this.firestore, this.currentProject.uuid, key), { data: JSON.stringify(data) }).then(() => {
+					resolve()
+				}).catch((e) => {
+					reject(e)
+				});
+			}
 		});
 	}
 	//FILE DATA
@@ -417,5 +422,6 @@ export interface IProject {
 	createdDate: number
 	fileKeysHeader: boolean
 	fileKeysRemoveFirstColumn: boolean
-	unidad: string
+	unidad: string,
+	minScore?: number
 }

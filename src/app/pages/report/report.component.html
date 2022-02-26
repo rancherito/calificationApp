@@ -1,8 +1,6 @@
 <co-recoverdatalayout [extend]="true" label="Reporte">
     
     <div action>
-        <button pButton routerLink="/" style="width: 100%;">Regresar al inicio</button>
-        <co-box></co-box>
         <div style="display: grid; gap: .5rem; grid-template-columns: repeat(2, 1fr);">
             <div class="p-3 shadow-1 link f-c" routerLink="/loadkeys">Cargar Clave</div>
             <div class="p-3 shadow-1 link f-c" routerLink="/loadstudents">Cargar Alumnos</div>
@@ -28,19 +26,21 @@
                 <ng-template pTemplate="header">
                     <tr>
                         <!--<th pSortableColumn="career">Carrera<p-sortIcon field="career"></p-sortIcon></th>-->
-                        <th pSortableColumn="code">#<p-sortIcon field="n"></p-sortIcon></th>
-                        <th pSortableColumn="code">Código<p-sortIcon field="career"></p-sortIcon>
+                        <th pSortableColumn="n">#<p-sortIcon field="n"></p-sortIcon></th>
+                        <th pSortableColumn="code">Código<p-sortIcon field="code"></p-sortIcon>
                         </th>
-                        <th pSortableColumn="fullname">Nombres<p-sortIcon field="career"></p-sortIcon>
+                        <th pSortableColumn="fullname">Nombres<p-sortIcon field="fullname"></p-sortIcon>
                         </th>
                         <th pSortableColumn="group">Grupo<p-sortIcon field="career"></p-sortIcon>
                         </th>
-                        <th pSortableColumn="modality">Modalidad<p-sortIcon field="career"></p-sortIcon>
+                        <th pSortableColumn="modality">Modalidad<p-sortIcon field="modality"></p-sortIcon>
                         </th>
-                        <th pSortableColumn="score">Puntaje<p-sortIcon field="career"></p-sortIcon>
+                        <th pSortableColumn="idBar">Asistencia<p-sortIcon field="idBar"></p-sortIcon>
                         </th>
-                        <th pSortableColumn="calification">Calificación<p-sortIcon field="career"></p-sortIcon>
-                        <th pSortableColumn="calification">Merito<p-sortIcon field="merith"></p-sortIcon>
+                        <th pSortableColumn="score">Puntaje<p-sortIcon field="score"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="career">Calificación<p-sortIcon field="career"></p-sortIcon>
+                        <th pSortableColumn="merith">Merito<p-sortIcon field="merith"></p-sortIcon>
 
                         </th>
                     </tr>
@@ -52,6 +52,7 @@
                         <td>{{student.fullname}}</td>
                         <td>{{student.group}}</td>
                         <td>{{student.modality}}</td>
+                        <td>{{student.idBar? 'ASISTIO': 'FALTO'}}</td>
                         <td>{{student.score}}</td>
                         <td>{{student.calification}}</td>
                         <td>{{student.merith}}</td>
@@ -69,7 +70,7 @@
                 <div class="careerItemInfo shadow-1 co-card p-5" *ngFor="let item of careerInfoList">
                     <div>
                         <div>{{item.careerName}}</div>
-                        <div class="mt-3">{{item.totalStundets}} Estudiantes</div>
+                        <div class="mt-3">{{item.totalStundents}} Estudiantes</div>
                     </div>
                     <div style="display: flex; gap: .5rem;">
                         <button pButton type="button" icon="pi pi-list"
@@ -79,6 +80,12 @@
                             class="p-button-rounded p-button-outlined p-button-success"
                             (click)="prepareExcelPerCareer(item)"></button>
 
+                    </div>
+                    {{item.asistence}}
+                    <div class="mt-4" style="overflow: hidden; border-radius: .5rem; height: 2px; display: flex; width: 100%;">
+                        
+                        <div style="background: var(--primary-color); height: 100%" [style]="{width: percentCalcule(item.asistence, item.totalStundents)}"></div>
+                        <div style="background: var(--pink-800); height: 100%" [style]="{width: percentCalcule(item.totalStundents - item.asistence, item.totalStundents)}"></div>
                     </div>
                 </div>
             </div>

@@ -28,7 +28,8 @@ export class LoadprojectComponent implements OnInit {
 			uuid: Guid.create().toString(),
 			fileKeysHeader: true,
 			fileKeysRemoveFirstColumn: true,
-			unidad: 'otros'
+			unidad: 'otros',
+			minScore: 6
 		}
 	 }
 	
