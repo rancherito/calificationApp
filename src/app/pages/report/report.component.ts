@@ -15,7 +15,7 @@ export class ReportComponent implements OnInit {
 	public studentAnswerList: IAnswer[] = []
 	public studentInfoList: IStudentInfo[] = [];
 	public studentDataList: IStudentInfo[] = [];
-
+	public totalStudents: number = 0;
 	public data: ChartData | null = null;
 
 
@@ -96,6 +96,7 @@ export class ReportComponent implements OnInit {
 			return ac;
 		}, [] as ICareer[]).sort((a, b) => (b.careerName ?? '') < (a.careerName ?? '') ? 1 : -1);
 
+		this.totalStudents = this.studentInfoList.length;
 		this.loadChartData()
 
 	}

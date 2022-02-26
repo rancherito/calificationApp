@@ -417,5 +417,5 @@ export interface IProject {
 	createdDate: number
 	fileKeysHeader: boolean
 	fileKeysRemoveFirstColumn: boolean
-	unidad?: string
+	unidad: string
 }

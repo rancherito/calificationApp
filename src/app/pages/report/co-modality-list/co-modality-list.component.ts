@@ -38,6 +38,7 @@ export class CoModalityListComponent implements OnInit {
 				}
 				return ac;
 			}, [] as ICareer[]).sort((a, b) => (b.careerName ?? '') < (a.careerName ?? '') ? 1 : -1);
+
 			this.careerModalityList.push({
 				modality: mod,
 				careers: cm
@@ -63,6 +64,7 @@ export class CoModalityListComponent implements OnInit {
 
 			this.charts.push({
 				label: mod.modality,
+				totalStudents: mod.careers.reduce((ac, i) => ac + i.totalStundets, 0),
 				data: {
 					labels: chartTotalStudentsLabel,
 					datasets: chartTotalStudentsDataset
@@ -79,5 +81,6 @@ interface ICareerModality {
 }
 interface IModalityChart {
 	label: string ;
+	totalStudents: number
 	data: ChartData;
 }

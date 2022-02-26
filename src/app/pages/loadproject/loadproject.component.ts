@@ -14,6 +14,7 @@ export class LoadprojectComponent implements OnInit {
 	public currentEditProject: IProject
 	public onNew = 0
 	public openCrud = false
+	public listColor: Record<string, string> = { 'cepre': 'var(--cyan-700)', 'otros': '#a9a9a9', 'admision': 'var(--primary-color)' }
 	constructor(
 		private storage: DatastorageService,
 		private route: Router

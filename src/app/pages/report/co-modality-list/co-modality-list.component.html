@@ -1,5 +1,6 @@
 <div style="display: grid; gap: 1rem;" *ngIf="modalitys.length > 1">
     <co-card class="shadow-1" *ngFor="let item of charts">
+        <h3 class="mb-4">MODALIDAD: {{item.label}} | TOTAL: {{item.totalStudents}}</h3>
         <div style="display: grid; grid-template-columns: 2fr 1fr;" >
             <p-chart type="bar" [data]="item.data"></p-chart>
             <p-chart type="doughnut" [data]="item.data"></p-chart>

@@ -14,18 +14,21 @@ section{
     padding: 2rem;
 }
 img{
-    height: 180px;
+    height: 400px;
 }
 .label-project{
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: lighter;
-    margin-top: 4rem;
 }
 .item-project-button{
     display: flex;
     gap: .5rem;
     align-items: center;
     cursor: pointer;
+}
+.item-project-button-selectable{
+    border-left: 4px solid #ccc;
+
 }
 .project-content{
     width: 100%; max-width: 400px; display: grid; gap: .5rem
@@ -36,7 +39,7 @@ img{
 .item-project button.b-edit{
     position: absolute;
     top: 50%;
-    transform: translate(50%, -50%);
+    transform: translate(-4px, -50%);
     right: 0;
     display: none;
 }
