@@ -1,0 +1,43 @@
+<co-recoverdatalayout [extend]="true" label="Informacion Estudiante">
+    <div view class="p-4">
+        <ng-container *ngIf="studentInfo">
+            <h2>{{studentInfo.fullname}}</h2>
+            <div>{{studentInfo.careerName}}</div>
+            <div style="display: flex;">
+                <co-card *ngIf="answerStudent.length" class="shadow-1">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>MARCO</th>
+                                <th>CORRECTA</th>
+                                <th>ESTADO</th>
+                                <th class="text-right">PUNTOS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of answerStudent;">
+                                <td class="text-center">{{item.index}}</td>
+                                <td class="text-center">{{item.answer}}</td>
+                                <td class="text-center">{{item.correct}}</td>
+                                <td [style]="{color: statusInfoColor[item.status]}">{{statusInfo[item.status]}}</td>
+                                <td [style]="{color: statusInfoColor[item.status]}" class="text-right">{{item.points}}</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="4" class="text-right">TOTAL</td>
+                                <td class="text-right">{{score()}}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </co-card>
+            </div>
+            
+            
+        </ng-container>
+    </div>
+    <div action>
+        <button pButton [routerLink]="['/report']" style="width: 100%;" class="shadow-1">REGRESAR A REPORTES</button>
+    </div>
+</co-recoverdatalayout>

@@ -1,18 +1,21 @@
 <co-recoverdatalayout [extend]="true" label="Reporte">
     
-    <div action>
+    <div action style="height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
         <div style="display: grid; gap: .5rem; grid-template-columns: repeat(2, 1fr);">
             <div class="p-3 shadow-1 link f-c" routerLink="/loadkeys">Cargar Clave</div>
             <div class="p-3 shadow-1 link f-c" routerLink="/loadstudents">Cargar Alumnos</div>
             <div class="p-3 shadow-1 link f-c" routerLink="/step3">Cargar Asistencia</div>
             <div class="p-3 shadow-1 link f-c" routerLink="/step4">Cargar Respuestas</div>
         </div>
+        <div class="pb-4" style="flex: 1; display: flex; align-items: flex-end;">
+            <img src="/assets/books.png" alt="" srcset="" style="max-height: 250px;">
+        </div>
     </div>
     <div view style="height: 100%; width: 100%; overflow-y: auto;">
         <div class="p-4" *ngIf="careerSelected != null">
             <div class="mb-4" style="display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
                 <div style="display: flex; align-items: center; gap: 1rem;">
-                    <p-dropdown [options]="careerInfoList" optionLabel="careerName" [(ngModel)]="careerSelected"
+                    <p-dropdown [options]="careerStudentsInfo" optionLabel="careerName" [(ngModel)]="careerSelected"
                         placeholder="Seleccione una carrera" (onChange)="selectChange()" [style]="{width: '400px'}">
                     </p-dropdown>
                     <p-button *ngIf="studentDataList.length" (onClick)="generateExcelFile()"
@@ -49,7 +52,9 @@
                     <tr>
                         <td>{{student.n}}</td>
                         <td>{{student.code}}</td>
-                        <td>{{student.fullname}}</td>
+                        <td>
+                            <a routerLink="/infostudent/project/{{student.code}}">{{student.fullname}}</a>
+                        </td>
                         <td>{{student.group}}</td>
                         <td>{{student.modality}}</td>
                         <td>{{student.idBar? 'ASISTIO': 'FALTO'}}</td>
@@ -62,44 +67,68 @@
             </p-table>
         </div>
         <div *ngIf="careerSelected == null" id="general-view" class="mt-6">
-            <div style="display: flex; gap: .5rem; align-items: center; justify-content: space-between;" class="mb-4">
-                <h2>Resultados por carrera</h2>
-                <button (click)="generateExcelFileAll()" pButton class="p-button-sm">Exportar a Excel</button>
+            <div style="display: grid; gap: 1rem;">
+                <div style="display: flex; gap: .5rem; align-items: center; justify-content: space-between;">
+                    <h2>Resultados por carrera</h2>
+                    <button (click)="generateExcelFileAll()" pButton class="p-button-sm">Exportar a Excel</button>
+                </div>
+                <div id="careerListContainer" *ngIf="careerStudentsInfo.length > 0">
+                    <co-card class="careerItemInfo shadow-1 p-5" *ngFor="let item of careerStudentsInfo">
+                        <div>
+                            <div>{{item.careerName}}</div>
+                            <div class="mt-3">{{item.totalStundents}} Estudiantes</div>
+                        </div>
+                        <div style="display: flex; gap: .5rem;">
+                            <button pButton type="button" icon="pi pi-list" class="p-button-rounded p-button-outlined p-button-info"
+                                (click)="selectCareer(item)"></button>
+                            <button pButton type="button" icon="pi pi-file-excel"
+                                class="p-button-rounded p-button-outlined p-button-success"
+                                (click)="prepareExcelPerCareer(item)"></button>
+                
+                        </div>
+                        <div class="mt-4"
+                            style="overflow: hidden; background: lightgray; border-radius: .5rem; height: 3px; display: flex; width: 100%;">
+                
+                            <div style="background: var(--primary-color); height: 100%"
+                                [style]="{width: percentCalcule(item.asistence, item.totalStundents)}"></div>
+                            <div style="background: transparent; height: 100%"
+                                [style]="{width: percentCalcule(item.totalStundents - item.asistence, item.totalStundents)}"></div>
+                        </div>
+                    </co-card>
+                </div>
+                <co-card class="shadow-1">
+                    <div class="mb-4">
+                        <h3>Total postulantes por carrera: {{studentInfoList.length}}</h3>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 2fr 1fr;">
+                        <p-chart type="bar" [data]="data"></p-chart>
+                        <p-chart type="doughnut" [data]="data"></p-chart>
+                    </div>
+                
+                </co-card>
+                <co-modality-list></co-modality-list>
             </div>
-            <div id="careerListContainer">
-                <div class="careerItemInfo shadow-1 co-card p-5" *ngFor="let item of careerInfoList">
-                    <div>
-                        <div>{{item.careerName}}</div>
-                        <div class="mt-3">{{item.totalStundents}} Estudiantes</div>
+            <div style="margin-top: calc(1rem + 35px);">
+                <co-card class="shadow-1" style="display: grid; gap: 1rem;">
+                    <div class="p-input-icon-left" style="width: 100%;">
+                        <i class="pi pi-search"></i>
+                        <input type="text" pInputText placeholder="Search" [(ngModel)]="searchStudent" (input)="initSearch()" style="width: 100%;">
                     </div>
-                    <div style="display: flex; gap: .5rem;">
-                        <button pButton type="button" icon="pi pi-list"
-                            class="p-button-rounded p-button-outlined p-button-info"
-                            (click)="selectCareer(item)"></button>
-                        <button pButton type="button" icon="pi pi-file-excel"
-                            class="p-button-rounded p-button-outlined p-button-success"
-                            (click)="prepareExcelPerCareer(item)"></button>
-
+                    <div class="text-center">
+                        <table *ngIf="searchStudentList.length > 0" style="text-align: left; width: 100%;">
+                            <tr *ngFor="let item of searchStudentList">
+                                <td>{{item.career}}</td>
+                                <td>
+                                    <button [routerLink]="['/infostudent/project/' + item.code]" pButton class="p-button-text" [innerHTML]="resaltText(item.fullname, searchStudent)"></button>
+                                </td>
+                            </tr>
+                        </table>
+                        <div *ngIf="searchStudentList.length == 0">
+                            SIN REGISTROS O BUSQUEDA NO INICIALIZADA
+                        </div>
                     </div>
-                    {{item.asistence}}
-                    <div class="mt-4" style="overflow: hidden; border-radius: .5rem; height: 2px; display: flex; width: 100%;">
-                        
-                        <div style="background: var(--primary-color); height: 100%" [style]="{width: percentCalcule(item.asistence, item.totalStundents)}"></div>
-                        <div style="background: var(--pink-800); height: 100%" [style]="{width: percentCalcule(item.totalStundents - item.asistence, item.totalStundents)}"></div>
-                    </div>
-                </div>
+                </co-card>
             </div>
-            <co-card class="shadow-1 mt-4">
-                <div class="mb-4">
-                    <h3>Total postulantes por carrera: {{studentInfoList.length}}</h3>
-                </div>
-                <div style="display: grid; grid-template-columns: 2fr 1fr;">
-                    <p-chart type="bar" [data]="data"></p-chart>
-                    <p-chart type="doughnut" [data]="data"></p-chart>
-                </div>
-
-            </co-card>
-            <co-modality-list class="mt-4"></co-modality-list>
         </div>
     </div>
 </co-recoverdatalayout>

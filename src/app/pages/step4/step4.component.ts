@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { DatastorageService } from 'src/app/datastorage/datastorage.service';
-import { IExcelData, IAnswer, IKeyAnswer, IRelationCodeBar, IStudentInfo } from "../../providersInterfaces";
+import { UtilsService } from 'src/app/utils/utils.service';
+import { IExcelData, IAnswer, IKeyAnswer, IRelationCodeBar, IStudentInfo, ICalification } from "../../providersInterfaces";
 
 @Component({
 	selector: 'page-step4',
@@ -22,10 +23,12 @@ export class Step4Component implements OnInit {
 	public file: string = ""
 	public processDataList: ICalification[] = []
 	public answerList: IKeyAnswer[] = [];
+	public processAnswers: IAnswer[] = [];
 	constructor(
 		private dataStorageService: DatastorageService,
 		private router: Router,
-		private message: MessageService
+		private message: MessageService,
+		private utils: UtilsService
 	) { }
 
 	async ngOnInit(): Promise<void> {
@@ -35,26 +38,17 @@ export class Step4Component implements OnInit {
 		this.asistenceList = this.studentList.filter(x => x.idBar != null)
 		this.file = (await this.dataStorageService.restoreFileResponses()) as string
 		if (this.file?.length) {
-			this.dataAnswer = this.dataStorageService.clearFile(this.file)
+			this.dataAnswer = UtilsService.clearFile(this.file)
+			this.processAnswers = UtilsService.processAnswers(this.totalKeys, this.dataAnswer);
 		}
 	}
 	fileProcess() {
 		return this.file.replace(/\,\,/g, ', ,').replace(/\,\,/g, ', ,')
 	}
-	processAnswers(): IAnswer[] {
-		let keyList: IAnswer[] = []
-		for (let index = 1; index < this.dataAnswer.length; index++) {
-			let rowAnswer = this.dataAnswer[index].split(",")
-			let [idBar, idTheme] = [rowAnswer[0], rowAnswer[1]]
-			for (let e = 2; e < this.totalKeys + 2; e++) {
-				keyList.push({ idBar, idTheme: idTheme == '' ? 'NULL' : idTheme, idQuestion: e - 1, answer: rowAnswer[e] == '' ? null : rowAnswer[e] })
-			}
-		}
-		return keyList
-	}
+
 	listCountThemesAnswer() {
 		let themes: { idTheme: string, total: number }[] = []
-		this.processAnswers().forEach(x => {
+		UtilsService.processAnswers(this.totalKeys, this.dataAnswer).forEach(x => {
 			let i = themes.findIndex(y => y.idTheme == x.idTheme)
 			if (i == -1) themes.push({ idTheme: x.idTheme, total: 1 })
 			else themes[i].total++
@@ -78,7 +72,7 @@ export class Step4Component implements OnInit {
 					this.file = reader.result as string
 					this.dataStorageService.saveFileResponses(reader.result as string)
 					this.dataStorageService.getAverageKeys().then(x => this.totalKeys = x)
-					this.dataAnswer = this.dataStorageService.clearFile(reader.result as string)
+					this.dataAnswer = UtilsService.clearFile(reader.result as string)
 					this.processCalification()
 				}
 
@@ -90,7 +84,7 @@ export class Step4Component implements OnInit {
 	processCalification() {
 
 		let list = this.studentList
-		let answers = this.processAnswers();
+		this.processAnswers = UtilsService.processAnswers(this.totalKeys, this.dataAnswer);
 
 		list.forEach(student => {
 			student.score = 0;
@@ -105,7 +99,7 @@ export class Step4Component implements OnInit {
 			else {
 
 				let filterGroup = this.answerList.filter(e => e.idGroup == student.group);
-				let studentAnswer = answers.filter(x => x.idBar == student.idBar)
+				let studentAnswer = this.processAnswers.filter(x => x.idBar == student.idBar)
 
 				if (studentAnswer.length > 0 && filterGroup.length > 0) {
 
@@ -132,8 +126,6 @@ export class Step4Component implements OnInit {
 				}
 			}
 		})
-		console.log(list);
-
 		let promise = this.dataStorageService.setStudentInfoList(list)
 		if (promise != null) {
 			promise.then(() => {
@@ -160,10 +152,3 @@ export class Step4Component implements OnInit {
 	}
 }
 
-interface ICalification {
-	code: string,
-	fullname: string,
-	score: number,
-	calification: string,
-	dni: string
-}

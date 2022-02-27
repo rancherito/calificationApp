@@ -33,6 +33,7 @@ import { CoModalityListComponent } from './report/co-modality-list/co-modality-l
 import { LoadprojectComponent } from './loadproject/loadproject.component';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { DialogModule } from 'primeng/dialog';
+import { ReportStudentComponent } from './report-student/report-student.component';
 let comps: any[] = [
   StartComponent,
   TestComponent,
@@ -40,7 +41,7 @@ let comps: any[] = [
 ]
 
 @NgModule({
-  declarations: [...comps, Step3Component, Step4Component, ReportDataComponent, ReportComponent, CoModalityListComponent, LoadprojectComponent],
+  declarations: [...comps, Step3Component, Step4Component, ReportDataComponent, ReportComponent, CoModalityListComponent, LoadprojectComponent, ReportStudentComponent],
   exports: [...comps, ReportComponent],
   imports: [
     DropdownModule,

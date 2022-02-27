@@ -9,7 +9,7 @@ import { ChartData, ChartDataset } from 'chart.js';
 	styleUrls: ['./report.component.scss']
 })
 export class ReportComponent implements OnInit {
-	public careerInfoList: ICareer[] = []
+	public careerStudentsInfo: ICareer[] = []
 
 	public careerSelected: ICareer | null = null
 	public studentAnswerList: IAnswer[] = []
@@ -18,6 +18,8 @@ export class ReportComponent implements OnInit {
 	public totalStudents: number = 0;
 	public data: ChartData | null = null;
 	public average: number = 0;
+	public searchStudent: string = '';
+	public searchStudentList: IStudentInfo[] = []
 
 
 	constructor(
@@ -25,6 +27,21 @@ export class ReportComponent implements OnInit {
 	) {
 	}
 
+	initSearch() {
+		if (this.searchStudent.length >= 3) {
+			this.searchStudentList = this.studentInfoList
+			.filter(x => 
+				(x.fullname??'').toLowerCase().includes(this.searchStudent.toLowerCase()) || 
+				(x.code + '').toLowerCase().includes(this.searchStudent.toLowerCase())
+			)
+			.filter((x ,i) => i < 10)
+		}
+		else
+			this.searchStudentList = []
+	}
+	resaltText(text: string | null, find: string) {
+		return (text + '').toUpperCase().replace(find.toUpperCase(), '<span class="resalt-text">' + find.toUpperCase() + '</span>');
+	}
 	percentCalcule(num: number, total: number) {
 		return ((num * 100) / total) + '%';
 	}
@@ -49,7 +66,7 @@ export class ReportComponent implements OnInit {
 
 		const book = xlsx.utils.book_new();
 		let list: IStudentInfo[] = []
-		this.careerInfoList.forEach(x => {
+		this.careerStudentsInfo.forEach(x => {
 			let studentDataList = this.filterResultsPerCareer(x.career);
 			list.push(...studentDataList)
 		})
@@ -59,35 +76,38 @@ export class ReportComponent implements OnInit {
 	}
 
 	loadChartData() {
+		this.storage.getCareers().subscribe(x => {
+			let chartTotalStudentsLabel: string[] = []
+			let chartTotalStudentsDataset: ChartDataset[] = [
+				{
+					label: 'Total estudiantes por carrera',
+					backgroundColor: [],
+					data: [],
+				}
+			]
+			let prepareColor: string[] = []
+			this.careerStudentsInfo.forEach(x => {
 
-		let chartTotalStudentsLabel: string[] = []
-		let chartTotalStudentsDataset: ChartDataset[] = [
-			{
-				label: 'Total estudiantes por carrera',
-				backgroundColor: [],
-				data: [],
+				chartTotalStudentsLabel.push(x.career ?? '');
+				chartTotalStudentsDataset[0].data.push(x.totalStundents);
+				prepareColor.push(this.storage.getColorPerCarrer(x.career))
+				console.log(this.storage.getColorPerCarrer(x.career));
+				
+			})
+			chartTotalStudentsDataset[0].backgroundColor = prepareColor
+			//console.log(prepareColor);
+			
+			this.data = {
+				labels: chartTotalStudentsLabel,
+				datasets: chartTotalStudentsDataset
 			}
-		]
-		this.careerInfoList.forEach(x => {
-
-			chartTotalStudentsLabel.push(x.career ?? '');
-			chartTotalStudentsDataset[0].data.push(x.totalStundents);
 		})
-		chartTotalStudentsDataset[0].backgroundColor = this.storage.getColors()
-
-		this.data = {
-			labels: chartTotalStudentsLabel,
-			datasets: chartTotalStudentsDataset
-		}
-
 	}
 	async ngOnInit(): Promise<void> {
 
-
-
 		this.studentInfoList = await this.storage.getStudentInfoList()//.filter(x => x.idBar != null);
 		this.average = await this.storage.getAverageKeys();
-		this.careerInfoList = this.studentInfoList.reduce((ac, i) => {
+		this.careerStudentsInfo = this.studentInfoList.reduce((ac, i) => {
 			let index = ac.findIndex(x => x.career == i.career);
 			if (index > -1) {
 				ac[index].totalStundents++;
@@ -95,7 +115,7 @@ export class ReportComponent implements OnInit {
 
 			}
 			else ac.push({
-				career: i.career, 
+				career: i.career,
 				totalStundents: 1,
 				careerName: i.careerName,
 				asistence: i.idBar != null ? 1 : 0

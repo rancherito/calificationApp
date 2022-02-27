@@ -88,6 +88,6 @@
     </div>
 </co-recoverdatalayout>
 
-<co-layout-bottom [wrapper]="false" *ngIf="processAnswers().length">
+<co-layout-bottom [wrapper]="false" *ngIf="this.processAnswers.length">
     <p-button styleClass="p-button-secondary" label="Salvar datos" (onClick)="saveData()"></p-button>
 </co-layout-bottom>

@@ -130,7 +130,7 @@ export class LoadstudentsComponent implements OnInit {
 		
 	}
 	async ngOnInit() {
-		this.referenceCareer = await this.store.getCareers()
+		this.referenceCareer = await this.store.getCareers().toPromise()
 		this.dataExcel = await this.store.restoreFileStudentInfo()
 	
 

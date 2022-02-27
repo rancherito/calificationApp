@@ -8,24 +8,54 @@ import { Router } from '@angular/router';
 	providedIn: 'root'
 })
 export class DatastorageService {
-	
-	async getCareers(): Promise<ICareerInfo[]> {
-		return [
-			{ "careerName": "Administración y Negocios Internacionales", "idGroup": "R", "career": "AN", "normalize": "ADMINISTRACIÓN Y NEGOCIOS INTERNACIONALES" }, 
-			{ "careerName": "Contabilidad y Finanzas", "idGroup": "R", "career": "CF", "normalize": "CONTABILIDAD Y FINANZAS" }, 
-			{ "careerName": "Derecho y Ciencias Políticas", "idGroup": "R", "career": "DC", "normalize": "DERECHO Y CIENCIAS POLÍTICAS" }, 
-			{ "careerName": "Ecoturismo", "idGroup": "R", "career": "EC", "normalize": "ECOTURISMO" }, 
-			{ "careerName": "Educación Especialidad Inicial y Especial", "idGroup": "R", "career": "EI", "normalize": "EDUCACIÓN: ESPECIALIDAD INICIAL Y ESPECIAL" }, 
-			{ "careerName": "Educación Especialidad Primaria e Informática", "idGroup": "R", "career": "EP", "normalize": "EDUCACIÓN: ESPECIALIDAD PRIMARIA E INFORMÁTICA" }, 
-			{ "careerName": "Educación Especialidad Matemática y Computación", "idGroup": "R", "career": "ED", "normalize": "EDUCACIÓN: ESPECIALIDAD MATEMÁTICA Y COMPUTACIÓN" }, 
-			{ "careerName": "Educación Matemática y Computación", "idGroup": "R", "career": "ED", "normalize": "EDUCACIÓN: ESPECIALIDAD MATEMÁTICA Y COMPUTACIÓN" }, 
-			{ "careerName": "Educación Inicial y Especial", "idGroup": "R", "career": "EI", "normalize": "EDUCACIÓN: ESPECIALIDAD INICIAL Y ESPECIAL" }, 
-			{ "careerName": "Educación Primaria e Informática", "idGroup": "R", "career": "EP", "normalize": "EDUCACIÓN: ESPECIALIDAD PRIMARIA E INFORMÁTICA" }, 
-			{ "careerName": "Enfermeria", "idGroup": "Q", "career": "EF", "normalize": "ENFERMERIA" }, 
-			{ "careerName": "Medicina Veterinaria y Zootecnia", "idGroup": "Q", "career": "MV", "normalize": "MEDICINA VETERINARIA Y ZOOTECNIA" }, 
-			{ "careerName": "Ingeniería Agroindustrial", "idGroup": "P", "career": "IA", "normalize": "INGENIERÍA AGROINDUSTRIAL" }, 
-			{ "careerName": "Ingeniería Forestal y Medio Ambiente", "idGroup": "P", "career": "IF", "normalize": "INGENIERÍA FORESTAL Y MEDIO AMBIENTE" }, 
-			{ "careerName": "Ingeniería de Sistemas e Informática", "idGroup": "P", "career": "IS", "normalize": "INGENIERÍA DE SISTEMAS E INFORMÁTICA" }]
+	private careers: ICareerInfo[] = [];
+	getCareers() {
+		let careers =  [
+			{color: "gray", "careerName": "Administración y Negocios Internacionales", "idGroup": "R", "career": "AN", "normalize": "ADMINISTRACIÓN Y NEGOCIOS INTERNACIONALES" }, 
+			{color: "gray", "careerName": "Contabilidad y Finanzas", "idGroup": "R", "career": "CF", "normalize": "CONTABILIDAD Y FINANZAS" }, 
+			{color: "gray", "careerName": "Derecho y Ciencias Políticas", "idGroup": "R", "career": "DC", "normalize": "DERECHO Y CIENCIAS POLÍTICAS" }, 
+			{color: "gray", "careerName": "Ecoturismo", "idGroup": "R", "career": "EC", "normalize": "ECOTURISMO" }, 
+			{color: "gray", "careerName": "Educación Especialidad Inicial y Especial", "idGroup": "R", "career": "EI", "normalize": "EDUCACIÓN: ESPECIALIDAD INICIAL Y ESPECIAL" }, 
+			{color: "gray", "careerName": "Educación Especialidad Primaria e Informática", "idGroup": "R", "career": "EP", "normalize": "EDUCACIÓN: ESPECIALIDAD PRIMARIA E INFORMÁTICA" }, 
+			{color: "gray", "careerName": "Educación Especialidad Matemática y Computación", "idGroup": "R", "career": "ED", "normalize": "EDUCACIÓN: ESPECIALIDAD MATEMÁTICA Y COMPUTACIÓN" }, 
+			{color: "gray", "careerName": "Educación Matemática y Computación", "idGroup": "R", "career": "ED", "normalize": "EDUCACIÓN: ESPECIALIDAD MATEMÁTICA Y COMPUTACIÓN" }, 
+			{color: "gray", "careerName": "Educación Inicial y Especial", "idGroup": "R", "career": "EI", "normalize": "EDUCACIÓN: ESPECIALIDAD INICIAL Y ESPECIAL" }, 
+			{color: "gray", "careerName": "Educación Primaria e Informática", "idGroup": "R", "career": "EP", "normalize": "EDUCACIÓN: ESPECIALIDAD PRIMARIA E INFORMÁTICA" }, 
+			{color: "gray", "careerName": "Enfermeria", "idGroup": "Q", "career": "EF", "normalize": "ENFERMERIA" }, 
+			{color: "gray", "careerName": "Medicina Veterinaria y Zootecnia", "idGroup": "Q", "career": "MV", "normalize": "MEDICINA VETERINARIA Y ZOOTECNIA" }, 
+			{color: "gray", "careerName": "Ingeniería Agroindustrial", "idGroup": "P", "career": "IA", "normalize": "INGENIERÍA AGROINDUSTRIAL" }, 
+			{color: "gray", "careerName": "Ingeniería Forestal y Medio Ambiente", "idGroup": "P", "career": "IF", "normalize": "INGENIERÍA FORESTAL Y MEDIO AMBIENTE" }, 
+			{color: "gray", "careerName": "Ingeniería de Sistemas e Informática", "idGroup": "P", "career": "IS", "normalize": "INGENIERÍA DE SISTEMAS E INFORMÁTICA" }]
+		let colors = this.getColors();
+		careers.forEach((career, index) => {
+			career.color = colors[index];
+		});
+		if (this.careers.length == 0) this.careers = careers
+		return  of(this.careers);
+	}
+	getColorPerCarrer(career: string | null) {
+		let careers = this.careers
+		let careerInfo = careers.find(x => x.career == career);
+		return careerInfo?.color??'gray';
+	}
+	levenshtein(a: string, b: string): number {
+		const matrix = Array.from({ length: a.length })
+			.map(() => Array.from({ length: b.length })
+				.map(() => 0))
+
+		for (let i = 0; i < a.length; i++) matrix[i][0] = i
+
+		for (let i = 0; i < b.length; i++) matrix[0][i] = i
+
+		for (let j = 0; j < b.length; j++)
+			for (let i = 0; i < a.length; i++)
+				matrix[i][j] = Math.min(
+					(i == 0 ? 0 : matrix[i - 1][j]) + 1,
+					(j == 0 ? 0 : matrix[i][j - 1]) + 1,
+					(i == 0 || j == 0 ? 0 : matrix[i - 1][j - 1]) + (a[i] == b[j] ? 0 : 1)
+				)
+
+		return matrix[a.length - 1][b.length - 1]
 	}
 	private matColors: any = {
 		"Amber": {
@@ -367,9 +397,6 @@ export class DatastorageService {
 	async getAverageKeys() {
 		return parseInt((await this.getCurrentProjectDataKey('averageKeys')) ?? '0');
 		//return parseInt(localStorage.getItem('totalKyes') ?? '0')
-	}
-	clearFile(fileString: string | null) {
-		return (fileString ?? "").split('\r\n').filter(e => e.length > 0)
 	}
 
 	setAverageKeys(total: number) {

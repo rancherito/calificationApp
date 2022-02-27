@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { DatastorageService } from 'src/app/datastorage/datastorage.service';
+import { UtilsService } from 'src/app/utils/utils.service';
 import { IRelationCodeBar, IStudentInfo } from '../../providersInterfaces';
 
 @Component({
@@ -28,7 +29,7 @@ export class Step3Component implements OnInit {
 
 	async loadingData(){
 		this.file = (await this.datastorageService.restoreFileRelationCodeBar()) ?? ''
-		this.dataRelation = this.datastorageService.clearFile(this.file)
+		this.dataRelation = UtilsService.clearFile(this.file)
 		this.relationKeys = (await this._computeRelationKeys()).filter(x => x.idBar != null).sort((a, b) => parseInt(a.code ?? '0') - parseInt(b.idBar ?? '0'))
 		
 

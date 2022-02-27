@@ -3,6 +3,7 @@ import { MessageService } from 'primeng/api';
 import { IKeyAnswer} from '../../providersInterfaces';
 import { DatastorageService, IProject } from "../../datastorage/datastorage.service";
 import { Router } from '@angular/router';
+import { UtilsService } from 'src/app/utils/utils.service';
 @Component({
 	selector: 'page-start',
 	templateUrl: './start.component.html',
@@ -27,7 +28,7 @@ export class StartComponent implements OnInit {
 		})
 		this.store.restoreFileKeyAnswer().then(e => {
 			this.file = e
-			this.claves = this.store.clearFile(e)
+			this.claves = UtilsService.clearFile(e)
 		})
 	 }
 	dropHeader(){
@@ -75,7 +76,7 @@ export class StartComponent implements OnInit {
 			reader.onload = () => {
 				this.store.saveFileKeyAnswer(reader.result as string)
 				this.file = (reader.result as string)??''
-				this.claves = this.store.clearFile(reader.result as string)
+				this.claves = UtilsService.clearFile(reader.result as string)
 			}
 			reader.readAsText(file)
 		}

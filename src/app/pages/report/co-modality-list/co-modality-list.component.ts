@@ -47,32 +47,37 @@ export class CoModalityListComponent implements OnInit {
 			})
 		})
 
+		this.storage.getCareers().subscribe(ca => {
+			this.careerModalityList.forEach(mod => {
+				let chartTotalStudentsLabel: string[] = []
+				let chartTotalStudentsDataset: ChartDataset[] = [
+					{
+						label: 'Por la modalidad de ' + mod.modality,
+						backgroundColor: [],
+						data: [],
+					}
+				]
+				let colorCareer: string[] = []
+				mod.careers.forEach(x => {
 
-		this.careerModalityList.forEach(mod => {
-			let chartTotalStudentsLabel: string[] = []
-			let chartTotalStudentsDataset: ChartDataset[] = [
-				{
-					label: 'Por la modalidad de ' + mod.modality,
-					backgroundColor: [],
-					data: [],
-				}
-			]
-			mod.careers.forEach(x => {
+					chartTotalStudentsLabel.push(x.career ?? '');
+					chartTotalStudentsDataset[0].data.push(x.totalStundents);
+					colorCareer.push(this.storage.getColorPerCarrer(x.career))
+				})
+				chartTotalStudentsDataset[0].backgroundColor = colorCareer
 
-				chartTotalStudentsLabel.push(x.career ?? '');
-				chartTotalStudentsDataset[0].data.push(x.totalStundents);
-			})
-			chartTotalStudentsDataset[0].backgroundColor = this.storage.getColors()
-
-			this.charts.push({
-				label: mod.modality,
-				totalStudents: mod.careers.reduce((ac, i) => ac + i.totalStundents, 0),
-				data: {
-					labels: chartTotalStudentsLabel,
-					datasets: chartTotalStudentsDataset
-				}
+				this.charts.push({
+					label: mod.modality,
+					totalStudents: mod.careers.reduce((ac, i) => ac + i.totalStundents, 0),
+					data: {
+						labels: chartTotalStudentsLabel,
+						datasets: chartTotalStudentsDataset
+					}
+				})
 			})
 		})
+
+		
 	}
 
 }

@@ -49,5 +49,13 @@ export interface ICareerInfo {
     career: string 
     careerName: string
     idGroup: string,
-    normalize: string
+    normalize: string,
+    color: string,
+}
+export interface ICalification {
+    code: string,
+    fullname: string,
+    score: number,
+    calification: string,
+    dni: string
 }
