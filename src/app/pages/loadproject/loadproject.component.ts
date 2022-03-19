@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Guid } from 'guid-typescript';
+import { MessageService } from 'primeng/api';
 import { DatastorageService, IProject } from 'src/app/datastorage/datastorage.service';
 
 //import {addDoc, collection, Firestore} from 'firebase/firestore';
 @Component({
 	selector: 'page-loadproject',
 	templateUrl: './loadproject.component.html',
-	styleUrls: ['./loadproject.component.scss']
+	styleUrls: ['./loadproject.component.scss'],
+	providers: [MessageService]
 })
 export class LoadprojectComponent implements OnInit {
 	public projects: IProject[] = [];
@@ -17,7 +19,8 @@ export class LoadprojectComponent implements OnInit {
 	public listColor: Record<string, string> = { 'cepre': 'var(--cyan-700)', 'otros': '#a9a9a9', 'admision': 'var(--primary-color)' }
 	constructor(
 		private storage: DatastorageService,
-		private route: Router
+		private route: Router,
+		private messageService: MessageService
 	) {
 		this.storage.getProjects().then(projects => {
 			this.projects = projects.sort((a, b) => b.createdDate - a.createdDate);
@@ -31,8 +34,12 @@ export class LoadprojectComponent implements OnInit {
 			unidad: 'otros',
 			minScore: 6
 		}
-	 }
-	
+	}
+	forceLoadProjects(){
+		this.storage.getProjects(true).then(projects => {
+			this.projects = projects.sort((a, b) => b.createdDate - a.createdDate);
+		})
+	}
 	newProject(){
 		this.onNew = 1;
 	}
@@ -64,6 +71,9 @@ export class LoadprojectComponent implements OnInit {
 			}
 			else
 				this.route.navigate(['/report']);
+		}).catch(err => {
+			console.log(err);
+			this.messageService.add({ severity: 'error', summary: 'Error', detail: err });
 		})
 		//
 	}

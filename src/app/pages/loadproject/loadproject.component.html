@@ -1,11 +1,15 @@
 <section>
     <div class="project-content">
-        <div class="label-project mb-4">Proyectos de calificación</div>
+        <div class="label-project mb-4" style="display: flex; align-items: center; justify-content: space-between;">
+            <span class="mr-4">Proyectos de calificación</span>
+            <button pButton (click)="forceLoadProjects()">Actualizar</button>
+        </div>
         <co-card class="shadow-1 item-project-button" style="height: 60px;" (click)="newProject()">
             <i class="pi pi-plus"></i><span>Crear nuevo proyecto</span>
         </co-card>
         <div *ngFor="let item of projects" class="item-project">
-            <co-card class="shadow-1 item-project-button item-project-button-selectable" (click)="setProject(item)" [style]="{'border-color': listColor[item.unidad]}">
+            <co-card class="shadow-1 item-project-button item-project-button-selectable" (click)="setProject(item)"
+                [style]="{'border-color': listColor[item.unidad]}">
                 <i class="pi pi-box"></i><span>{{item.name}}</span>
             </co-card>
             <button pButton icon="pi pi-pencil" class="shadow-1 b-edit" (click)="editProject(item)"></button>
@@ -16,43 +20,43 @@
         <img src="/assets/office.png" alt="s">
     </div>
 </section>
-    <p-dialog [header]="onNew == 1? 'CREAR PROYECTO': 'EDITAR: '+ currentEditProject.name" [visible]="onNew != 0" (visibleChange)="onNew = 0" [modal]="true"
-        [style]="{width: '90%', 'max-width': '800px'}">
-        <div class="py-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-            <div class="f-c">
-                <img src="/assets/table.png" alt="edit file" style="max-height: 160px;">
-            </div>
-            <div>
-                <div class="p-float-label">
-                    <input id="float-input" type="text" pInputText [(ngModel)]="currentEditProject.name" style="width: 100%;">
-                    <label for="float-input">Nombre del proyecto</label>
-                </div>
-                <div class="mt-4">
-                    <h4 class="mb-4">Elegir unidad</h4>
-                    <div class="field-radiobutton">
-                        <p-radioButton name="admision" value="admision" [(ngModel)]="currentEditProject.unidad"
-                            inputId="admision">
-                        </p-radioButton>
-                        <label for="admision">ADMISIÓN</label>
-                    </div>
-                    <div class="field-radiobutton">
-                        <p-radioButton name="cepre" value="cepre" [(ngModel)]="currentEditProject.unidad"
-                            inputId="cepre">
-                        </p-radioButton>
-                        <label for="cepre">CEPRE</label>
-                    </div>
-                    <div class="field-radiobutton">
-                        <p-radioButton name="otros" value="otros" [(ngModel)]="currentEditProject.unidad"
-                            inputId="otros">
-                        </p-radioButton>
-                        <label for="otros">OTROS</label>
-                    </div>
-
-                </div>
-                <div class="mt-4 text-right">
-                    <button pButton (click)="saveProject()" class="p-button-sm">Salvar</button>
-                </div>
-            </div>
-            
+<p-dialog [header]="onNew == 1? 'CREAR PROYECTO': 'EDITAR: '+ currentEditProject.name" [visible]="onNew != 0"
+    (visibleChange)="onNew = 0" [modal]="true" [style]="{width: '90%', 'max-width': '800px'}">
+    <div class="py-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="f-c">
+            <img src="/assets/table.png" alt="edit file" style="max-height: 160px;">
         </div>
-    </p-dialog>
+        <div>
+            <div class="p-float-label">
+                <input id="float-input" type="text" pInputText [(ngModel)]="currentEditProject.name"
+                    style="width: 100%;">
+                <label for="float-input">Nombre del proyecto</label>
+            </div>
+            <div class="mt-4">
+                <h4 class="mb-4">Elegir unidad</h4>
+                <div class="field-radiobutton">
+                    <p-radioButton name="admision" value="admision" [(ngModel)]="currentEditProject.unidad"
+                        inputId="admision">
+                    </p-radioButton>
+                    <label for="admision">ADMISIÓN</label>
+                </div>
+                <div class="field-radiobutton">
+                    <p-radioButton name="cepre" value="cepre" [(ngModel)]="currentEditProject.unidad" inputId="cepre">
+                    </p-radioButton>
+                    <label for="cepre">CEPRE</label>
+                </div>
+                <div class="field-radiobutton">
+                    <p-radioButton name="otros" value="otros" [(ngModel)]="currentEditProject.unidad" inputId="otros">
+                    </p-radioButton>
+                    <label for="otros">OTROS</label>
+                </div>
+
+            </div>
+            <div class="mt-4 text-right">
+                <button pButton (click)="saveProject()" class="p-button-sm">Salvar</button>
+            </div>
+        </div>
+
+    </div>
+</p-dialog>
+<p-toast></p-toast>

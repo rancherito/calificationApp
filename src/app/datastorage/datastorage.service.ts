@@ -316,7 +316,7 @@ export class DatastorageService {
 			if (this.currentProject == null) reject('Null project')
 			else {
 				getDoc(doc(this.firestore, this.currentProject.uuid, key)).then(docInfo => {
-					docInfo.exists() ? resolve(JSON.parse(docInfo.data().data as string)) : reject('No data')
+					docInfo.exists() ? resolve(JSON.parse(docInfo.data().data as string)) : resolve(null)
 				}).catch(err => {
 					reject(err)
 				})
@@ -405,10 +405,10 @@ export class DatastorageService {
 	}
 
 	//File project gestor
-	async getProjects(): Promise<IProject[]> {
+	async getProjects(force: boolean = false): Promise<IProject[]> {
 		let list: IProject[] = [];
 		let localProjects = localStorage.getItem('projects')
-		if (localProjects == null) {
+		if (localProjects == null || force) {
 			let docs = await getDocs(collection(this.firestore, 'projects'))
 
 			docs.docs.forEach(doc => {

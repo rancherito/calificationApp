@@ -45,8 +45,14 @@ export class Step3Component implements OnInit {
 		let relationcodebarList: IRelationCodeBar[] = []
 		if (this.dataRelation.length > 1) {
 			for (let i = 1; i < this.dataRelation.length; i++) {
-				let [idBar, code] = this.dataRelation[i].split(',')
-				relationcodebarList.push({ idBar, code })
+				let arrayInfo = this.dataRelation[i].split(",")
+				let [idBar, code] = [null, null] as [string | null, string | null]
+				if (arrayInfo.length = 4) {
+					idBar = '0' + arrayInfo.join("").substring(0, 5)
+					code = arrayInfo.join("").substring(5, 12)
+				}
+				else if(arrayInfo.length = 2) [idBar, code] = this.dataRelation[i].split(',')
+				if (idBar != null && code != null) relationcodebarList.push({ idBar, code })
 			}
 
 			relationcodebarList.reduce((acc, cur) => {
@@ -101,11 +107,6 @@ export class Step3Component implements OnInit {
 			reader.onload = () => {
 				if (reader.result) {
 					this.datastorageService.saveFileRelationCodeBar(reader.result as string)
-					/*this.file = (reader.result as string) ?? ''
-					this.dataRelation = this.datastorageService.clearFile(this.file)
-					this._computeRelationKeys().then(e => {
-						this.relationKeys = e.filter(x => x.idBar != null).sort((a, b) => parseInt(a.idBar ?? '0') - parseInt(b.idBar ?? '0'))
-					})*/
 					this.loadingData()
 				}
 			}
