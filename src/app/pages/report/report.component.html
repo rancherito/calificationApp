@@ -7,8 +7,8 @@
             <div class="p-3 shadow-1 link f-c" routerLink="/step3">Cargar Asistencia</div>
             <div class="p-3 shadow-1 link f-c" routerLink="/step4">Cargar Respuestas</div>
         </div>
-        <div class="pb-4" style="flex: 1; display: flex; align-items: flex-end;">
-            <img src="/assets/books.png" alt="" srcset="" style="max-height: 250px;">
+        <div class="pb-4" style="flex: 1; display: flex; align-items: flex-end; width: 100%; justify-content: center;">
+            <img src="/assets/indicators.png" alt="" srcset="" style="max-height: 250px;">
         </div>
     </div>
     <div view style="height: 100%; width: 100%; overflow-y: auto;">
@@ -96,19 +96,8 @@
                         </div>
                     </co-card>
                 </div>
-                <co-card class="shadow-1">
-                    <div class="mb-4">
-                        <h3>Total postulantes por carrera: {{studentInfoList.length}}</h3>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 2fr 1fr;">
-                        <p-chart type="bar" [data]="data"></p-chart>
-                        <p-chart type="doughnut" [data]="data"></p-chart>
-                    </div>
-                
-                </co-card>
-                <co-modality-list></co-modality-list>
             </div>
-            <div style="margin-top: calc(1rem + 35px);">
+            <div style="margin-top: calc(1rem + 35px); display: grid; gap: 1rem;">
                 <co-card class="shadow-1" style="display: grid; gap: 1rem;">
                     <div class="p-input-icon-left" style="width: 100%;">
                         <i class="pi pi-search"></i>
@@ -128,6 +117,17 @@
                         </div>
                     </div>
                 </co-card>
+                <co-card class="shadow-1">
+                    <div class="mb-4">
+                        <h3>Total postulantes por carrera: {{studentInfoList.length}}</h3>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr;">
+                        <p-chart type="bar" [data]="data"></p-chart>
+                        <!--<p-chart type="doughnut" [data]="data"></p-chart>-->
+                    </div>
+                
+                </co-card>
+                <co-modality-list></co-modality-list>
             </div>
         </div>
     </div>

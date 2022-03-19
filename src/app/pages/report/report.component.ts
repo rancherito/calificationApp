@@ -91,7 +91,6 @@ export class ReportComponent implements OnInit {
 				chartTotalStudentsLabel.push(x.career ?? '');
 				chartTotalStudentsDataset[0].data.push(x.totalStundents);
 				prepareColor.push(this.storage.getColorPerCarrer(x.career))
-				console.log(this.storage.getColorPerCarrer(x.career));
 				
 			})
 			chartTotalStudentsDataset[0].backgroundColor = prepareColor

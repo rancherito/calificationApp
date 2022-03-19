@@ -1,6 +1,6 @@
-import { ThisReceiver } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { ChartData, ChartDataset } from 'chart.js';
 import { DatastorageService } from 'src/app/datastorage/datastorage.service';
 import { IAnswer, IStudentInfo } from 'src/app/providersInterfaces';
 import { UtilsService } from 'src/app/utils/utils.service';
@@ -16,16 +16,20 @@ export class ReportStudentComponent implements OnInit {
 	public answers: IAnswer[] = [];
 	public studentCode: string | null = null;
 	public answerStudent: IAnswerStudent[] = [];
+	public data: ChartData | null = null;
 	public statusInfo: Record<string, string> = {
 		'N': 'INCORRECTA',
 		'B': 'EN BLANCO',
 		'C': 'CORRECTA'
 	}
 	public statusInfoColor: Record<string, string> = {
-		'N': '#e91e63',
-		'B': '#a55f03',
-		'C': '#0d7011'
+		'N': '#dc334d',
+		'B': 'GRAY',
+		'C': '#23ba73'
 	}
+	public dataset: Record<string, number> = {};
+	public dataset2: InfoChart[] = []
+
 	constructor(
 		private store: DatastorageService,
 		private activateRoute: ActivatedRoute
@@ -76,6 +80,45 @@ export class ReportStudentComponent implements OnInit {
 							this.answerStudent.push(response);
 						}
 					})
+					this.dataset = {} as Record<string, number>
+					this.answerStudent.forEach(e => {
+						let index = this.dataset2.findIndex(f => f.status == e.status)
+						if (index == -1) {
+							this.dataset2.push({
+								status: e.status,
+								total: 1,
+								statusName: this.statusInfo[e.status],
+								color: this.statusInfoColor[e.status],
+								percent: '0.00'
+							})
+						}
+						else this.dataset2[index].total += 1
+
+						if (this.dataset[e.status] == undefined) {
+							this.dataset[e.status] = 0
+						}
+						this.dataset[e.status] += 1
+					})
+
+					this.dataset2.forEach(e => {
+						e.percent = ((e.total / this.answerStudent.length) * 100).toFixed(2)
+					})
+
+					let chartTotalStudentsDataset: ChartDataset[] = [
+						{
+							label: 'Total estudiantes por carrera',
+							backgroundColor: Object.keys(this.dataset).map(e => this.statusInfoColor[e]),
+							data: Object.values(this.dataset),
+						}
+					]
+
+					console.log(this.dataset);
+					
+
+					this.data = {
+						labels: Object.keys(this.dataset).map(e => this.statusInfo[e]),
+						datasets: chartTotalStudentsDataset
+					}
 				}
 
 			}
@@ -98,4 +141,11 @@ interface IAnswerStudent {
 	correct: string
 	status: string
 	points: number
+}
+interface InfoChart{
+	status: string
+	statusName: string
+	total: number
+	color: string
+	percent: string
 }
