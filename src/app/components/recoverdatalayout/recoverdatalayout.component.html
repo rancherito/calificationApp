@@ -1,18 +1,17 @@
-<section [class]="extend?'extend':null">
-    <div [class]="extend ? '': null" style="height: 100%;">
-        <div class="action shadow-4 p-4">
-            <div style="display: flex; align-items: center; justify-content: flex-end;">
-                <div class="super-title">{{label}}</div>
-                <button routerLink="/" icon="pi pi-home" pButton></button>
-            </div>
-            <div class="action-content">
-                <ng-content select="[action]"></ng-content>
-            </div>
-            <div class="nameProject" *ngIf="currentProject != null">{{currentProject.name}}</div>
-        </div>
-    </div>
+<button class="action-expand-movil" pButton icon="pi pi-bars" (click)="toggle()"></button>
 
-    <div class="view" *ngIf="extend" style="width: 100%; height: 100%; overflow-y: auto;">
-        <ng-content select="[view]"></ng-content>
+<article [class]="{'extend':extend, 'movil-expand': movil}" class="action shadow-4 p-4">
+    <div style="display: flex; align-items: center; justify-content: flex-end;">
+        <div class="super-title">{{label}}</div>
+        <button routerLink="/" icon="pi pi-home" pButton></button>
     </div>
-</section>
+    <div class="action-content">
+        <ng-content select="[action]"></ng-content>
+    </div>
+    <div class="nameProject text-center" *ngIf="currentProject != null">{{currentProject.name}}</div>
+    
+</article>
+
+<article [class]="extend?'extend':null" class="view" *ngIf="extend">
+    <ng-content select="[view]"></ng-content>
+</article>

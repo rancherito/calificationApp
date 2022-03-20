@@ -21,6 +21,7 @@ export class Step3Component implements OnInit {
 	public file: string = ''
 	public relationKeys: IStudentInfo[] = []
 	public repeatedCode: IRelationCodeBar[] = []
+	public studentInfo: IStudentInfo[] = [];
 	constructor(
 		private datastorageService: DatastorageService,
 		private router: Router,
@@ -41,17 +42,17 @@ export class Step3Component implements OnInit {
 		this.dataLost = []
 		this.inasistenceList = []
 		this.repeatedCode = []
-		let studentInfo = await this.datastorageService.getStudentInfoList()
+		this.studentInfo = await this.datastorageService.getStudentInfoList()
 		let relationcodebarList: IRelationCodeBar[] = []
 		if (this.dataRelation.length > 1) {
 			for (let i = 1; i < this.dataRelation.length; i++) {
 				let arrayInfo = this.dataRelation[i].split(",")
 				let [idBar, code] = [null, null] as [string | null, string | null]
-				if (arrayInfo.length = 4) {
-					idBar = '0' + arrayInfo.join("").substring(0, 5)
+				if (arrayInfo.length == 4) {
+					idBar = ((parseInt(arrayInfo.join("").substring(0, 5)) + 1000000) + '').substring(1)
 					code = arrayInfo.join("").substring(5, 12)
 				}
-				else if(arrayInfo.length = 2) [idBar, code] = this.dataRelation[i].split(',')
+				else if(arrayInfo.length == 2) [idBar, code] = this.dataRelation[i].split(',')
 				if (idBar != null && code != null) relationcodebarList.push({ idBar, code })
 			}
 
@@ -67,20 +68,19 @@ export class Step3Component implements OnInit {
 					return acc
 				}
 			}, [] as IRelationCodeBar[])
-
-
-			studentInfo.forEach(e => {
+			
+			this.studentInfo.forEach(e => {
 				let idbar = relationcodebarList.find(r => r.code == e.code)
 				e.idBar = idbar?.idBar ?? null
 				if (idbar == undefined) this.inasistenceList.push({ ...e })
 			})
 			relationcodebarList.forEach(e => {
-				if (studentInfo.find(t => t.code == e.code) == undefined) this.dataLost.push({ ...e })
+				if (this.studentInfo.find(t => t.code == e.code) == undefined) this.dataLost.push({ ...e })
 			})
 		}
 		console.log(this.repeatedCode);
 		
-		return studentInfo
+		return this.studentInfo
 	}
 	nextStep() {
 		this.datastorageService.getStudentInfoList().then(studentData => {

@@ -1,0 +1,8 @@
+section{
+    display: grid; grid-template-columns: 400px auto; gap: 1rem;
+}
+@media (max-width: 600px) {
+    section{
+        grid-template-columns: 1fr;
+    }
+}

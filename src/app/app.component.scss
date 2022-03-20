@@ -2,3 +2,8 @@ section {
     min-height: 100vh;
     position: relative;
 }
+@media screen and (max-width: 600px) {
+    section {
+        min-height: auto;
+    }
+}

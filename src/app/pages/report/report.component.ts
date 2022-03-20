@@ -127,6 +127,8 @@ export class ReportComponent implements OnInit {
 
 	}
 	selectChange() {
+		console.log(this.careerSelected);
+		
 		if (this.careerSelected?.career) {
 			this.studentDataList = this.filterResultsPerCareer(this.careerSelected?.career);
 		}

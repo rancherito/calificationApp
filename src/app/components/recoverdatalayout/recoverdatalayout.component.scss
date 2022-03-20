@@ -1,29 +1,70 @@
-section{
-    width: 100vw;
-    height: 100vh;
-    display: grid;
-    grid-template-columns: 100%;
-    grid-template-rows: 100%;
+:host{
+    position: relative;
+    display: block;
+    width: 100%;
+    overflow-x: hidden;
 }
 .action{
     display: grid !important;
-    grid-template-columns: 100%;
-    grid-template-rows: auto 1fr;
-    height: 100%;
     background-color: #7d48d9;
     color: white;
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 9;
+    transition: linear all 0.2s;
+    gap: 1rem;
+    grid-template-rows: auto 1fr auto;
 }
-section.extend{
-    grid-template-columns: 300px auto;
+
+.action.extend{
+    width: 260px;
+}
+.view{
+    display: none;
+    width: 100vw;
+    overflow-x: hidden;
+}
+.view.extend{
+    display: block;
+    margin-left: 260px;
+    width: calc(100vw - 260px);
 }
 .super-title{
     font-size: 1.5rem;
     font-weight: lighter;
     text-align: right;
-    padding: 2rem;
+    padding: 1rem;
 }
 .nameProject{
     font-size: 1.2rem;
     text-align: right;
     font-weight: lighter;
 }
+.action-expand-movil{
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+}
+.action-expand-movil{
+    z-index: 9;
+    display: none;
+}
+@media screen and (max-width: 600px){
+    .action-expand-movil{
+        display: block;
+    }
+    .view.extend{
+        width: 100vw;
+        margin-left: 0;
+    }
+    .action.extend{
+        transform: translateX(-260px);
+    }
+    .action.movil-expand{
+        transform: translateX(0);
+    }
+}
+    

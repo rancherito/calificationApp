@@ -46,3 +46,19 @@ img{
 .item-project:hover button.b-edit{
     display: block;
 }
+@media screen and (max-width: 600px){
+    :host{
+        justify-content: flex-start;
+        height: auto;
+    }
+    section{
+        flex-direction: column;
+    }
+    img{
+        height: 200px;
+    }
+    .project-content{
+        grid-template-columns: 1fr;
+    }
+    
+}

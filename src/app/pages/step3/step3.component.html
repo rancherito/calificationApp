@@ -1,7 +1,7 @@
 <co-recoverdatalayout label="Paso 3 de 4" [extend]="dataRelation.length > 0">
-    <div view style="height: 100%; display: grid; grid-template-columns: 1fr 500px; grid-template-rows: 100%;">
+    <div view style="height: 100%; display: grid; grid-template-columns: 1fr 400px; grid-template-rows: 100%; gap: 1rem;" class="p-3">
         <div style="overflow-y: auto; height: 100%;">
-            <div class="p-4">
+            <div>
                 <co-card class="mb-4" style="background-color: #263238;">
                     <h3 class="mb-4" style="color: white;">Contenido del archivo</h3>
                     <ngx-codemirror [(ngModel)]="file" [options]="{
@@ -13,19 +13,21 @@
                     </ngx-codemirror>
                 </co-card>
                 <co-card class="shadow-1">
-                    <p-table [value]="relationKeys">
+                    <p-table [value]="relationKeys" styleClass="p-datatable-sm p-datatable-striped" responsiveLayout="scroll">
                         <ng-template pTemplate="header">
                             <tr>
-                                <th width="200px">C. ESTUDIANTE</th>
-                                <th class="text-left">NOMBRES</th>
-                                <th width="200px">C. BARRA</th>
+                                <th style="width: 0;"></th>
+                                <th class="text-left">NOMBRE COMPLETO</th>
+                                <th width="0px" class="text-center">CODIGO</th>
+                                <th width="0px" class="text-center">INDENTIFICADOR</th>
                             </tr>
                         </ng-template>
-                        <ng-template pTemplate="body" let-student>
+                        <ng-template pTemplate="body" let-student let-i="rowIndex">
                             <tr>
+                                <td>{{i + 1}}</td>
+                                <td style="font-size: .8rem;">{{student.fullname}}</td>
                                 <td class="text-center">{{student.code}}</td>
-                                <td>{{student.fullname}}</td>
-                                <td class="c">{{student.idBar == null? 'FALTA': student.idBar}}</td>
+                                <td class="text-center">{{student.idBar == null? 'FALTA': student.idBar}}</td>
                             </tr>
                         </ng-template>
 
@@ -34,10 +36,11 @@
 
             </div>
         </div>
-        <div class="p-3" style="overflow-y: auto; height: 100%;">
+        <div style="overflow-y: auto; height: 100%;">
             <div style="display: grid; gap: .5rem;">
                 <co-card class="shadow-1">
-                    <span>{{relationKeys.length}} ENCONTRADOS  DE {{dataRelation.length - 1}} ESCANEADOS</span>
+                    <b>{{relationKeys.length}} ENCONTRADOS  DE {{dataRelation.length - 1}} ESCANEADOS</b>
+                    <i>NOTA: ALUMNOS SEGUN LA FICHA DE RELACIÓN {{studentInfo.length}}</i>
                 </co-card>
                 <co-card *ngIf="dataLost.length" class="shadow-1">
                     <div class="mb-4">
@@ -68,7 +71,7 @@
                         <thead>
                             <tr>
                                 <th class="text-left">CODIGO</th>
-                                <th class="text-left">ID BARRA</th>
+                                <th class="text-left">IDENTIFICADOR</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -84,22 +87,26 @@
                         <h3>Alumnos faltantes</h3>
                         Los siguientes alumnos no se encuentran en las cartillas escaneadas.
                     </div>
-                    <table style="width: 100%;">
-                        <tr>
-                            <th>#</th>
-                            <th class="text-left">CODIGO</th>
-                            <th class="text-left">NOMBRES</th>
-                            <th class="text-left"></th>
-
-                        </tr>
-                        <tr *ngFor="let item of inasistenceList; let i = index">
-                            <td>{{i + 1}}</td>
-                            <td>{{item.code}}</td>
-                            <td class="text-xs">{{item.fullname}}</td>
-                            <td class="text-xs">{{item.career}}</td>
-
-                        </tr>
-                    </table>
+                    <p-table [value]="inasistenceList" styleClass="p-datatable-sm p-datatable-striped" responsiveLayout="scroll">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th style="width: 0">#</th>
+                                <th class="text-left"  style="width: 0;">CODIGO</th>
+                                <th class="text-left">NOMBRES</th>
+                                <th class="text-left" style="width: 0;"></th>
+    
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-item let-i="rowIndex">
+                            <tr>
+                                <td>{{i + 1}}</td>
+                                <td>{{item.code}}</td>
+                                <td class="text-xs">{{item.fullname}}</td>
+                                <td class="text-xs">{{item.career}}</td>
+                            </tr>
+                                
+                        </ng-template>
+                    </p-table>
                 </co-card>
             </div>
 
@@ -112,14 +119,14 @@
         <co-box size="2rem"></co-box>
         <h3>Seleccione el archivo que contenga la información del codigo de barras y de estudiantes</h3>
         <co-box></co-box>
-        <label pButton class="p-button-raised">
+        <label pButton class="p-button-raised  p-button-sm">
             Codigo de barras y alumno
             <input type="file" style="display: none;" (change)="loadRelationsKeys($event)">
         </label>
 
         <div class="mt-3">
-            <p-button styleClass="p-button-secondary p-button-raised" routerLink="/loadstudents">Retroceder</p-button>
-            <p-button styleClass="ml-2 p-button-secondary p-button-raised" (onClick)="nextStep()">Siguiente</p-button>
+            <p-button styleClass="p-button-secondary p-button-raised p-button-sm" routerLink="/loadstudents">Retroceder</p-button>
+            <p-button styleClass="ml-2 p-button-secondary p-button-raised p-button-sm" (onClick)="nextStep()">Siguiente</p-button>
         </div>
 
     </div>
