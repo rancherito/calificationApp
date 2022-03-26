@@ -1,3 +1,7 @@
+<div class="title-app">
+    <span>PROCESO DE CALIFICACIÓN</span>
+    <b>{{isModeOffLine ? 'OFFLINE MODE' : 'ONLINE MODE'}}</b>
+</div>
 <section>
     <div class="project-content">
         <div style="display: flex; gap: .5rem; justify-content: flex-end;" class="pb-4">
@@ -20,14 +24,14 @@
 
     </div>
     <div class="text-center">
-        <img src="/assets/office.png" alt="s">
+        <img [src]="isModeOffLine ? '/assets/offline.png': '/assets/office.png'" alt="s" style="padding: 2rem ;">
     </div>
 </section>
 <p-dialog [header]="onNew == 1? 'CREAR PROYECTO': 'EDITAR: '+ currentEditProject.name" [visible]="onNew != 0"
     (visibleChange)="onNew = 0" [modal]="true" [style]="{width: '90%', 'max-width': '800px'}">
     <div class="py-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
         <div class="f-c">
-            <img [src]="isModeOffLine ? '/assets/offline.png': '/assets/table.png'" alt="edit file" style="max-height: 160px;">
+            <img [src]="isModeOffLine ? '/assets/offline.png': '/assets/office.png'" alt="edit file" style="max-height: 160px;">
         </div>
         <div>
             <div class="p-float-label">

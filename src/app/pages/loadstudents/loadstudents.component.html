@@ -1,5 +1,5 @@
 <p-toast></p-toast>
-<co-recoverdatalayout [extend]="dataExcel.length > 0" label="PASO 2 DE 4">
+<co-recoverdatalayout [extend]="dataExcel.length > 0" label="PASO 1 DE 4">
     <section class="action-table" view>
         <div [style]="{height: '100%'}" style="overflow-y: auto;">
             <div class="p-4">
@@ -97,7 +97,7 @@
             <input type="file" accept=".xlsx,.xls" style="display: none;" (change)="readExcel($event)">
         </label>
         <div style="display: flex; justify-content: center;">
-            <p-button styleClass="mt-3 p-button-secondary p-button-raised" routerLink="/loadkeys">Retroceder</p-button>
+            <p-button styleClass="mt-3 p-button-secondary p-button-raised" routerLink="/">Retroceder</p-button>
             <p-button styleClass="mt-3 p-button-secondary p-button-raised ml-2" (onClick)="nextStep()" *ngIf="computeTableStudent().length">Siguiente</p-button>
         </div>
         

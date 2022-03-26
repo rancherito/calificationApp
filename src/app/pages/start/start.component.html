@@ -1,4 +1,4 @@
-<co-recoverdatalayout [extend]="countKeyperGroup().length > 0" label="PASO 1 DE 4">
+<co-recoverdatalayout [extend]="countKeyperGroup().length > 0" label="PASO 3 DE 4">
     <div view class="p-4">
         <co-card class="mb-4" style="background-color: #263238;">
             <h3 class="mb-4" style="color: white;">Contenido del archivo</h3>
@@ -48,7 +48,8 @@
         <co-box size="6rem"></co-box>
 
         <div class="flex">
-            <p-button label="Siguiente" (click)="nextStep()" styleClass="p-button-secondary p-button-raised"
+            <p-button label="Retroceder" routerLink="/LoadIdentifiers" styleClass="p-button-secondary p-button-raised"></p-button>
+            <p-button label="Siguiente" (click)="nextStep()" styleClass="p-button-secondary p-button-raised ml-3"
                 *ngIf="countKeyperGroup().length > 0"></p-button>
 
         </div>

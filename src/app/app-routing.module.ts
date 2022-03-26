@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { StartComponent } from './pages/start/start.component';
+import { LoadKeysComponent } from './pages/start/start.component';
 import { LoadstudentsComponent } from "./pages/loadstudents/loadstudents.component";
 import { Step3Component } from "./pages/step3/step3.component";
 import { Step4Component } from "./pages/step4/step4.component";
@@ -9,10 +9,10 @@ import { LoadprojectComponent } from './pages/loadproject/loadproject.component'
 import { ReportStudentComponent } from './pages/report-student/report-student.component';
 const routes: Routes = [
   { path: '', component: LoadprojectComponent },
-  { path: 'loadkeys', component: StartComponent },
+  { path: 'loadkeys', component: LoadKeysComponent },
   { path: 'loadstudents', component: LoadstudentsComponent},
-  { path: 'step3', component: Step3Component },
-  { path: 'step4', component: Step4Component },
+  { path: 'LoadIdentifiers', component: Step3Component },
+  { path: 'loadAnswers', component: Step4Component },
   { path: 'report', component: ReportComponent },
   { path: 'infostudent/:project/:student', component: ReportStudentComponent }
 

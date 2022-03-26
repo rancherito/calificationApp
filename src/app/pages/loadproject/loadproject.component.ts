@@ -77,7 +77,7 @@ export class LoadprojectComponent implements OnInit {
 		this.storage.setCurrentProject(project);
 		this.storage.getStudentInfoList().then(students => {
 			if (students.every(x => x.calification == 0)) {
-				this.route.navigate(['/loadkeys']);
+				this.route.navigate(['/loadstudents']);
 			}
 			else
 				this.route.navigate(['/report']);

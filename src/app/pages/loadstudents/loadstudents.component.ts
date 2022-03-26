@@ -141,7 +141,7 @@ export class LoadstudentsComponent implements OnInit {
 	}
 	nextStep(){
 		this.store.getStudentInfoList().then(data => {
-			if (data.length > 0) this.router.navigate(['/step3'])
+			if (data.length > 0) this.router.navigate(['/LoadIdentifiers'])
 			else this.messageService.add({ severity: 'warn', detail: 'No se han salvado los datos de los estudiantes' })	
 		})
 	}

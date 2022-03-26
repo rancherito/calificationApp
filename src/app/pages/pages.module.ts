@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TestComponent } from './test/test.component';
 import { LoadstudentsComponent } from './loadstudents/loadstudents.component';
-import { StartComponent } from './start/start.component';
+import { LoadKeysComponent } from './start/start.component';
 
 
 //IMPORT PRIMENG MODULES
@@ -35,7 +35,7 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { DialogModule } from 'primeng/dialog';
 import { ReportStudentComponent } from './report-student/report-student.component';
 let comps: any[] = [
-  StartComponent,
+  LoadKeysComponent,
   TestComponent,
   LoadstudentsComponent
 ]

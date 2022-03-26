@@ -10,7 +10,7 @@ import { UtilsService } from 'src/app/utils/utils.service';
 	styleUrls: ['./start.component.scss'],
 	providers: [MessageService]
 })
-export class StartComponent implements OnInit {
+export class LoadKeysComponent implements OnInit {
 	public claves: string[] = []
 	public isDropHeader = true;
 	public isDropFirstColumn = true;
@@ -108,7 +108,7 @@ export class StartComponent implements OnInit {
 	}
 	nextStep(){
 		this.store.getKeyAnswerList().then(e => {
-			if (e.length > 0) this.router.navigate(['/loadstudents'])
+			if (e.length > 0) this.router.navigate(['/loadAnswers'])
 			else this.messageService.add({ severity: 'warn', detail: 'Primero guarde la información' });
 		})
 	}

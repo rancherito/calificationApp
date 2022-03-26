@@ -87,7 +87,7 @@ export class Step3Component implements OnInit {
 			if (studentData.every(e => e.idBar == null)) {
 				this.message.add({ severity: "warn", detail: 'Primero salve los datos de los estudiantes' })
 			}
-			else this.router.navigate(['/step4'])
+			else this.router.navigate(['/loadkeys'])
 		})
 
 	}
