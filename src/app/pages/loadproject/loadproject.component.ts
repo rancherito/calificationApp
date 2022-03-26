@@ -17,14 +17,13 @@ export class LoadprojectComponent implements OnInit {
 	public onNew = 0
 	public openCrud = false
 	public listColor: Record<string, string> = { 'cepre': 'var(--cyan-700)', 'otros': '#a9a9a9', 'admision': 'var(--primary-color)' }
+	public isModeOffLine = false;
 	constructor(
 		private storage: DatastorageService,
 		private route: Router,
 		private messageService: MessageService
 	) {
-		this.storage.getProjects().then(projects => {
-			this.projects = projects.sort((a, b) => b.createdDate - a.createdDate);
-		})
+		
 		this.currentEditProject = {
 			createdDate: new Date().getTime(),
 			name: "Nuevo proyecto",
@@ -44,7 +43,18 @@ export class LoadprojectComponent implements OnInit {
 		this.onNew = 1;
 	}
 	ngOnInit(): void {
-		
+		this.storage.isModeOffLine().subscribe(isModeOffLine => {
+			this.isModeOffLine = isModeOffLine;
+			console.log(isModeOffLine);
+			
+			this.storage.getProjects().then(projects => {
+				console.log(projects);
+				this.projects = projects.sort((a, b) => b.createdDate - a.createdDate);
+			})
+		})
+	}
+	changeMode(){
+		this.storage.tooggleModeOffLine();
 	}
 	editProject(project: IProject){
 		this.currentEditProject = {...project};
@@ -72,7 +82,6 @@ export class LoadprojectComponent implements OnInit {
 			else
 				this.route.navigate(['/report']);
 		}).catch(err => {
-			console.log(err);
 			this.messageService.add({ severity: 'error', summary: 'Error', detail: err });
 		})
 		//

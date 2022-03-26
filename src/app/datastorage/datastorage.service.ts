@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { addDoc, collection, doc, Firestore, getDoc, getDocs, setDoc } from '@angular/fire/firestore';
 import { IAnswer, IKeyAnswer, IExcelData, IStudentInfo, ICareer, ICareerInfo } from "../providersInterfaces";
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -9,6 +9,23 @@ import { Router } from '@angular/router';
 })
 export class DatastorageService {
 	private careers: ICareerInfo[] = [];
+	private ModeOffLine$ = new BehaviorSubject<boolean>(false);
+
+	private currentProject: IProject | null = null;
+	private currentProjectOffLine: IProject | null = null;
+
+
+	isModeOffLine() {
+		return this.ModeOffLine$.asObservable()
+	}
+	tooggleModeOffLine() {
+		const modeOffLine = !JSON.parse(localStorage.getItem('modeOffLine') ?? 'false');
+		localStorage.setItem('modeOffLine', JSON.stringify(modeOffLine));
+		this.ModeOffLine$.next(modeOffLine);
+	}
+	private isModeOffLineInternal(): boolean {
+		return JSON.parse(localStorage.getItem('modeOffLine') ?? 'false');
+	}
 	getCareers() {
 		let careers =  [
 			{color: "gray", "careerName": "Administración y Negocios Internacionales", "idGroup": "R", "career": "AN", "normalize": "ADMINISTRACIÓN Y NEGOCIOS INTERNACIONALES" }, 
@@ -287,18 +304,20 @@ export class DatastorageService {
 			900: '#F57F17',
 		}
 	}
-	private currentProject: IProject | null = null;
 
 	constructor(
 		private firestore: Firestore,
 		private route: Router,
 	) {
+		this.ModeOffLine$.next(JSON.parse(localStorage.getItem('modeOffLine') ?? 'false'));
 
 		this.currentProject = JSON.parse(localStorage.getItem('currentProject') ?? 'null') as IProject | null;
+		this.currentProjectOffLine = JSON.parse(localStorage.getItem('currentProjectOffLine') ?? 'null') as IProject | null;
 	}
 
-	reLocationPage(){
-		if (this.currentProject == null) this.route.navigate(['/']);
+	reLocationPage(){		
+		if (this.isModeOffLineInternal() && this.currentProjectOffLine == null || !this.isModeOffLineInternal()  && this.currentProject == null) this.route.navigate(['/']);
+	
 	}
 	normalizeString(str: string) {
 		return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^\w\s]/gi, '').trim().split(" ").filter(x => x.length > 3).join(" ").toUpperCase()
@@ -312,20 +331,45 @@ export class DatastorageService {
 		return colors;
 	}
 	private async getCurrentProjectDataKey(key: string){
-		return new Promise<any>((resolve, reject) => {
-			if (this.currentProject == null) reject('Null project')
-			else {
-				getDoc(doc(this.firestore, this.currentProject.uuid, key)).then(docInfo => {
-					docInfo.exists() ? resolve(JSON.parse(docInfo.data().data as string)) : resolve(null)
-				}).catch(err => {
-					reject(err)
-				})
-			}
-		});
+		let isModeOffLine = this.isModeOffLineInternal();
+		if (isModeOffLine) {
+			return new Promise<any>((resolve, reject) => {
+				if (this.currentProjectOffLine == null) reject('Null project offline')
+				else {
+					let projectFiles = JSON.parse(localStorage.getItem(this.currentProjectOffLine.uuid) ?? '{}') as Record<string, string>;
+					resolve(JSON.parse(projectFiles[key] ?? 'null'));
+				}
+
+			})
+		}
+		else{
+			return new Promise<any>((resolve, reject) => {
+				if (this.currentProject == null) reject('Null project')
+				else {
+					getDoc(doc(this.firestore, this.currentProject.uuid, key)).then(docInfo => {
+						docInfo.exists() ? resolve(JSON.parse(docInfo.data().data as string)) : resolve(null)
+					}).catch(err => {
+						reject(err)
+					})
+				}
+			})
+		}
 	}
 	private setCurrentProjectData(key: string, data: any) {
+		let isModeOffLine = this.isModeOffLineInternal();
+		if (isModeOffLine) {
+			return new Promise<void>((resolve, reject) => {
+				if (this.currentProjectOffLine == null) reject('Null project');
+				else{
+					let projectFiles = JSON.parse(localStorage.getItem(this.currentProjectOffLine.uuid) ?? '{}') as Record<string, string>;
+					projectFiles[key] = JSON.stringify(data);
+					localStorage.setItem(this.currentProjectOffLine.uuid, JSON.stringify(projectFiles));
+				}			
+			})
+		}
 
-		return new Promise<void>((resolve, reject) => {
+		else {
+			return new Promise<void>((resolve, reject) => {
 			if(this.currentProject == null){
 				reject('Null project')
 			}
@@ -336,7 +380,7 @@ export class DatastorageService {
 					reject(e)
 				});
 			}
-		});
+		});}
 	}
 	//FILE DATA
 	saveFileResponses(fileResponses: string) {
@@ -406,35 +450,65 @@ export class DatastorageService {
 
 	//File project gestor
 	async getProjects(force: boolean = false): Promise<IProject[]> {
-		let list: IProject[] = [];
-		let localProjects = localStorage.getItem('projects')
-		if (localProjects == null || force) {
-			let docs = await getDocs(collection(this.firestore, 'projects'))
 
-			docs.docs.forEach(doc => {
-				list.push(doc.data() as IProject);
-			})
-			localStorage.setItem('projects', JSON.stringify(list));
-			return list;
+		let list: IProject[] = [];
+		let isOffline = this.isModeOffLineInternal()
+		console.log('isOffline', isOffline);
+		
+		if (isOffline) {
+			return JSON.parse(localStorage.getItem('projectsOffline') ?? '[]') as IProject[]
 		}
-		return JSON.parse(localProjects) as IProject[];
+		else {
+			let localProjects = localStorage.getItem('projects')
+			if (localProjects == null || force) {
+				let docs = await getDocs(collection(this.firestore, 'projects'))
+
+				docs.docs.forEach(doc => {
+					list.push(doc.data() as IProject);
+				})
+				localStorage.setItem('projects', JSON.stringify(list));
+				return list;
+			}
+			return JSON.parse(localProjects) as IProject[];
+		}
+		
 	}
 	saveProject(project: IProject) {
-		let list = JSON.parse(localStorage.getItem('projects')??'[]') as IProject[];
-		let index = list.findIndex(e => e.uuid == project.uuid);
-		if (index != -1) list[index] = project;
-		else list.push(project);
-		localStorage.setItem('projects', JSON.stringify(list));		
-		setDoc(doc(collection(this.firestore, 'projects'), project.uuid), project)
+		let isOffline = this.isModeOffLineInternal()
+		if (isOffline) {
+			let projects = JSON.parse(localStorage.getItem('projectsOffline') ?? '[]') as IProject[]
+			let index = projects.findIndex(e => e.uuid == project.uuid);
+			if (index != -1) projects[index] = project;
+			else projects.push(project);
+			localStorage.setItem('projectsOffline', JSON.stringify(projects))
+		}
+		else {
+			let list = JSON.parse(localStorage.getItem('projects')??'[]') as IProject[];
+			let index = list.findIndex(e => e.uuid == project.uuid);
+			if (index != -1) list[index] = project;
+			else list.push(project);
+			localStorage.setItem('projects', JSON.stringify(list));		
+			setDoc(doc(collection(this.firestore, 'projects'), project.uuid), project)
+		}
 	}
 	setCurrentProject(project: IProject) {
-		this.currentProject = project;
-		this.saveProject(project)
-		localStorage.setItem('currentProject', JSON.stringify(project))
+		let isOffline = this.isModeOffLineInternal()
+		if (isOffline) {
+			this.currentProjectOffLine = project;
+			this.saveProject(project)
+			localStorage.setItem('currentProjectOffLine', JSON.stringify(project));
+		}
+		else {
+			this.currentProject = project;
+			this.saveProject(project)
+			localStorage.setItem('currentProject', JSON.stringify(project))
+		}
 	}
 	getCurrentProject() {
-		const c = of(this.currentProject);
-		return c
+		if (this.isModeOffLineInternal()) {
+			return of(this.currentProjectOffLine);
+		}
+		return of(this.currentProject)
 	}
 	async getTemplateDataHeaderCustom(): Promise<Record<string, string>> {
 		return (await this.getCurrentProjectDataKey('templateDataHeaderCustom')) ?? {} as Record<string, string>;

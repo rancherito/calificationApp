@@ -27,6 +27,10 @@ export class StartComponent implements OnInit {
 			}
 		})
 		this.store.restoreFileKeyAnswer().then(e => {
+			
+			console.log(e);
+			
+			
 			this.file = e
 			this.claves = UtilsService.clearFile(e)
 		})

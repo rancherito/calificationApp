@@ -43,7 +43,7 @@ export class Step4Component implements OnInit {
 		}
 	}
 	fileProcess() {
-		return this.file.replace(/\,\,/g, ', ,').replace(/\,\,/g, ', ,')
+		return this.file?.replace(/\,\,/g, ', ,').replace(/\,\,/g, ', ,')
 	}
 
 	listCountThemesAnswer() {
