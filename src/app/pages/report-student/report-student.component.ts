@@ -35,6 +35,15 @@ export class ReportStudentComponent implements OnInit {
 		private activateRoute: ActivatedRoute
 	) { }
 
+	total(){
+		let score: { score: number, totalQuestions: number, calification: string} = {score: 0, totalQuestions: 0, calification: '0.00'};
+		this.dataset2.forEach(e => {
+			score.score += e.status == 'C' ? e.total * 5 : (e.status == 'N' ? 0 : e.total * .5);
+			score.totalQuestions += e.total
+		})
+		score.calification = ((score.score / (score.totalQuestions * 5)) * 20).toFixed(2);
+		return score;
+	}
 	score(){
 		return this.answerStudent.reduce((ac, e) => ac + e.points, 0)
 	}

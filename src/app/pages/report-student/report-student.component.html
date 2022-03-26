@@ -1,14 +1,20 @@
 <co-recoverdatalayout [extend]="true" label="Informacion Estudiante">
     <div view class="p-3">
         <ng-container *ngIf="studentInfo">
+            <co-card class="shadow-1 mb-3" style="display: flex; gap: 1rem; align-items: center;">
+                <button pButton icon="pi pi-arrow-left" routerLink="/report" label="REGRESAR" class="p-button-sm"></button>
+                <div class="extra-infotitle"> REPORTE DE NOTAS POR ESTUDIANTE</div>
+            </co-card>
             <section>
-                <div>
-                    <co-card class="shadow-1">
-                        <div class="text-center mb-6">
+                <div style="position: relative;">
+                    <co-card class="shadow-1" style="position: sticky; top: 1rem;">
+                        <div class="text-center mb-3">
                             <div style="font-size: 1.2rem; font-weight: lighter;">{{studentInfo.fullname}}</div>
                             <b>{{studentInfo.careerName}}</b>
                         </div>
-                        
+                        <div class="text-center mb-6">
+                            <h3>Puntos: {{total().score}} | Calif.: {{total().calification}}</h3>
+                        </div>
                         <p-chart type="doughnut" [data]="data"></p-chart>
                         <div class="mt-4">
                             <table style="width: 100%;">
@@ -21,6 +27,12 @@
                                     <td><span [style]="{color: indicator.color}">{{indicator.statusName}}</span></td>
                                     <td class="text-center">{{indicator.total}}</td>
                                     <td class="text-center">{{indicator.percent}}%</td>
+                                </tr>
+                                <tr>
+                                    <td>TOTAL</td>
+                                    <td class="text-center">{{total().totalQuestions}}</td>
+                                    <td class="text-center">100%</td>
+
                                 </tr>
                             </table>
                         </div>
@@ -57,7 +69,7 @@
             </section>
         </ng-container>
     </div>
-    <div action>
-        <button pButton [routerLink]="['/report']" style="width: 100%;" class="shadow-1">REGRESAR A REPORTES</button>
+    <div action style="display: flex; justify-content: flex-end; align-items: center; height: 100%; flex-direction: column;">
+        <img src="/assets/calculator.png" alt="" srcset="" style="max-height: 250px;">
     </div>
 </co-recoverdatalayout>

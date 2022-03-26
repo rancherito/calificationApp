@@ -2,6 +2,9 @@ section{
     display: grid; grid-template-columns: 400px auto; gap: 1rem;
 }
 @media (max-width: 600px) {
+    .extra-infotitle{
+        display: none;
+    }
     section{
         grid-template-columns: 1fr;
     }

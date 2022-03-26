@@ -22,9 +22,8 @@
             
                 <div style="display: flex; align-items: center; gap: 1rem;">
                     <button pButton (click)="careerSelected = null">Atras</button>
-                    <p-button *ngIf="studentDataList.length" (onClick)="generateExcelFile()"
-                        [style]="{background: 'var(--cyan-600)'}">
-                        Exportar selección a Excel</p-button>
+                    <button pButton *ngIf="studentDataList.length" (click)="generateExcelFile()" icon="pi pi-file-excel" label="Exportar"
+                        [style]="{background: 'var(--cyan-600)'}"></button>
                 </div>
             </div>
             <p-table [value]="studentDataList" [rows]="10" [showCurrentPageReport]="true">
@@ -71,7 +70,7 @@
         <div *ngIf="careerSelected == null" class="mt-3">
             <div style="display: flex; gap: .5rem; align-items: center; justify-content: space-between;" class="d-flex m-3">
                 <h2>Resultados por carrera</h2>
-                <button (click)="generateExcelFileAll()" pButton class="p-button-sm">Exportar a Excel</button>
+                <button (click)="generateExcelFileAll()" pButton class="p-button-sm" icon="pi pi-file-excel" label="Exportar"></button>
             </div>
             <div id="general-view">
                 <div style="display: grid; gap: 1rem;">
