@@ -2,7 +2,6 @@
     position: relative;
     display: block;
     width: 100%;
-    overflow-x: hidden;
 }
 .action{
     display: grid !important;
@@ -24,13 +23,12 @@
 }
 .view{
     display: none;
-    width: 100vw;
-    overflow-x: hidden;
+    width: 100%;
 }
 .view.extend{
     display: block;
     margin-left: 260px;
-    width: calc(100vw - 260px);
+    width: calc(100% - 260px);
 }
 .super-title{
     font-size: 1.5rem;
