@@ -39,14 +39,16 @@
                 <thead  class="bg-primary text-white">
                     <tr>
                         <th class="w-1">CÓDIGO</th>
-                        <th>NOMBRE COMPLETO</th>
-                        <th>CARRERA</th>
+                        <th class="w-1">C.BARRA</th>
+                        <th class="text-left">NOMBRE COMPLETO</th>
+                        <th class="text-left">CARRERA</th>
                         <th class="w-1">THEMA</th>
-                        <th class="w-1">THEMA_MARCADO</th>
+                        <th class="w-1">T.MARCADO</th>
                     </tr>
                 </thead>    
                 <tr *ngFor="let item of studentsThemeIncorrect">
                     <td class="text-center">{{item.code}}</td>
+                    <td class="text-center">{{item.idBar}}</td>
                     <td>{{item.fullname}}</td>
                     <td>{{item.careerName}}</td>
                     <td class="text-center">{{item.theme}}</td>
