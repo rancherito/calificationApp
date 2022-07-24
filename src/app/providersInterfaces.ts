@@ -24,6 +24,16 @@ export interface IStudentInfo {
     _c?: number
     _n?: number
 }
+export interface IStudentSimpleInfo {
+    code: string | null,
+    idBar: string | null,
+    career: string | null,
+    careerName: string | null,
+    fullname: string | null,
+    dni: string | null,
+    theme: string | null,
+    themeAnswer: string | null
+}
 export interface IAnswer {
     idBar: string
     idTheme: string

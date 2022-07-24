@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { DatastorageService } from 'src/app/datastorage/datastorage.service';
 import { UtilsService } from 'src/app/utils/utils.service';
-import { IExcelData, IAnswer, IKeyAnswer, IRelationCodeBar, IStudentInfo, ICalification } from "../../providersInterfaces";
+import { IExcelData, IAnswer, IKeyAnswer, IStudentInfo, ICalification, IStudentSimpleInfo } from "../../providersInterfaces";
 
 @Component({
 	selector: 'page-step4',
@@ -12,12 +12,12 @@ import { IExcelData, IAnswer, IKeyAnswer, IRelationCodeBar, IStudentInfo, ICalif
 	providers: [MessageService]
 })
 export class Step4Component implements OnInit {
-	private totalQuestions: number = 0
 	public dataAnswer: string[] = []
 	public asistenceList: IStudentInfo[] = []
 	public studentList: IStudentInfo[] = []
+	public studentsThemeIncorrect: IStudentSimpleInfo[] = []
 
-	/*public dataCodeBarList: IRelationCodeBar[] = []*/
+
 	public totalKeys = 0
 	public JSON = JSON
 	public file: string = ""
@@ -41,6 +41,7 @@ export class Step4Component implements OnInit {
 			this.dataAnswer = UtilsService.clearFile(this.file)
 			this.processAnswers = UtilsService.processAnswers(this.totalKeys, this.dataAnswer);
 		}
+		this.findErrorThemes()
 	}
 	fileProcess() {
 		return this.file?.replace(/\,\,/g, ', ,').replace(/\,\,/g, ', ,')
@@ -80,6 +81,33 @@ export class Step4Component implements OnInit {
 			reader.readAsText(file)
 		}
 	}
+	findErrorThemes(){
+		let list = this.studentList
+		this.processAnswers = UtilsService.processAnswers(this.totalKeys, this.dataAnswer);
+		list.forEach(student => {
+			student.score = 0;
+			student.calification = 0;
+			student._b = 0
+			student._c = 0
+			student._n = 0
+
+			//Respuestas de cada estudiante
+			let studentAnswer = this.processAnswers.filter(x => x.idBar == student.idBar)
+			var themeAnswer = studentAnswer.length == 0 ? student.group : (studentAnswer[0].idTheme ?? student.group)
+			if (themeAnswer != student.group) {
+				this.studentsThemeIncorrect.push({
+					idBar: student.idBar,
+					fullname: student.fullname,
+					themeAnswer: themeAnswer,
+					dni: student.dni,
+					career: student.career,
+					careerName: student.careerName,
+					code: student.code,
+					theme: student.group
+				})
+			}
+		})
+	}
 
 	processCalification() {
 
@@ -93,13 +121,30 @@ export class Step4Component implements OnInit {
 			student._c = 0
 			student._n = 0
 
-			if (student.idBar == null) {
-				student._b = 60
-			}
-			else {
+			//Obtenemos la lista de preguntas de cada estudiante segun su tema
+			let filterGroup = this.answerList.filter(e => e.idGroup == student.group);
 
-				let filterGroup = this.answerList.filter(e => e.idGroup == student.group);
-				let studentAnswer = this.processAnswers.filter(x => x.idBar == student.idBar)
+			//Respuestas de cada estudiante
+			let studentAnswer = this.processAnswers.filter(x => x.idBar == student.idBar)
+
+			//console.log(studentAnswer.length > 0 ? typeof (studentAnswer[0].idTheme) : 'No hay respuestas')
+/*
+			var themeAnswer = studentAnswer.length == 0 ? student.group : (studentAnswer[0].idTheme ?? student.group)
+			if(themeAnswer != student.group){
+				this.studentsThemeIncorrect.push({
+					idBar: student.idBar!!,
+					fullname: student.fullname!!,
+					themeAnswer: student.group!!,
+					dni: student.dni!!,
+					career: student.career!!,
+					careerName: student.careerName!!,
+					code: student.code!!,
+					theme: themeAnswer!!
+				})
+			}
+*/
+			if (student.idBar == null) student._b = filterGroup.length			
+			else {
 
 				if (studentAnswer.length > 0 && filterGroup.length > 0) {
 

@@ -74,7 +74,9 @@ body{
     overflow: hidden;
     border-radius: .5rem;
 }*/
-
+.w-1{
+    width: 1px;
+}
 select{
     background: #ffffff;
     border: 1px solid rgba(0, 0, 0, 0.38);
@@ -83,4 +85,29 @@ select{
     height: 45px;
     box-sizing: border-box;
     padding: .5rem 1rem;
+}
+.table-default{
+    width: 100%;
+    border: 0;
+    margin: 0;
+    border-spacing: 0;
+    border: 1px solid #f8f8f8;
+    border-radius: .5rem;
+}
+.table-default thead{
+    background-color: #f8f8f8 !important;
+}
+.table-default td, .table-default th{
+    color: #11171a !important;
+    padding: .5rem
+}
+.table-default th{
+    padding: .75rem .5rem
+}
+.table-default td{
+    border-bottom: 1px solid #f8f8f8;
+    background-color: white;
+}
+.table-default tr:last-child  td{
+    border: 0;
 }

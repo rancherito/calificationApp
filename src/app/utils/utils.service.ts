@@ -16,9 +16,7 @@ export class UtilsService {
 
 			for (let e = 2; e < totalKeys + 2; e++) {
 				if (idBarEspecific == null || idBarEspecific == idBar) 
-					keyList.push({ idBar, idTheme: idTheme == '' ? 'NULL' : idTheme, idQuestion: e - 1, answer: rowAnswer[e] == '' ? null : rowAnswer[e] })
-				
-				
+					keyList.push({ idBar, idTheme: idTheme == '' ? 'NULL' : idTheme, idQuestion: e - 1, answer: rowAnswer[e] == '' ? null : rowAnswer[e] })	
 			}
 
 		}

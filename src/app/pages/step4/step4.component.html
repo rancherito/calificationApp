@@ -2,15 +2,17 @@
 <co-recoverdatalayout label="Paso 4 de 4" [extend]="true">
     <div view class="p-3">
         <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-            <co-card class="shadow-1">
+            <co-card class="shadow-1" style="width: 260px;">
                 <h4 class="mb-3">Informacion del archivo</h4>
                 <div><b>Grupos:</b> {{listCountThemesAnswer().length}}</div>
                 <div><b>Estudiantes:</b> {{totalStudents()}}</div>
-                <table class="mt-3">
-                    <tr>
-                        <th>Grupo</th>
-                        <th># Estudiantes</th>
-                    </tr>
+                <table class="mt-3 table-default">
+                    <thead>
+                        <tr>
+                            <th>Grupo</th>
+                            <th>N° Estudiantes</th>
+                        </tr>
+                    </thead>
                     <tr *ngFor="let item of listCountThemesAnswer()">
                         <td class="text-center">{{item.idTheme}}</td>
                         <td class="text-right">{{item.total}}</td>
@@ -25,7 +27,7 @@
                     Algunos datos no concuerdan, esto puede deberse a lo siguiente
                     <ul>
                         <li>
-                            El archivo no contiene toda la informaciond de las cartillas escaneadas
+                            El archivo no contiene toda la información de las cartillas escaneadas
                         </li>
                         <li>Algunos estudiantes marcaron incorrectamente sus codigos en las cartillas</li>
                         <li>Algunos estudiantes no estan asignados a un grupo o tema valido</li>
@@ -33,6 +35,24 @@
                     
                 </div>
             </co-card>
+            <table class="table-default shadow-1">
+                <thead  class="bg-primary text-white">
+                    <tr>
+                        <th class="w-1">CÓDIGO</th>
+                        <th>NOMBRE COMPLETO</th>
+                        <th>CARRERA</th>
+                        <th class="w-1">THEMA</th>
+                        <th class="w-1">THEMA_MARCADO</th>
+                    </tr>
+                </thead>    
+                <tr *ngFor="let item of studentsThemeIncorrect">
+                    <td class="text-center">{{item.code}}</td>
+                    <td>{{item.fullname}}</td>
+                    <td>{{item.careerName}}</td>
+                    <td class="text-center">{{item.theme}}</td>
+                    <td  class="text-center">{{item.themeAnswer}}</td>
+                </tr>
+            </table>
             <co-card style="background-color: #263238; width: 100%;">
                 <h3 class="mb-4" style="color: white;">Contenido del archivo</h3>
                 <ngx-codemirror [ngModel]="fileProcess()" [options]="{
