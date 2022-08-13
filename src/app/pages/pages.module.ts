@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { TestComponent } from './test/test.component';
 import { LoadstudentsComponent } from './loadstudents/loadstudents.component';
 import { LoadKeysComponent } from './start/start.component';
 
@@ -27,7 +26,6 @@ import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { ComponentsModule } from "../components/components.module";
 import { Step3Component } from './step3/step3.component';
 import { Step4Component } from './step4/step4.component';
-import { ReportDataComponent } from './report-data/report-data.component';
 import { ReportComponent } from './report/report.component';
 import { CoModalityListComponent } from './report/co-modality-list/co-modality-list.component';
 import { LoadprojectComponent } from './loadproject/loadproject.component';
@@ -36,12 +34,11 @@ import { DialogModule } from 'primeng/dialog';
 import { ReportStudentComponent } from './report-student/report-student.component';
 let comps: any[] = [
   LoadKeysComponent,
-  TestComponent,
   LoadstudentsComponent
 ]
 
 @NgModule({
-  declarations: [...comps, Step3Component, Step4Component, ReportDataComponent, ReportComponent, CoModalityListComponent, LoadprojectComponent, ReportStudentComponent],
+  declarations: [...comps, Step3Component, Step4Component, ReportComponent, CoModalityListComponent, LoadprojectComponent, ReportStudentComponent],
   exports: [...comps, ReportComponent],
   imports: [
     DropdownModule,

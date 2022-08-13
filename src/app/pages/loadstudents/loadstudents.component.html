@@ -4,8 +4,14 @@
         <div [style]="{height: '100%'}" style="overflow-y: auto;">
             <div class="p-4">
                 <co-card>
+                    <div style="display: flex; justify-content: flex-end;" class="mb-3">
+                        <input type="text" style="height: 34px; padding: 0 .5rem;" [(ngModel)]="searchStudent" placeholder="buscar alumno">
+                    </div>
+                    
                     <p-table 
-                    [paginator]="true" [rows]="30" styleClass="p-datatable-sm" responsiveLayout="scroll" [value]="computeTableStudent()"
+                    [rows]="60"
+                    [paginator] = "true"
+                    styleClass="p-datatable-sm" responsiveLayout="scroll" [value]="computeTableView()"
                     [showCurrentPageReport]="true"
                     currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} estudiantes"
                     >
@@ -19,11 +25,10 @@
                         </ng-template>
                         <ng-template pTemplate="body" let-student>
                             <tr>
-                                <td>{{student.career}}</td>
-                                <td>{{student.careerName}}</td>
+                                <td style="font-size: 11px;">{{student.careerName}}</td>
                                 <td>{{student.code}}</td>
                                 <td>{{student.dni}}</td>
-                                <td>{{student.fullname}}</td>
+                                <td style="font-size: 11px;">{{student.fullname}}</td>
                                 <td>{{student.group}}</td>
                                 <td>{{student.modality}}</td>
                             </tr>
