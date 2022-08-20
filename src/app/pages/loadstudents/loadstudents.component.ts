@@ -13,6 +13,7 @@ import * as XLSX from "xlsx";
 	providers: [MessageService]
 })
 export class LoadstudentsComponent implements OnInit {
+	display: boolean = false;
 	public searchStudent: string = ''
 	public dataExcel: Record<string, string>[] = []
 	public keyHeaders: string[] = []
@@ -33,6 +34,9 @@ export class LoadstudentsComponent implements OnInit {
 		fullname: "fullname",
 		group: "group",
 		modality: "modality"
+	}
+	showDialog() {
+		this.display = true;
 	}
 	public currentHeaderChange: string | null = null
 

@@ -23,6 +23,6 @@ export class UtilsService {
 		return keyList
 	}
 	static clearFile(fileString: string | null) {
-		return (fileString ?? "").split('\r\n').filter(e => e.length > 0)
+		return (fileString ?? "").split('\r\n').map(x => x.replace(/ +(?= )/g, '')).filter(e => e.length > 1)
 	}
 }

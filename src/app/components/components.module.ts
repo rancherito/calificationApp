@@ -7,12 +7,14 @@ import { RecoverdatalayoutComponent } from "./recoverdatalayout/recoverdatalayou
 
 import { ScrollPanelModule } from "primeng/scrollpanel";
 import { LayoutBottomComponent } from './layout-bottom/layout-bottom.component';
-import {ButtonModule} from 'primeng/button'
+import {ButtonModule} from 'primeng/button';
+import { CardOutlinedComponent } from './card-outlined/card-outlined.component'
 let comps = [
   BoxComponent,
   CardComponent,
   RecoverdatalayoutComponent,
-  LayoutBottomComponent
+  LayoutBottomComponent,
+  CardOutlinedComponent
 ]
 @NgModule({
   declarations: [...comps],

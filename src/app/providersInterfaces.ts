@@ -47,7 +47,9 @@ export interface IKeyAnswer {
 }
 export interface IRelationCodeBar {
     idBar: string,
-    code: string
+    code: string,
+    printerCode?: number,
+    fullname?: string | null,
 }
 export interface ICareer {
     career: string | null

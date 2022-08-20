@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { addDoc, collection, doc, Firestore, getDoc, getDocs, setDoc } from '@angular/fire/firestore';
-import { IAnswer, IKeyAnswer, IExcelData, IStudentInfo, ICareer, ICareerInfo } from "../providersInterfaces";
+import { IAnswer, IKeyAnswer, IExcelData, IStudentInfo, ICareer, ICareerInfo, IRelationCodeBar } from "../providersInterfaces";
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { Router } from '@angular/router';
 
@@ -411,12 +411,12 @@ export class DatastorageService {
 		//localStorage.setItem('fileKeyAnswers', fileKeyAnswer)
 	}
 
-	saveFileRelationCodeBar(fileRelationCodeBar: string) {
+	saveFileRelationCodeBar(fileRelationCodeBar: IRelationCodeBar[]) {
 		this.setCurrentProjectData('fileRelationCodeBar', fileRelationCodeBar);
 		//localStorage.setItem('fileRelationCodeBar', fileRelationCodeBar)
 	}
-	restoreFileRelationCodeBar() {
-		return this.getCurrentProjectDataKey('fileRelationCodeBar');
+	async restoreFileRelationCodeBar(): Promise<IRelationCodeBar[]> {
+		return (await this.getCurrentProjectDataKey('fileRelationCodeBar')) ?? [] as IRelationCodeBar[];
 		//return localStorage.getItem('fileRelationCodeBar')
 	}
 	//GENERAL DATA

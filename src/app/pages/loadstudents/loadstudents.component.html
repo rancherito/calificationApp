@@ -1,113 +1,124 @@
 <p-toast></p-toast>
+<p-dialog header="Opciones" [(visible)]="display" [modal]="true" [breakpoints]="{'960px': '75vw', '640px': '100vw'}"
+	[style]="{width: '50vw'}">
+	<div style="display: grid; gap: 1rem;">
+
+		<co-card-outlined>
+			<p-button styleClass="p-button-sm" (click)="reset()">Reset</p-button>
+		</co-card-outlined>
+		<co-card-outlined>
+			<h4 class="mb-2">Cabeceras encontradas del archivo</h4>
+			<div style="display: flex; gap: .25rem;flex-wrap: wrap;">
+				<p-chip *ngFor="let header of keyHeaders" [label]="header"
+					[style]="{background: 'var(--primary-color)', height: '28px', color: 'white', 'border-radius': '.25rem'}">
+				</p-chip>
+			</div>
+		</co-card-outlined>
+		<co-card-outlined>
+			<h4 class="mb-2">Cabeceras enlazadas</h4>
+			<div style="gap: .25rem; display: grid;">
+				<ng-container *ngFor="let item of relationHeaders">
+					<p-chip *ngIf="item.relationkey" [style]="{background: 'var(--primary-color)', width: '100%'}"
+						styleClass="customChip" (click)="evChangeHeader(item.headerkey)">
+
+						<div
+							style="display: grid; grid-template-columns: auto 1fr auto; gap: .25rem; align-items: center; width: 100%;">
+							<span>{{item.headerkey}}</span>
+							<div style="height: 1px;background-color: white; width: auto;"></div>
+							<span>{{item.relationkey}}</span>
+						</div>
+					</p-chip>
+				</ng-container>
+			</div>
+		</co-card-outlined>
+
+		<co-card-outlined>
+			<h3 class="mb-2">Cabeceras faltantes</h3>
+			<div style="gap: .25rem; display: grid; ">
+				<ng-container *ngFor="let item of relationHeaders">
+					<p-chip *ngIf="item.relationkey == undefined"
+						[style]="{background: currentHeaderChange == item.headerkey?'var(--teal-500)': 'var(--pink-500)',width: '100%'}"
+						styleClass="customChip" (click)="evChangeHeader(item.headerkey)">
+						<div
+							style="display: grid; grid-template-columns: auto 1fr auto; gap: .25rem; align-items: center; width: 100%;">
+							<span>{{item.headerkey}}</span>
+							<div style="height: 1px;background-color: white; width: auto;"></div>
+							<span>{{item.relationkey}}</span>
+						</div>
+					</p-chip>
+				</ng-container>
+			</div>
+		</co-card-outlined>
+
+		<p-card styleClass="mt-3" [header]="currentHeaderChange" *ngIf="currentHeaderChange != null"
+			subheader="Asigne una nueva cabezera">
+			<div style="display: flex; gap: .25rem;flex-wrap: wrap;">
+				<p-chip *ngFor="let header of keyHeaders" [label]="header" [style]="{background: 'var(--teal-500)'}"
+					styleClass="customChip" (click)="evAsingHeader(header)"></p-chip>
+			</div>
+			<ng-template pTemplate="footer">
+
+				<button pButton class="p-button-sm" (click)="currentHeaderChange = null">Cancelar</button>
+			</ng-template>
+		</p-card>
+	</div>
+</p-dialog>
+
+
 <co-recoverdatalayout [extend]="dataExcel.length > 0" label="PASO 1 DE 4">
-    <section class="action-table" view>
-        <div [style]="{height: '100%'}" style="overflow-y: auto;">
-            <div class="p-4">
-                <co-card>
-                    <div style="display: flex; justify-content: flex-end;" class="mb-3">
-                        <input type="text" style="height: 34px; padding: 0 .5rem;" [(ngModel)]="searchStudent" placeholder="buscar alumno">
-                    </div>
-                    
-                    <p-table 
-                    [rows]="60"
-                    [paginator] = "true"
-                    styleClass="p-datatable-sm" responsiveLayout="scroll" [value]="computeTableView()"
-                    [showCurrentPageReport]="true"
-                    currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} estudiantes"
-                    >
-                        <ng-template pTemplate="header">
-                            <tr>
-                                <th *ngFor="let item of dataHeaders | keyvalue" [pSortableColumn]="item.key + ''">
-                                    {{item.value}}
-                                    <p-sortIcon [field]="item.key + ''"></p-sortIcon>
-                                </th>
-                            </tr>
-                        </ng-template>
-                        <ng-template pTemplate="body" let-student>
-                            <tr>
-                                <td style="font-size: 11px;">{{student.careerName}}</td>
-                                <td>{{student.code}}</td>
-                                <td>{{student.dni}}</td>
-                                <td style="font-size: 11px;">{{student.fullname}}</td>
-                                <td>{{student.group}}</td>
-                                <td>{{student.modality}}</td>
-                            </tr>
-                        </ng-template>
-                    </p-table>
-                </co-card>
-            </div>
-        </div>
-        
-        <div class="p-3">
-            <co-card class="mb-3">
-                TOTAL CARGADOS: {{computeTableStudent().length}}
-            </co-card>
-            <co-card class="mb-3">
-                <p-button styleClass="p-button-sm" (click)="reset()">Reset</p-button>
-            </co-card>
-            <co-card class="mb-3">
-                <h4 class="mb-2">Cabeceras encontradas del archivo</h4>
-                <div style="display: flex; gap: .25rem;flex-wrap: wrap;" >
-                    <p-chip *ngFor="let header of keyHeaders" [label]="header" [style]="{background: 'var(--primary-color)', height: '28px', color: 'white', 'border-radius': '.25rem'}"></p-chip>
-                </div>
-            </co-card>
-            <co-card class="mb-3">
-                <h4 class="mb-2">Cabeceras enlazadas</h4>
-                <div style="gap: .25rem; display: grid;">
-                    <ng-container *ngFor="let item of relationHeaders">
-                        <p-chip *ngIf="item.relationkey"  [style]="{background: 'var(--primary-color)', width: '100%'}" styleClass="customChip" (click)="evChangeHeader(item.headerkey)">
-                            
-                            <div  style="display: grid; grid-template-columns: auto 1fr auto; gap: .25rem; align-items: center; width: 100%;">
-                                <span>{{item.headerkey}}</span>
-                                <div style="height: 1px;background-color: white; width: auto;"></div>
-                                <span>{{item.relationkey}}</span>
-                            </div>
-                        </p-chip>
-                    </ng-container>
-                </div>
-            </co-card>
-            
-            <co-card>
-                <h3 class="mb-2">Cabeceras faltantes</h3>
-                <div style="gap: .25rem; display: grid; ">
-                    <ng-container *ngFor="let item of relationHeaders">
-                        <p-chip *ngIf="item.relationkey == undefined" [style]="{background: currentHeaderChange == item.headerkey?'var(--teal-500)': 'var(--pink-500)',width: '100%'}" styleClass="customChip" (click)="evChangeHeader(item.headerkey)">
-                            <div  style="display: grid; grid-template-columns: auto 1fr auto; gap: .25rem; align-items: center; width: 100%;">
-                                <span>{{item.headerkey}}</span>
-                                <div style="height: 1px;background-color: white; width: auto;"></div>
-                                <span>{{item.relationkey}}</span>
-                            </div>
-                        </p-chip>
-                    </ng-container>
-                </div>
-            </co-card>
-        
-            <p-card styleClass="mt-3" [header]="currentHeaderChange" *ngIf="currentHeaderChange != null" subheader="Asigne una nueva cabezera">
-                <div style="display: flex; gap: .25rem;flex-wrap: wrap;" >
-                    <p-chip *ngFor="let header of keyHeaders" [label]="header" [style]="{background: 'var(--teal-500)'}" styleClass="customChip" (click)="evAsingHeader(header)"></p-chip>
-                </div>
-                <ng-template pTemplate="footer">
-                
-                    <button pButton class="p-button-sm" (click)="currentHeaderChange = null">Cancelar</button>
-                </ng-template>
-            </p-card>
-        </div>
-    </section>
-    <div action class="f-c" style="height: 100%;">
-        <img src="/assets/microsoft-excel.svg" style="height: 6rem;">
-        <co-box size="2rem"></co-box>
-        <h3>Seleccione su archivo Excel con los datos de alumnos</h3>
-        <co-box></co-box>
-        <label pButton class="p-button-raised">Cargar Excel Alumnos
-            <input type="file" accept=".xlsx,.xls" style="display: none;" (change)="readExcel($event)">
-        </label>
-        <div style="display: flex; justify-content: center;">
-            <p-button styleClass="mt-3 p-button-secondary p-button-raised" routerLink="/">Retroceder</p-button>
-            <p-button styleClass="mt-3 p-button-secondary p-button-raised ml-2" (onClick)="nextStep()" *ngIf="computeTableStudent().length">Siguiente</p-button>
-        </div>
-        
-    </div>
+
+	<section class="action-table" view>
+
+		<co-card style="display: flex; justify-content: space-between; align-items: center;">
+			<input type="text" style="height: 36px; padding: 0 .5rem; width: 100%; max-width: 200px;"
+				[(ngModel)]="searchStudent" placeholder="buscar alumno">
+			<button pButton class="p-button-rounded p-button-text" type="button" (click)="showDialog()"
+				icon="pi pi-cog"></button>
+		</co-card>
+		<co-card>
+			<span>TOTAL CARGADOS: {{computeTableStudent().length}}</span>
+			<p-divider></p-divider>
+			<p-table [rows]="60" [paginator]="true" styleClass="p-datatable-sm p-datatable-gridlines p-datatable-striped" responsiveLayout="scroll"
+				[value]="computeTableView()" [showCurrentPageReport]="true"
+				currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} estudiantes">
+				<ng-template pTemplate="header">
+					<tr>
+						<th *ngFor="let item of dataHeaders | keyvalue" [pSortableColumn]="item.key + ''">
+							{{item.value}}
+							<p-sortIcon [field]="item.key + ''"></p-sortIcon>
+						</th>
+					</tr>
+				</ng-template>
+				<ng-template pTemplate="body" let-student>
+					<tr>
+						<td style="font-size: 11px;">{{student.careerName}}</td>
+						<td>{{student.code}}</td>
+						<td>{{student.dni}}</td>
+						<td style="font-size: 11px;">{{student.fullname}}</td>
+						<td>{{student.group}}</td>
+						<td>{{student.modality}}</td>
+					</tr>
+				</ng-template>
+			</p-table>
+		</co-card>
+
+	</section>
+	<div action class="f-c" style="height: 100%;">
+		<img src="/assets/microsoft-excel.svg" style="height: 6rem;">
+		<co-box size="2rem"></co-box>
+		<h3>Seleccione su archivo Excel con los datos de alumnos</h3>
+		<co-box></co-box>
+		<label pButton class="p-button-raised">Cargar Excel Alumnos
+			<input type="file" accept=".xlsx,.xls" style="display: none;" (change)="readExcel($event)">
+		</label>
+		<div style="display: flex; justify-content: center;">
+			<p-button styleClass="mt-3 p-button-secondary p-button-raised" routerLink="/">Retroceder</p-button>
+			<p-button styleClass="mt-3 p-button-secondary p-button-raised ml-2" (onClick)="nextStep()"
+				*ngIf="computeTableStudent().length">Siguiente</p-button>
+		</div>
+
+	</div>
 </co-recoverdatalayout>
 <co-layout-bottom [wrapper]="false" *ngIf="computeTableStudent().length">
-    <p-button styleClass="p-button-secondary" label="Salvar datos" (onClick)="saveData()"></p-button>
+	<p-button styleClass="p-button-secondary" label="Salvar datos" (onClick)="saveData()"></p-button>
 </co-layout-bottom>

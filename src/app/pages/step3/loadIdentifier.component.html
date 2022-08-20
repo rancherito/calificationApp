@@ -1,8 +1,10 @@
 <co-recoverdatalayout label="Paso 2 de 4" [extend]="dataRelation.length > 0">
-    <div view style="height: 100%; display: grid; grid-template-columns: 1fr 400px; grid-template-rows: 100%; gap: 1rem;" class="p-3">
+    <div view
+        style="height: 100%; display: grid; grid-template-columns: 1fr 400px; grid-template-rows: 100%; gap: 1rem;"
+        class="p-3">
         <div style="overflow-y: auto; height: 100%;">
             <div>
-                <co-card class="mb-4" style="background-color: #263238;">
+                <!--<co-card class="mb-4" style="background-color: #263238;">
                     <h3 class="mb-4" style="color: white;">Contenido del archivo</h3>
                     <ngx-codemirror [(ngModel)]="file" [options]="{
                         lineNumbers: true,
@@ -11,25 +13,31 @@
                         readOnly: true
                         }">
                     </ngx-codemirror>
-                </co-card>
+                </co-card>-->
                 <co-card class="shadow-1">
-                    <p-table [value]="relationKeys" styleClass="p-datatable-sm p-datatable-striped" responsiveLayout="scroll">
+                    <p-table [value]="studentsValid" styleClass="p-datatable-sm p-datatable-striped"
+                        responsiveLayout="scroll">
                         <ng-template pTemplate="header">
                             <tr>
-                                <th style="width: 0;"></th>
+                                <th style="width: 0;">N°</th>
                                 <th class="text-left">NOMBRE COMPLETO</th>
                                 <th width="0px" class="text-center">CODIGO</th>
                                 <th width="0px" class="text-center">INDENTIFICADOR</th>
+                                <th width="0px" class="text-center">IMPRESO</th>
+
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-student let-i="rowIndex">
                             <tr>
                                 <td>{{i + 1}}</td>
-                                <td style="font-size: .8rem;">{{student.fullname}}</td>
+
+                                <td style="font-size: .8rem;">{{student.fullname??"SIN IDENTIFICAR"}}</td>
                                 <td class="text-center">{{student.code}}</td>
-                                <td class="text-center">{{student.idBar == null? 'FALTA': student.idBar}}</td>
+                                <td class="text-center">{{student.idBar?? 'FALTA'}}</td>
+                                <td class="text-center">{{student.printerCode?? 'FALTA'}}</td>
+
                             </tr>
-                        </ng-template>
+                        </ng-template>      
 
                     </p-table>
                 </co-card>
@@ -39,7 +47,8 @@
         <div style="overflow-y: auto; height: 100%;">
             <div style="display: grid; gap: .5rem;">
                 <co-card class="shadow-1">
-                    <b>{{relationKeys.length}} ENCONTRADOS  DE {{dataRelation.length - 1}} ESCANEADOS</b>
+                    <b>{{dataRelation.length}} ENCONTRADOS DE {{dataRelation.length}} ESCANEADOS</b>
+                    <br>
                     <i>NOTA: ALUMNOS SEGUN LA FICHA DE RELACIÓN {{studentInfo.length}}</i>
                 </co-card>
                 <co-card *ngIf="dataLost.length" class="shadow-1">
@@ -72,12 +81,16 @@
                             <tr>
                                 <th class="text-left">CODIGO</th>
                                 <th class="text-left">IDENTIFICADOR</th>
+                                <th class="text-left">IMPRESO</th>
+
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let item of repeatedCode">
                                 <td>{{item.code}}</td>
                                 <td>{{item.idBar}}</td>
+                                <td>{{item.printerCode}}</td>
+
                             </tr>
                         </tbody>
                     </table>
@@ -87,14 +100,15 @@
                         <h3>Alumnos faltantes</h3>
                         Los siguientes alumnos no se encuentran en las cartillas escaneadas.
                     </div>
-                    <p-table [value]="inasistenceList" styleClass="p-datatable-sm p-datatable-striped" responsiveLayout="scroll">
+                    <p-table [value]="inasistenceList" styleClass="p-datatable-sm p-datatable-striped"
+                        responsiveLayout="scroll">
                         <ng-template pTemplate="header">
                             <tr>
                                 <th style="width: 0">#</th>
-                                <th class="text-left"  style="width: 0;">CODIGO</th>
+                                <th class="text-left" style="width: 0;">CODIGO</th>
                                 <th class="text-left">NOMBRES</th>
                                 <th class="text-left" style="width: 0;"></th>
-    
+
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-item let-i="rowIndex">
@@ -104,7 +118,7 @@
                                 <td class="text-xs">{{item.fullname}}</td>
                                 <td class="text-xs">{{item.career}}</td>
                             </tr>
-                                
+
                         </ng-template>
                     </p-table>
                 </co-card>
@@ -125,8 +139,10 @@
         </label>
 
         <div class="mt-3">
-            <p-button styleClass="p-button-secondary p-button-raised p-button-sm" routerLink="/loadstudents">Retroceder</p-button>
-            <p-button styleClass="ml-2 p-button-secondary p-button-raised p-button-sm" (onClick)="nextStep()">Siguiente</p-button>
+            <p-button styleClass="p-button-secondary p-button-raised p-button-sm" routerLink="/loadstudents">Retroceder
+            </p-button>
+            <p-button styleClass="ml-2 p-button-secondary p-button-raised p-button-sm" (onClick)="nextStep()">Siguiente
+            </p-button>
         </div>
 
     </div>

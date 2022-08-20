@@ -1,12 +1,12 @@
-.action-table{
-    display: grid;
-    grid-template-columns: auto 300px;
-    grid-template-rows: 100%;
-    height: 100%;
-}
 ::ng-deep .customChip {
     height: 28px;
     color: white;
     border-radius: .25rem;
     cursor: pointer;
+}
+.action-table{
+    display: grid;
+    width: 100%;
+    gap: 1rem;
+    padding: 1rem;
 }
