@@ -4,6 +4,8 @@ import { LoadKeysComponent } from './pages/start/start.component';
 import { LoadstudentsComponent } from "./pages/loadstudents/loadstudents.component";
 import { loadIdentifier } from "./pages/step3/loadIdentifier.component";
 import { Step4Component } from "./pages/step4/step4.component";
+import { ReportVacanciesComponent } from "./pages/report-vacancies/report-vacancies.component";
+
 import { ReportComponent } from './pages/report/report.component';
 import { LoadprojectComponent } from './pages/loadproject/loadproject.component';
 import { ReportStudentComponent } from './pages/report-student/report-student.component';
@@ -14,6 +16,7 @@ const routes: Routes = [
   { path: 'LoadIdentifiers', component: loadIdentifier },
   { path: 'loadAnswers', component: Step4Component },
   { path: 'report', component: ReportComponent },
+  { path: 'reportVacancies', component: ReportVacanciesComponent },
   { path: 'infostudent/:project/:student', component: ReportStudentComponent }
 
 ];

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { addDoc, collection, doc, Firestore, getDoc, getDocs, setDoc } from '@angular/fire/firestore';
-import { IAnswer, IKeyAnswer, IExcelData, IStudentInfo, ICareer, ICareerInfo, IRelationCodeBar } from "../providersInterfaces";
+import { IAnswer, IKeyAnswer, IExcelData, IStudentInfo, ICareer, ICareerInfo, IRelationCodeBar, ICarrerModality } from "../providersInterfaces";
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { Router } from '@angular/router';
 
@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 	providedIn: 'root'
 })
 export class DatastorageService {
+	
 	private careers: ICareerInfo[] = [];
 	private ModeOffLine$ = new BehaviorSubject<boolean>(false);
 
@@ -305,6 +306,7 @@ export class DatastorageService {
 		}
 	}
 
+
 	constructor(
 		private firestore: Firestore,
 		private route: Router,
@@ -364,6 +366,7 @@ export class DatastorageService {
 					let projectFiles = JSON.parse(localStorage.getItem(this.currentProjectOffLine.uuid) ?? '{}') as Record<string, string>;
 					projectFiles[key] = JSON.stringify(data);
 					localStorage.setItem(this.currentProjectOffLine.uuid, JSON.stringify(projectFiles));
+					resolve();
 				}			
 			})
 		}
@@ -401,6 +404,7 @@ export class DatastorageService {
 		//localStorage.setItem('fileStudentInfo', fileStudentInfo)
 	}
 
+
 	restoreFileKeyAnswer() {
 		
 		return this.getCurrentProjectDataKey('fileKeyAnswer');
@@ -409,6 +413,14 @@ export class DatastorageService {
 	saveFileKeyAnswer(fileKeyAnswer: string) {
 		this.setCurrentProjectData('fileKeyAnswer', fileKeyAnswer);
 		//localStorage.setItem('fileKeyAnswers', fileKeyAnswer)
+	}
+
+	saveCarrerModality(carrerModality: ICarrerModality[]) {
+		this.setCurrentProjectData('carrerModality', carrerModality);
+	}
+
+	async getCarrerModality(): Promise<ICarrerModality[]>  {
+		return (await this.getCurrentProjectDataKey('carrerModality')) ?? [] as ICarrerModality[];
 	}
 
 	saveFileRelationCodeBar(fileRelationCodeBar: IRelationCodeBar[]) {

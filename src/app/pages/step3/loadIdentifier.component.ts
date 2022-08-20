@@ -110,19 +110,6 @@ export class loadIdentifier implements OnInit {
 		this.studentInfo = await this.datastorageService.getStudentInfoList()
 		if (this.dataRelation.length > 0) {
 
-			/*
-						this.dataRelation.reduce((acc, cur) => {
-							let i = acc.findIndex(x => x.code == cur.code)
-							if (i >= 0) {
-								this.repeatedCode.push(cur)
-								if (this.repeatedCode.findIndex(x => x.idBar == acc[i].idBar) == -1) this.repeatedCode.push(acc[i])
-								return acc
-							}
-							else {
-								acc.push(cur)
-								return acc
-							}
-						}, [] as IRelationCodeBar[])*/
 
 
 			this.studentInfo.forEach(e => {
@@ -149,6 +136,11 @@ export class loadIdentifier implements OnInit {
 	}
 	saveData() {
 		this._computeRelationKeys().then(e => {
+			for (let i = 0; i < e.length; i++) {
+				if (this.studentsValid.find(x => x.code == e[i].code) == undefined) {
+					e[i].idBar = null
+				}				
+			}
 			this.datastorageService.setStudentInfoList(e)
 			this.message.add({ severity: "success", detail: 'Datos guardados' })
 		})

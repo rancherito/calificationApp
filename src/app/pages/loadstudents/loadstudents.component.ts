@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ICareerInfo, IExcelData, IStudentInfo } from "../../providersInterfaces";
+import { ICareerInfo, ICarrerModality, IExcelData, IStudentInfo } from "../../providersInterfaces";
 import { DatastorageService } from "../../datastorage/datastorage.service";
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
@@ -157,7 +157,22 @@ export class LoadstudentsComponent implements OnInit {
 		let data = this.computeTableStudent()
 		if (data.length > 0) {
 
+			let modalities = data.map(x => {
+				return JSON.stringify({
+					career: x.career,
+					modality: x.modality,
+					vacancies: 0
+				})
+			})
+
+			var carrerModality = [...new Set(modalities)].map(x => JSON.parse(x) as ICarrerModality)
+			for (let e = 0; e < carrerModality.length; e++) {
+				carrerModality[e].careerName = this.referenceCareer.find(x => x.career == carrerModality[e].career)?.normalize;			
+			}
+
 			this.store.setStudentInfoList(data)
+			this.store.saveCarrerModality(carrerModality)
+			
 			this.messageService.add({ severity: 'success', detail: 'Datos salvados correctamente' })
 		}
 		else this.messageService.add({ severity: 'warn', detail: 'Cargar información de estudiantes antes de salvar' })

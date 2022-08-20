@@ -71,3 +71,9 @@ export interface ICalification {
     calification: string,
     dni: string
 }
+export interface ICarrerModality {
+    career: string,
+    careerName?: string,
+    modality: number,
+    vacancies: number,
+}

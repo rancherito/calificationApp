@@ -19,7 +19,6 @@ export class Step4Component implements OnInit {
 
 
 	public totalKeys = 0
-	public JSON = JSON
 	public file: string = ""
 	public processDataList: ICalification[] = []
 	public answerList: IKeyAnswer[] = [];
@@ -75,6 +74,7 @@ export class Step4Component implements OnInit {
 					this.dataStorageService.getAverageKeys().then(x => this.totalKeys = x)
 					this.dataAnswer = UtilsService.clearFile(reader.result as string)
 					this.processCalification()
+					this.findErrorThemes()
 				}
 
 			}
@@ -127,22 +127,6 @@ export class Step4Component implements OnInit {
 			//Respuestas de cada estudiante
 			let studentAnswer = this.processAnswers.filter(x => x.idBar == student.idBar)
 
-			//console.log(studentAnswer.length > 0 ? typeof (studentAnswer[0].idTheme) : 'No hay respuestas')
-/*
-			var themeAnswer = studentAnswer.length == 0 ? student.group : (studentAnswer[0].idTheme ?? student.group)
-			if(themeAnswer != student.group){
-				this.studentsThemeIncorrect.push({
-					idBar: student.idBar!!,
-					fullname: student.fullname!!,
-					themeAnswer: student.group!!,
-					dni: student.dni!!,
-					career: student.career!!,
-					careerName: student.careerName!!,
-					code: student.code!!,
-					theme: themeAnswer!!
-				})
-			}
-*/
 			if (student.idBar == null) student._b = filterGroup.length			
 			else {
 

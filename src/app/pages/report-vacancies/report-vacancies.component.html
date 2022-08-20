@@ -1,0 +1,22 @@
+<button pButton class="p-3 shadow-1 link f-c" routerLink="/report" label="REPORTES"></button>
+<button pButton class="p-3 shadow-1 link f-c" label="SAVAR" (click)="salvar()" ></button>
+<table class="table-default">
+    <thead>
+        <tr>
+            <th>CODIGO</th>
+            <th>CARRERA</th>
+            <th>MODALIDAD</th>
+            <th>VACANTES</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let vacancy of vacancies">
+            <td>{{ vacancy.career }}</td>
+            <td>{{ vacancy.careerName }}</td>
+            <td>{{ vacancy.modality }}</td>
+            <td>
+                <input  type="number" [(ngModel)]="vacancy.vacancies">
+            </td>
+        </tr>
+    </tbody>
+</table>
