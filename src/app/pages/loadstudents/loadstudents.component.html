@@ -1,68 +1,4 @@
 <p-toast></p-toast>
-<p-dialog header="Opciones" [(visible)]="display" [modal]="true" [breakpoints]="{'960px': '75vw', '640px': '100vw'}"
-	[style]="{width: '50vw'}">
-	<div style="display: grid; gap: 1rem;">
-
-		<co-card-outlined>
-			<p-button styleClass="p-button-sm" (click)="reset()">Reset</p-button>
-		</co-card-outlined>
-		<co-card-outlined>
-			<h4 class="mb-2">Cabeceras encontradas del archivo</h4>
-			<div style="display: flex; gap: .25rem;flex-wrap: wrap;">
-				<p-chip *ngFor="let header of keyHeaders" [label]="header"
-					[style]="{background: 'var(--primary-color)', height: '28px', color: 'white', 'border-radius': '.25rem'}">
-				</p-chip>
-			</div>
-		</co-card-outlined>
-		<co-card-outlined>
-			<h4 class="mb-2">Cabeceras enlazadas</h4>
-			<div style="gap: .25rem; display: grid;">
-				<ng-container *ngFor="let item of relationHeaders">
-					<p-chip *ngIf="item.relationkey" [style]="{background: 'var(--primary-color)', width: '100%'}"
-						styleClass="customChip" (click)="evChangeHeader(item.headerkey)">
-
-						<div
-							style="display: grid; grid-template-columns: auto 1fr auto; gap: .25rem; align-items: center; width: 100%;">
-							<span>{{item.headerkey}}</span>
-							<div style="height: 1px;background-color: white; width: auto;"></div>
-							<span>{{item.relationkey}}</span>
-						</div>
-					</p-chip>
-				</ng-container>
-			</div>
-		</co-card-outlined>
-
-		<co-card-outlined>
-			<h3 class="mb-2">Cabeceras faltantes</h3>
-			<div style="gap: .25rem; display: grid; ">
-				<ng-container *ngFor="let item of relationHeaders">
-					<p-chip *ngIf="item.relationkey == undefined"
-						[style]="{background: currentHeaderChange == item.headerkey?'var(--teal-500)': 'var(--pink-500)',width: '100%'}"
-						styleClass="customChip" (click)="evChangeHeader(item.headerkey)">
-						<div
-							style="display: grid; grid-template-columns: auto 1fr auto; gap: .25rem; align-items: center; width: 100%;">
-							<span>{{item.headerkey}}</span>
-							<div style="height: 1px;background-color: white; width: auto;"></div>
-							<span>{{item.relationkey}}</span>
-						</div>
-					</p-chip>
-				</ng-container>
-			</div>
-		</co-card-outlined>
-
-		<p-card styleClass="mt-3" [header]="currentHeaderChange" *ngIf="currentHeaderChange != null"
-			subheader="Asigne una nueva cabezera">
-			<div style="display: flex; gap: .25rem;flex-wrap: wrap;">
-				<p-chip *ngFor="let header of keyHeaders" [label]="header" [style]="{background: 'var(--teal-500)'}"
-					styleClass="customChip" (click)="evAsingHeader(header)"></p-chip>
-			</div>
-			<ng-template pTemplate="footer">
-
-				<button pButton class="p-button-sm" (click)="currentHeaderChange = null">Cancelar</button>
-			</ng-template>
-		</p-card>
-	</div>
-</p-dialog>
 
 
 <co-recoverdatalayout [extend]="dataExcel.length > 0" label="PASO 1 DE 4">
@@ -122,3 +58,64 @@
 <co-layout-bottom [wrapper]="false" *ngIf="computeTableStudent().length">
 	<p-button styleClass="p-button-secondary" label="Salvar datos" (onClick)="saveData()"></p-button>
 </co-layout-bottom>
+
+<p-dialog header="Opciones" [(visible)]="display" [modal]="true" [breakpoints]="{'960px': '75vw', '640px': '100vw'}"
+	[style]="{width: '60vw'}">
+	<div style="display: grid; gap: 1rem;">
+
+		<co-card-outlined>
+			<p-button styleClass="p-button-sm" (click)="reset()">Reset</p-button>
+		</co-card-outlined>
+		<co-card-outlined>
+			<h4 class="mb-2">Cabeceras encontradas del archivo</h4>
+			<div style="display: flex; gap: .25rem;flex-wrap: wrap;">
+				<p-chip *ngFor="let header of keyHeaders"
+					[style]="{background: 'var(--primary-color)', height: '28px', color: 'white', 'border-radius': '.25rem'}">
+					<span>{{header}}</span>
+				</p-chip>
+			</div>
+		</co-card-outlined>
+		<co-card-outlined>
+			<h4 class="mb-2">Cabeceras enlazadas</h4>
+			<div style="gap: .25rem; display: grid;">
+				<ng-container *ngFor="let item of relationHeaders">
+					<p-chip *ngIf="item.relationkey" [style]="{background: 'var(--primary-color)', width: '100%'}"
+						styleClass="customChip" (click)="evChangeHeader(item.headerkey)">
+
+						<div
+							style="display: grid; grid-template-columns: auto 1fr auto; gap: .25rem; align-items: center; width: 100%;">
+							<span>{{item.headerkey}}</span>
+							<div style="height: 1px;background-color: white; width: auto;"></div>
+							<span>{{item.relationkey}}</span>
+						</div>
+					</p-chip>
+				</ng-container>
+			</div>
+		</co-card-outlined>
+
+		<co-card-outlined>
+			<h3 class="mb-2">Cabeceras faltantes</h3>
+			<div style="display: flex; gap: .25rem;flex-wrap: wrap;">
+				<ng-container *ngFor="let item of relationHeaders">
+					<p-chip *ngIf="item.relationkey == undefined"
+						[style]="{background: currentHeaderChange == item.headerkey?'var(--teal-500)': 'var(--pink-500)'}"
+						styleClass="customChip" (click)="evChangeHeader(item.headerkey)">
+						<span>{{item.headerkey}}</span>
+					</p-chip>
+				</ng-container>
+			</div>
+		</co-card-outlined>
+
+		<p-card styleClass="mt-3" [header]="currentHeaderChange" *ngIf="currentHeaderChange != null"
+			subheader="Asigne una nueva cabezera">
+			<div style="display: flex; gap: .25rem;flex-wrap: wrap;">
+				<p-chip *ngFor="let header of keyHeaders" [label]="header" [style]="{background: 'var(--teal-500)'}"
+					styleClass="customChip" (click)="evAsingHeader(header)"></p-chip>
+			</div>
+			<ng-template pTemplate="footer">
+
+				<button pButton class="p-button-sm" (click)="currentHeaderChange = null">Cancelar</button>
+			</ng-template>
+		</p-card>
+	</div>
+</p-dialog>

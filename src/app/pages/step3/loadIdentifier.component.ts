@@ -24,6 +24,7 @@ export class loadIdentifier implements OnInit {
 
 	public inasistenceList: IStudentInfo[] = []
 	public file: string = ''
+	public havePrinteCode: Boolean = false
 	public repeatedCode: IRelationCodeBar[] = []
 	public studentInfo: IStudentInfo[] = [];
 	constructor(
@@ -82,6 +83,7 @@ export class loadIdentifier implements OnInit {
 				printerCode: e.printerCode
 			}
 		})
+		this.havePrinteCode = this.dataRelation.some(x=>x.printerCode != undefined)
 		//group by code using reduce
 		let grouping: Map<string, IRelationCodeBar[]> = new Map()
 		
@@ -102,6 +104,24 @@ export class loadIdentifier implements OnInit {
 	}
 	ngOnInit() {
 		this.loadingData()
+	}
+	saveChange(item: IRelationCodeBar){
+		if(item.printerCode == undefined) return
+
+		let index = this.dataRelation.findIndex(x=>x.printerCode == item.printerCode)
+		if(index == -1) return
+
+
+
+		this.dataRelation[index].code = item.code
+		
+
+		console.log(this.dataRelation[index]);
+		console.log(item);
+
+		this.datastorageService.saveFileRelationCodeBar(this.dataRelation)
+		this.loadingData()
+		
 	}
 	async _computeRelationKeys() {
 		this.dataLost = []

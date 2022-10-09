@@ -46,9 +46,11 @@
         </div>
         <div style="overflow-y: auto; height: 100%;">
             <div style="display: grid; gap: .5rem;">
+                <co-card *ngIf="!havePrinteCode">
+                    <b>EL ARCHIVO DE ORIGEN NO POSEE CLAVES IMPRESAS</b>
+                </co-card>
                 <co-card class="shadow-1">
-                    <b>{{dataRelation.length}} ENCONTRADOS DE {{dataRelation.length}} ESCANEADOS</b>
-                    <br>
+                    <b style="display: block;">{{dataRelation.length}} ENCONTRADOS DE {{dataRelation.length}} ESCANEADOS</b>                    
                     <i>NOTA: ALUMNOS SEGUN LA FICHA DE RELACIÓN {{studentInfo.length}}</i>
                 </co-card>
                 <co-card *ngIf="dataLost.length" class="shadow-1">
@@ -59,14 +61,24 @@
                     <table style="width: 100%;">
                         <thead>
                             <tr>
-                                <th class="text-left">CODIGO</th>
+                                <th class="text-left" style="width: 1px;">CODIGO</th>
                                 <th class="text-left">ID BARRA</th>
+                                <th class="text-left">IMPRESO</th>
+                                <th class="text-left" style="width: 1px;"></th>
+
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let item of dataLost">
-                                <td>{{item.code}}</td>
+                                
+                                <td>
+                                    <input type="text" [(ngModel)]="item.code" style="width: 100px;" >
+                                </td>
                                 <td>{{item.idBar}}</td>
+                                <td>{{item.printerCode}}</td>
+                                <td>
+                                    <button (click)="saveChange(item)" pButton type="button" icon="pi pi-save" class="p-button-sm p-button-icon-only"></button>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -82,15 +94,21 @@
                                 <th class="text-left">CODIGO</th>
                                 <th class="text-left">IDENTIFICADOR</th>
                                 <th class="text-left">IMPRESO</th>
+                                <th class="text-left" style="width: 1px;"></th>
+
 
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let item of repeatedCode">
-                                <td>{{item.code}}</td>
+                                <input type="text" [(ngModel)]="item.code" style="width: 100px;">
+
                                 <td>{{item.idBar}}</td>
                                 <td>{{item.printerCode}}</td>
-
+                                <td>
+                                    <button (click)="saveChange(item)" pButton type="button" icon="pi pi-save"
+                                        class="p-button-sm p-button-icon-only"></button>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
